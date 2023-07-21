@@ -9,15 +9,16 @@ use App\Models\User;
 use Hash;
 use Illuminate\Support\Arr;
 use DB;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
     function __construct()
     {
-        $this->middleware('permission:list-user|create-user|edit-user|delete-user', ['only' => ['index','store']]);
-        $this->middleware('permission:create-user', ['only' => ['create','store']]);
-        $this->middleware('permission:edit-user', ['only' => ['edit','update']]);
-        $this->middleware('permission:delete-user', ['only' => ['destroy']]);
+        // $this->middleware('permission:list-user|create-user|edit-user|delete-user', ['only' => ['index','store']]);
+        // $this->middleware('permission:create-user', ['only' => ['create','store']]);
+        // $this->middleware('permission:edit-user', ['only' => ['edit','update']]);
+        // $this->middleware('permission:delete-user', ['only' => ['destroy']]);
     }
 
     public function index(Request $request){
@@ -87,12 +88,27 @@ class UserController extends Controller
     }
 
     public function create(){
-
-        return view('pages.users.create');
+        $roles  = Role::all();
+        return view('pages.users.create', compact(
+            'roles'
+        ));
     }
 
     public function store(Request $request){
-
+        $request->validate([
+            'name'      => 'required|string|max:200',
+            'email'     => 'required|email',
+            'password'  => 'required',
+            'role'      => 'required',
+        ],[
+            'name.required'     => 'Nama wajib diisi',
+            'name.string'       => 'Nama harus berupa string',
+            'name.max'          => 'Nama tidak boleh lebih dari 200 karakter',
+            'email.required'    => 'Email wajib diisi',
+            'email.email'       => 'Email tidak valid',
+            'password.required' => 'Password wajib diisi',
+            'role.required'     => 'Role wajib diisi',
+        ]);
     }
 
     public function edit($id){

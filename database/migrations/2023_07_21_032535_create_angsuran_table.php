@@ -20,8 +20,6 @@ return new class extends Migration
             $table->integer('angsuran_ke');
             $table->integer('nominal_produk');
             $table->integer('nominal_untung');
-            $table->integer('nominal_untung');
-            $table->integer('nominal_untung');
             $table->string('jadwal_ansur');
             $table->date('tgl_bayar');
             $table->integer('nominal_byr_pokok');
