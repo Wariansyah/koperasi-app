@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('simpanan', function (Blueprint $table) {
             $table->id();
-            $table->integer('rekening');
+            $table->string('rekening');
             $table->string('user_id');
             $table->integer('nominal');
             $table->date('tgl_pinjam');

@@ -13,16 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('transaction', function (Blueprint $table) {
-            $table->string('id',16)->primary();
-            $table->string('jurnal_id');
-            $table->date('tanggal');
-            $table->string('jam');
-            $table->string('rekening_pinjaman');
+        Schema::create('produk', function (Blueprint $table) {
+            $table->id();
+            $table->string('kode');
             $table->string('ledger');
             $table->string('keterangan');
-            $table->integer('nominal_debet');
-            $table->integer('nominal_kredit');
             $table->timestamps();
         });
     }
@@ -34,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('transaction');
+        Schema::dropIfExists('produk');
     }
 };
