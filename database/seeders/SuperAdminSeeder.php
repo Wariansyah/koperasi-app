@@ -16,10 +16,14 @@ class SuperAdminSeeder extends Seeder
      */
     public function run()
     {
+        $micro_id = explode(" ", microtime());
+        $micro_id = $micro_id[1].substr($micro_id[0],2,6);
+
         User::create([
+            'id'        => $micro_id,
             'name'      => 'superAdmin',
             'email'     => 'super@gmail.com',
-            'password'  => Hash::make('123456')
+            'password'  => Hash::make('123456'),
         ]);
     }
 }

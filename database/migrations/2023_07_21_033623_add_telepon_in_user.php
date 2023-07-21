@@ -14,13 +14,13 @@ return new class extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('no_induk')->after('name');
-            $table->string('alamat')->after('no_induk');
-            $table->string('telepon')->after('email');
-            $table->string('status')->after('telepon');
-            $table->string('jenkel')->after('status');
-            $table->date('tgl_lahir')->after('jenkel');
-            $table->string('tmpt_lahir')->after('tgl_lahir');
+            $table->string('no_induk')->after('name')->nullable();
+            $table->string('alamat')->after('no_induk')->nullable();
+            $table->string('telepon')->after('email')->nullable();
+            $table->string('status')->after('telepon')->nullable();
+            $table->string('jenkel')->after('status')->nullable();
+            $table->date('tgl_lahir')->after('jenkel')->nullable();
+            $table->string('tmpt_lahir')->after('tgl_lahir')->nullable();
             $table->decimal('limit_pinjaman', 14,2)->after('tmpt_lahir')->nullable();
         });
     }
