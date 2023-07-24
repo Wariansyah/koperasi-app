@@ -42,8 +42,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="password">Password</label>
-                                    <input type="password" class="form-control" id="password"
-                                        placeholder="Masukkan Password">
+                                    <input type="password" class="form-control" id="password" placeholder="Masukkan Password">
                                     <small class="text-danger" id="password_error"></small>
                                 </div>
                                 <div class="form-group">

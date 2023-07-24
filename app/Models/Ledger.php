@@ -5,18 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Simpanan extends Model
+class Ledger extends Model
 {
     use HasFactory;
 
-    protected $table = "pinjaman";
+    protected $table = "ledger";
     protected $primarykey = "id";
     protected $fillable = [
-        'rekening_simpanan',
-        'user_id',
-        'tgl_buka',
-        'tgl_tutup',
-        'nominal',
+        'kode',
+        'nama',
         'keterangan',
     ];
 }
