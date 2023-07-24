@@ -102,6 +102,7 @@ class UserController extends Controller
             'email'     => 'required|email',
             'no_induk'  => 'required',
             'alamat'    => 'required',
+            'telepon'    => 'required',
             'jenkel'    => 'required',
             'tgl_lahir' => 'required',
             'tmpt_lahir'=> 'required',
@@ -115,6 +116,7 @@ class UserController extends Controller
             'email.email'        => 'Email tidak valid',
             'no_induk.required'  => 'No induk harus diisi',
             'alamat.required'    => 'Alamat harus diisi',
+            'telepon.required'    => 'Telepon harus diisi',
             'jenkel.required'    => 'Jenis kelamin harus diisi',
             'tgl_lahir.required' => 'Tanggal lahir harus diisi',
             'tmpt_lahir.required'=> 'Tempat lahir harus diisi',
@@ -125,7 +127,7 @@ class UserController extends Controller
         $data                   = $request->all();
         $data['password']       = Hash::make($data['password']);
         $user                   = User::create($data);
-        $user->assignRole($request->input('role'));
+        $user->assignRole($request->input('roles'));
 
         if($user){
             return response()->json([
@@ -140,81 +142,63 @@ class UserController extends Controller
         ]);
     }
 
-    public function edit($id){
-
-        $user       = User::find($id);
-        $roles      = Role::all();
-        $userRole   = $user->roles->first();
-        return view('pages.users.edit',compact('user','roles','userRole'));
-    }
-
-    public function update(Request $request){
-
+    public function update(Request $request, $id)
+    {
         $request->validate([
             'name'      => 'required|string|max:200',
             'email'     => 'required|email',
             'no_induk'  => 'required',
             'alamat'    => 'required',
+            'telepon'   => 'required',
             'jenkel'    => 'required',
             'tgl_lahir' => 'required',
             'tmpt_lahir'=> 'required',
             'password'  => 'required',
             'role'      => 'required',
-        ],[
-            'name.required'      => 'Nama wajib diisi',
-            'name.string'        => 'Nama harus berupa string',
-            'name.max'           => 'Nama tidak boleh lebih dari 200 karakter',
-            'email.required'     => 'Email wajib diisi',
-            'email.email'        => 'Email tidak valid',
-            'no_induk.required'  => 'No induk harus diisi',
-            'alamat.required'    => 'Alamat harus diisi',
-            'jenkel.required'    => 'Jenis kelamin harus diisi',
-            'tgl_lahir.required' => 'Tanggal lahir harus diisi',
-            'tmpt_lahir.required'=> 'Tempat lahir harus diisi',
-            'password.required'  => 'Password wajib diisi',
-            'role.required'      => 'Role wajib diisi',
         ]);
 
         $data = $request->all();
-        if(!empty($data['password'])){ 
+        if (!empty($data['password'])) {
             $data['password'] = Hash::make($data['password']);
-        }else{
-            $data = Arr::except($data,array('password'));    
+        } else {
+            $data = Arr::except($data, ['password']);
         }
 
         $user = User::find($id);
-        $user->update($data);
-        DB::table('model_has_roles')->where('model_id',$id)->delete();
-    
-        $user->assignRole($request->input('role'));
-
-        if($user){
+        if (!$user) {
             return response()->json([
-                'code'      => 200,
-                'message'   => 'User berhasil di update'
+                'code' => 404,
+                'message' => 'User not found'
             ]);
         }
 
+        $user->update($data);
+        DB::table('model_has_roles')->where('model_id', $id)->delete();
+        $user->assignRole($request->input('role'));
+
         return response()->json([
-            'code'      => 400,
-            'message'   => 'User gagal di update'
+            'code' => 200,
+            'message' => 'User berhasil di update'
         ]);
     }
 
-    public function destroy(Request $request){
-
+    public function destroy(Request $request, $id)
+    {
         $user = User::find($id);
-        if($user){
-            $user->delete();
+        if (!$user) {
             return response()->json([
-                'code'      => 200,
-                'message'   => 'User berhasil di hapus'
+                'code' => 404,
+                'message' => 'User not found'
             ]);
         }
 
+        $user->delete();
         return response()->json([
-            'code'      => 400,
-            'message'   => 'User gagal di hapus'
+            'code' => 200,
+            'message' => 'User berhasil di hapus'
         ]);
     }
 }
+
+
+
