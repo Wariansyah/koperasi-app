@@ -13,15 +13,16 @@ use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
-    function __construct()
-    {
-        // $this->middleware('permission:list-user|create-user|edit-user|delete-user', ['only' => ['index','store']]);
-        // $this->middleware('permission:create-user', ['only' => ['create','store']]);
-        // $this->middleware('permission:edit-user', ['only' => ['edit','update']]);
-        // $this->middleware('permission:delete-user', ['only' => ['destroy']]);
-    }
+    // function __construct()
+    // {
+    //     // $this->middleware('permission:list-user|create-user|edit-user|delete-user', ['only' => ['index','store']]);
+    //     // $this->middleware('permission:create-user', ['only' => ['create','store']]);
+    //     // $this->middleware('permission:edit-user', ['only' => ['edit','update']]);
+    //     // $this->middleware('permission:delete-user', ['only' => ['destroy']]);
+    // }
 
     public function index(Request $request){
+        
         $auth  = auth()->user()->with('permissions')->first();
         $data  = User::all();
         if($request->ajax()){
@@ -95,6 +96,7 @@ class UserController extends Controller
     }
 
     public function store(Request $request){
+        dd($request->all());
         $request->validate([
             'name'      => 'required|string|max:200',
             'email'     => 'required|email',
