@@ -20,20 +20,16 @@
                     <div class="form-group">
                         <strong>Permission:</strong>
                         <br />
-                        <div class="container" id="sortableContainer">
+                        <div class="container">
                             @foreach($permission as $value)
-                            <input class="form-check-input" value="{{ $value->id }}" name="permission[]" type="checkbox" id="flexSwitchCheckDefault{{ $value->id }}">
-                            <label class="form-check-label" for="flexSwitchCheckDefault{{ $value->id }}">{{ $value->name }}</label>
+                            <input class="form-check-input" value="{{ $value->id }}" name="permission[]" type="checkbox" id="flexSwitchCheckDefault">
+                            <label class="form-check-label" for="flexSwitchCheckDefault">{{ $value->name }}</label>
                             <br />
                             @endforeach
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="description">Description:</label>
-                        <textarea name="description" id="description" class="form-control"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <button type="submit" id="createRoleBtn" class="btn btn-primary">SIMPAN</button>
+                        <button type="submit" id="createRoleBtn" class="btn btn-primary">Create Role</button>
                         <a href="{{ route('roles.index') }}" class="btn btn-secondary">Cancel</a>
                     </div>
                 </form>
@@ -45,60 +41,38 @@
 @endsection
 
 @section('script')
-<!-- Include jQuery library -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<!-- Include jQuery UI library -->
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
-
 <script type="application/javascript">
-    $("#createRoleForm").on('submit', function(e) {
+    $("#create-user").on('submit', function(e) {
         e.preventDefault();
-        var form = e.target; // Get the form element
-        var btn = $(form).find('#createRoleBtn'); // Find the button element inside the form
+        var btn = $('#btn-create');
         btn.attr('disabled', true);
-        btn.html('<i class="fas fa-spinner fa-spin"></i> Loading...');
-
-        let formData = new FormData(form);
+        btn.val("Loading...");
+        let formData = new FormData(this);
         $('#name_error').text('');
+        $('#permission_error').text('');
 
         $.ajax({
-            url: $(form).attr('action'),
+            url: "{{ route('roles.store') }}",
             type: "POST",
             data: formData,
             cache: false,
             contentType: false,
             processData: false,
             success: function(response) {
-                if (response.code === 200) {
-                    // Redirect to roles.index after successful data submission
+                $(".preloader").fadeOut();
+                if (response.success) {
                     window.location.href = "{{ route('roles.index') }}";
+                    sessionStorage.setItem('success', response.message);
                 }
             },
             error: function(response) {
                 btn.attr('disabled', false);
-                btn.text("SIMPAN");
-                if (response.responseJSON && response.responseJSON.errors && response.responseJSON.errors.name) {
-                    $('#name_error').text(response.responseJSON.errors.name[0]);
-                } else {
-                    // Handle other error scenarios if necessary
-                    console.log(response);
-                }
+                btn.val("Simpan");
+                $('#name_error').text(response.responseJSON.errors.name);
+                $('#premission_error').text(response.responseJSON.errors.permission);
             }
         });
-    });
 
-    // Add sortable functionality
-    $(document).ready(function() {
-        $("#sortableContainer").sortable({
-            // Add options here if needed
-        });
-
-        // Initialize Summernote editor
-        $('#description').summernote({
-            height: 200,
-            // Add other options here if needed
-        });
     });
 </script>
 @endsection

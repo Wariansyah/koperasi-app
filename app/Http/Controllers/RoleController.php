@@ -9,6 +9,9 @@ use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use DB;
 use DataTables;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Session;
 
 class RoleController extends Controller
 {
@@ -33,20 +36,25 @@ class RoleController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $roles = Role::select('id', 'name')->orderBy('id', 'ASC')->get();
-            return DataTables::of($roles)
+            $data = Role::with('permissions')->get();
+            return Datatables::of($data)
                 ->addIndexColumn()
-                ->addColumn('action', function ($role) {
-                    // Replace this with the appropriate HTML for the action column (edit, delete buttons, etc.).
-                    $action = '<button class="btn btn-sm btn-danger btn-delete" data-id="' . $role->id . '">Delete</button>';
-                    return $action;
+                ->addColumn('permissions', function ($row) {
+                    return $row->permissions->pluck('name')->implode(', ');
+                })
+                ->addColumn('action', function ($row) {
+                    $btn = '<a href="' . route('roles.edit', $row->id) . '" class="btn btn-sm btn-info">Edit</a>';
+                    $btn .= ' <button type="button" class="btn btn-sm btn-danger" data-id="' . $row->id . '" onclick="deleteItem(this)">Delete</button>';
+                    return $btn;
                 })
                 ->rawColumns(['action'])
-                ->toJson();
+                ->make(true);
         }
 
         return view('pages.roles.index');
     }
+
+
 
     /**
      * Show the form for creating a new resource.
@@ -55,8 +63,10 @@ class RoleController extends Controller
      */
     public function create()
     {
-        $permission = Permission::get();
-        return view('pages.roles.create', compact('permission'));
+        $permission  = Permission::all();
+        return view('pages.roles.create', compact(
+            'permission'
+        ));
     }
 
     /**
@@ -65,17 +75,32 @@ class RoleController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+
     public function store(Request $request)
     {
-        $this->validate($request, [
+        $request->validate([
             'name' => 'required|unique:roles,name',
             'permission' => 'required',
+        ], [
+            'name.required' => 'Nama wajib diisi',
+            'name.string' => 'Nama harus berupa string',
+            'name.max' => 'Nama tidak boleh lebih dari 200 karakter',
+            'permission.required' => 'permission wajib diisi',
         ]);
 
-        $role = Role::create(['name' => $request->input('name')]);
-        $role->syncPermissions($request->input('permission'));
 
-        return redirect()->route('pages.roles.index')->with('success', 'Role created successfully');
+        $data = $request->all();
+        $role = Role::create($data);
+        $role->syncPermissions($request->input('permission'));
+        if ($role) {
+            return redirect()->route('roles.index')->with('success', 'Role berhasil di simpan');
+        }
+
+
+        return response()->json([
+            'code' => 400,
+            'message' => 'Role gagal di simpan'
+        ]);
     }
 
     /**
@@ -120,20 +145,32 @@ class RoleController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $this->validate($request, [
-            'name' => 'required',
-            'permission' => 'required',
+        $request->validate([
+            'name' => 'required|unique:roles,name,' . $id,
+            'permission' => 'required|array',
+        ], [
+            'name.required' => 'Nama wajib diisi',
+            'name.string' => 'Nama harus berupa string',
+            'name.max' => 'Nama tidak boleh lebih dari 200 karakter',
+            'permission.required' => 'Permission wajib diisi',
+            'permission.array' => 'Permission harus berupa array',
         ]);
 
-        $role = Role::find($id);
-        $role->name = $request->input('name');
-        $role->save();
-
+        $data = $request->all();
+        $role = Role::findOrFail($id);
+        $role->update($data);
         $role->syncPermissions($request->input('permission'));
 
-        return redirect()->route('roles.index')
-            ->with('success', 'Role updated successfully');
+        if ($role) {
+            return redirect()->route('roles.index')->with('success', 'Role berhasil diupdate');
+        }
+
+        return response()->json([
+            'code' => 400,
+            'message' => 'Role gagal diupdate'
+        ]);
     }
+
     /**
      * Remove the specified resource from storage.
      *
@@ -142,10 +179,18 @@ class RoleController extends Controller
      */
     public function destroy($id)
     {
-        DB::table("roles")->where('id', $id)->delete();
-        return response()->json(array('success' => true));
+        $role = Role::findOrFail($id);
 
-        // return redirect()->route('roles.index')
-        //                 ->with('success','Role deleted successfully');
+        if ($role->delete()) {
+            return response()->json([
+                'code' => 200,
+                'message' => 'Role berhasil dihapus'
+            ]);
+        }
+
+        return response()->json([
+            'code' => 400,
+            'message' => 'Role gagal dihapus'
+        ]);
     }
 }
