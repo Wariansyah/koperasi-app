@@ -79,13 +79,17 @@
                     "sNext": "<i class='fas fa-angle-right'>",
                     "sPrevious": "<i class='fas fa-angle-left'>",
                 },
-                processing: '<img src="{{ asset('img/loader/loader3.gif') }}">',
             },
 
-            columns: [
-                { data: 'DT_RowIndex', className:'align-middle' },
-                { data: 'name', className:'align-middle' },
-                { data: 'action', className:'align-middle text-center' }
+            columns: [{
+                    data: 'DT_RowIndex', className:'align-middle'
+                },
+                {
+                    data: 'name', className:'align-middle'
+                },
+                {
+                    data: 'action', className:'align-middle text-center'
+                }
             ],
         });
     });
@@ -101,38 +105,41 @@
         });
         swalWithBootstrapButtons.fire({
             title: 'Are you sure?',
-            text: "Do you want to delete this reminder?",
+            text: "Do you want to delete this reminder ?",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonText: 'Yes, delete it!',
             cancelButtonText: 'No, cancel!',
             reverseButtons: true
         }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    type: 'POST',
-                    url: "{{ route('roles.destroy', ['role' => ':id']) }}".replace(':id', id),
-                    data: {
-                        "_token": "{{ csrf_token() }}",
-                        "_method": 'DELETE',
-                    },
-                    success: function(data) {
-                        if (data.code === 200) {
-                            toastr.success(data.message);
-                            var oTable = $('#table-role').DataTable();
-                            oTable.draw(false);
-                        } else {
-                            toastr.error(data.message);
+            if (result.value) {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: 'POST',
+                        url: "roles/" + id,
+                        data: {
+                            "_token": "{{ csrf_token() }}",
+                            "_method": 'DELETE',
+                        },
+                        success: function(data) {
+                            if (data.success) {
+                                toastr.success('success',data.message);
+                                var oTable = $('#table-role').dataTable();
+                                oTable.fnDraw(false);
+                            }
+                            else{
+                                toastr.error('error',data.message);
+                            }
                         }
-                    },
-                    error: function(error) {
-                        toastr.error('An error occurred while deleting the role.');
-                    }
-                });
-            } else if (result.dismiss === Swal.DismissReason.cancel) {
+
+                    });
+                }
+            } else if (
+                result.dismiss === Swal.DismissReason.cancel
+            ) {
                 swalWithBootstrapButtons.fire(
                     'Cancelled',
-                    'Deletion canceled',
+                    name + ' cancel deleted',
                     'error'
                 );
             }
