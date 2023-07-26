@@ -23,7 +23,7 @@ class PermissionController extends Controller
             $data = Permission::with('roles')->get();
             return Datatables::of($data)
                 ->addIndexColumn()
-                ->addColumn('Nama_Permission', function ($row) {
+                ->addColumn('name', function ($row) {
                     return $row->name; // Ubah 'name' sesuai dengan kolom yang tepat di tabel "permissions"
                 })
                 ->addColumn('roles', function ($row) {

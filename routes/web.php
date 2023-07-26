@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\{PermissionController, UserController,RoleController};
 use App\Http\Controllers\Auth\LoginController;
-
+use App\Http\Controllers\KasController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -30,5 +30,5 @@ Route::group(['middleware' => ['auth']], function() {
     Route::resource('roles', RoleController::class);
     Route::resource('permissions', PermissionController::class);
     Route::resource('users', UserController::class);
-    Route::resource('permissions', PermissionController::class);
+    Route::resource('kass', KasController::class);
 });

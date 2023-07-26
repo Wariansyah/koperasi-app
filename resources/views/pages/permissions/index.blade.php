@@ -77,7 +77,7 @@
                     className: 'align-middle'
                 },
                 {
-                    data: 'Nama_Permission',
+                    data: 'name',
                     className: 'align-middle'
                 },
                 {
