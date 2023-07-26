@@ -5,12 +5,12 @@
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1 class="m-0">Roles</h1>
+                <h1 class="m-0">Permissions</h1>
             </div><!-- /.col -->
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><a href="#">Home</a></li>
-                    <li class="breadcrumb-item active">Roles</li>
+                    <li class="breadcrumb-item active">Permissions</li>
                 </ol>
             </div><!-- /.col -->
         </div><!-- /.row -->
@@ -25,17 +25,16 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-header">
-                        <a href="{{ route('roles.create') }}" class="btn btn-sm btn-primary">Tambah</a>
+                        <a href="{{ route('permissions.create') }}" class="btn btn-sm btn-primary">Tambah</a>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table id="table-role" style="width: 100%" class="table table-bordered table-hover">
+                            <table id="table-permission" style="width: 100%" class="table table-bordered table-hover">
                                 <thead>
                                     <tr>
                                         <th>#</th>
-                                        <th>Nama</th>
-                                        <th>Permission</th>
+                                        <th>Nama_Permission</th>
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
@@ -66,11 +65,11 @@
             sessionStorage.clear();
         }
 
-        $('#table-role').DataTable({
+        $('#table-permission').DataTable({
             processing: true,
             serverSide: true,
             ajax: {
-                url: "{{ route('roles.index') }}",
+                url: "{{ route('permissions.index') }}",
                 type: 'GET',
             },
             columns: [{
@@ -78,11 +77,7 @@
                     className: 'align-middle'
                 },
                 {
-                    data: 'name',
-                    className: 'align-middle'
-                },
-                {
-                    data: 'permissions',
+                    data: 'Nama_Permission',
                     className: 'align-middle'
                 },
                 {
@@ -116,7 +111,7 @@
                 if (result.isConfirmed) {
                     $.ajax({
                         type: 'POST',
-                        url: "roles/" + id,
+                        url: "permissions/" + id,
                         data: {
                             "_token": "{{ csrf_token() }}",
                             "_method": 'DELETE',

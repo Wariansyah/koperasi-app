@@ -53,6 +53,12 @@
                                 <p>Roles</p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="{{ route('permissions.index') }}" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Permission</p>
+                            </a>
+                        </li>
                     </ul>
                 </li>
             </ul>

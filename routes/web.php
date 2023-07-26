@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\{UserController,RoleController};
+use App\Http\Controllers\{UserController,RoleController,PermissionController};
 
 /*
 |--------------------------------------------------------------------------
@@ -21,4 +21,5 @@ Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('ho
 Route::group(['middleware' => ['auth']], function() {
     Route::resource('roles', RoleController::class);
     Route::resource('users', UserController::class);
+    Route::resource('permissions', PermissionController::class);
 });
