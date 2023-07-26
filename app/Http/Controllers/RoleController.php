@@ -9,14 +9,9 @@ use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use DB;
 use DataTables;
-<<<<<<< HEAD
-use Illuminate\Support\Arr;
-
-=======
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
->>>>>>> 53a1d442f20d7c6301ea236cac61ee8b88043acc
 
 class RoleController extends Controller
 {
@@ -25,13 +20,13 @@ class RoleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    // function __construct()
-    // {
-    //      $this->middleware('permission:role-list|role-create|role-edit|role-delete', ['only' => ['index','store']]);
-    //      $this->middleware('permission:role-create', ['only' => ['create','store']]);
-    //      $this->middleware('permission:role-edit', ['only' => ['edit','update']]);
-    //      $this->middleware('permission:role-delete', ['only' => ['destroy']]);
-    // }
+    function __construct()
+    {
+        $this->middleware('permission:role-list|role-create|role-edit|role-delete', ['only' => ['index', 'store']]);
+        $this->middleware('permission:role-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:role-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:role-delete', ['only' => ['destroy']]);
+    }
 
     /**
      * Display a listing of the resource.
@@ -40,24 +35,14 @@ class RoleController extends Controller
      */
     public function index(Request $request)
     {
-<<<<<<< HEAD
-        $data = Role::with('permissions')->get();
-        $auth  = auth()->user()->with('permissions')->first();
-        if ($request->ajax()) {
-=======
         if ($request->ajax()) {
             $data = Role::with('permissions')->get();
->>>>>>> 53a1d442f20d7c6301ea236cac61ee8b88043acc
             return Datatables::of($data)
                 ->addIndexColumn()
                 ->addColumn('permissions', function ($row) {
                     return $row->permissions->pluck('name')->implode(', ');
                 })
                 ->addColumn('action', function ($row) {
-<<<<<<< HEAD
-                    $btn = '<a href="' . route('roles.show', $row->id) . '" class="btn btn-sm btn-info">Show</a>';
-=======
->>>>>>> 53a1d442f20d7c6301ea236cac61ee8b88043acc
                     $btn = '<a href="' . route('roles.edit', $row->id) . '" class="btn btn-sm btn-info">Edit</a>';
                     $btn .= ' <button type="button" class="btn btn-sm btn-danger" data-id="' . $row->id . '" onclick="deleteItem(this)">Delete</button>';
                     return $btn;
@@ -70,10 +55,6 @@ class RoleController extends Controller
     }
 
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 53a1d442f20d7c6301ea236cac61ee8b88043acc
     /**
      * Show the form for creating a new resource.
      *
@@ -81,11 +62,7 @@ class RoleController extends Controller
      */
     public function create()
     {
-<<<<<<< HEAD
-        $permission = Permission::all();
-=======
         $permission  = Permission::all();
->>>>>>> 53a1d442f20d7c6301ea236cac61ee8b88043acc
         return view('pages.roles.create', compact(
             'permission'
         ));
@@ -123,11 +100,6 @@ class RoleController extends Controller
             'code' => 400,
             'message' => 'Role gagal di simpan'
         ]);
-<<<<<<< HEAD
-         
-       
-=======
->>>>>>> 53a1d442f20d7c6301ea236cac61ee8b88043acc
     }
 
     /**
@@ -161,10 +133,6 @@ class RoleController extends Controller
             ->all();
 
         return view('pages.roles.edit', compact('role', 'permission', 'rolePermissions'));
-<<<<<<< HEAD
-
-    }
-=======
     }
 
     /**
@@ -174,7 +142,6 @@ class RoleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
->>>>>>> 53a1d442f20d7c6301ea236cac61ee8b88043acc
     public function update(Request $request, $id)
     {
         $request->validate([
@@ -211,20 +178,6 @@ class RoleController extends Controller
      */
     public function destroy($id)
     {
-<<<<<<< HEAD
-        $role = Role::find($id);
-        if (!$role) {
-            return response()->json([
-                'code' => 404,
-                'message' => 'role not found'
-            ]);
-        }
-
-        $role->delete();
-        return response()->json([
-            'code' => 200,
-            'message' => 'role berhasil di hapus'
-=======
         $role = Role::findOrFail($id);
 
         if ($role->delete()) {
@@ -237,7 +190,6 @@ class RoleController extends Controller
         return response()->json([
             'code' => 400,
             'message' => 'Role gagal dihapus'
->>>>>>> 53a1d442f20d7c6301ea236cac61ee8b88043acc
         ]);
     }
 }
