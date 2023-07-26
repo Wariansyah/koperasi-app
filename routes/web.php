@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\{UserController,RoleController,PermissionController};
+use App\Http\Controllers\{UserController,RoleController};
 
 /*
 |--------------------------------------------------------------------------
@@ -16,6 +16,13 @@ use App\Http\Controllers\{UserController,RoleController,PermissionController};
 */
 
 Auth::routes();
+
+Route::get('/login', function () {
+    return view('auth.login');
+})->name('login');
+
+Route::post('/postlogin', [LoginController::class, 'postlogin'])->name('postlogin');
+Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::group(['middleware' => ['auth']], function() {
