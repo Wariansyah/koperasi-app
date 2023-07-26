@@ -76,7 +76,7 @@
                             <a href="{{ route('permissions.index') }}"
                                 class="nav-link {{ request()->is('permissions*') ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
-                                <p>permissions</p>
+                                <p>Permissions</p>
                             </a>
                         </li>
                     </ul>
