@@ -40,8 +40,8 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{ route('kass.index') }}"
-                                class="nav-link {{ request()->is('kass*') ? 'active' : '' }}">
+                            <a href="{{ route('kas.index') }}"
+                                class="nav-link {{ request()->is('kas*') ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Kas</p>
                             </a>

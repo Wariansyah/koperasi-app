@@ -13,6 +13,7 @@ class Kas extends Model
     protected $primarykey = "id";
     protected $fillable = [
         'user_id',
+        'username',
         'kas_awal',
         'kas_masuk',
         'kas_keluar',

@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Kas; // Assuming you have a "Kas" model for the "kas" table
 use DataTables;
 use DB;
+use Carbon\Carbon;
 
 class KasController extends Controller
 {
@@ -15,9 +16,29 @@ class KasController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        if ($request->ajax()) {
+            $data = DB::table('kas')->get();
+            return DataTables::of($data)
+                ->addColumn('action', function ($row) {
+                    // Add any action buttons you want for each row
+                    // For example:
+                    // $button = '<a href="'.route('kas.edit', $row->id).'" class="btn btn-sm btn-warning">Edit</a>';
+                    // $button .= ' <button class="btn btn-sm btn-danger" onclick="deleteItem('.$row->id.')">Delete</button>';
+                    // return $button;
+
+                    // Replace the example above with your desired action buttons.
+                })
+                ->editColumn('date', function ($row) {
+                    // You can format the date if needed
+                    return Carbon::parse($row->date)->format('Y-m-d');
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+
+        return view('kas.index');
     }
 
     /**
@@ -27,7 +48,7 @@ class KasController extends Controller
      */
     public function create()
     {
-        //
+        return view('kas.create');
     }
 
     /**
@@ -38,8 +59,23 @@ class KasController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'username' => 'required|string|max:255',
+            'kas_awal' => 'required|numeric',
+            'kas_masuk' => 'required|numeric',
+            'kas_keluar' => 'required|numeric',
+            'date' => 'required|date',
+            // Add other validation rules as needed for 'note' field or any other fields.
+        ]);
+
+        $data = $request->except('_token'); // Remove the _token field from the $data array
+        $data['kas_akhir'] = $data['kas_awal'] + $data['kas_masuk'] - $data['kas_keluar'];
+
+        DB::table('kas')->insert($data);
+
+        return redirect()->route('kas.index')->with('success', 'Data Kas has been created successfully!');
     }
+
 
     /**
      * Display the specified resource.
@@ -49,7 +85,12 @@ class KasController extends Controller
      */
     public function show($id)
     {
-        //
+        $data = DB::table('kas')->find($id);
+        if (!$data) {
+            return redirect()->route('kas.index')->with('error', 'Kas data not found!');
+        }
+
+        return view('kas.show', compact('data'));
     }
 
     /**
@@ -60,7 +101,12 @@ class KasController extends Controller
      */
     public function edit($id)
     {
-        //
+        $data = DB::table('kas')->find($id);
+        if (!$data) {
+            return redirect()->route('kas.index')->with('error', 'Kas data not found!');
+        }
+
+        return view('kas.edit', compact('data'));
     }
 
     /**
@@ -72,7 +118,21 @@ class KasController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'username' => 'required|string|max:255',
+            'kas_awal' => 'required|numeric',
+            'kas_masuk' => 'required|numeric',
+            'kas_keluar' => 'required|numeric',
+            'date' => 'required|date',
+            // Add other validation rules as needed for 'note' field or any other fields.
+        ]);
+
+        $data = $request->all();
+        $data['kas_akhir'] = $data['kas_awal'] + $data['kas_masuk'] - $data['kas_keluar'];
+
+        DB::table('kas')->where('id', $id)->update($data);
+
+        return redirect()->route('kas.index')->with('success', 'Data Kas has been updated successfully!');
     }
 
     /**
@@ -83,7 +143,14 @@ class KasController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $data = DB::table('kas')->find($id);
+        if (!$data) {
+            return redirect()->route('kas.index')->with('error', 'Kas data not found!');
+        }
+
+        DB::table('kas')->where('id', $id)->delete();
+
+        return redirect()->route('kas.index')->with('success', 'Data Kas has been deleted successfully!');
     }
 
     public function insertKasFromPreviousDay()
