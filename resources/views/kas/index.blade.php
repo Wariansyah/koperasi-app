@@ -29,15 +29,15 @@
                 </div>
                 <div class="card-body">
                     @if (session('success'))
-                        <div class="alert alert-success">
-                            {{ session('success') }}
-                        </div>
+                    <div class="alert alert-success">
+                        {{ session('success') }}
+                    </div>
                     @endif
 
                     @if (session('error'))
-                        <div class="alert alert-danger">
-                            {{ session('error') }}
-                        </div>
+                    <div class="alert alert-danger">
+                        {{ session('error') }}
+                    </div>
                     @endif
 
                     <table class="table table-bordered" id="kas-table">
@@ -62,6 +62,7 @@
     </div>
 </div>
 @endsection
+
 @section('script')
 <!-- Include the required Toastr plugin CSS and JavaScript files -->
 <link rel="stylesheet" href="path/to/toastr.css">
@@ -70,7 +71,18 @@
 <!-- Include the required SweetAlert plugin JavaScript file -->
 <script src="path/to/sweetalert.js"></script>
 
+<!-- Include the DataTables library -->
+<script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+
+<!-- Include the FormatHelper.js script -->
+<script src="{{ asset('Helpers/FormatHelper.js') }}"></script>
+
 <script type="application/javascript">
+    // Define the formatRupiah function in JavaScript
+    function formatRupiah(nominal) {
+        return "Rp. " + new Intl.NumberFormat("id-ID").format(nominal);
+    }
+
     $(document).ready(function() {
         if (sessionStorage.getItem('success')) {
             let data = sessionStorage.getItem('success');
@@ -89,69 +101,105 @@
             serverSide: true,
             ajax: "{{ route('kas.index') }}",
             type: 'GET',
-            columns: [
-                { data: 'id', name: 'id' },
-                { data: 'username', name: 'username' },
-                { data: 'kas_awal', name: 'kas_awal' },
-                { data: 'kas_masuk', name: 'kas_masuk' },
-                { data: 'kas_keluar', name: 'kas_keluar' },
-                { data: 'kas_akhir', name: 'kas_akhir' },
-                { data: 'date', name: 'date' },
-                { data: 'note', name: 'note' },
-                { data: 'action', className: 'align-middle text-center' },
+            columns: [{
+                    data: 'id',
+                    name: 'id'
+                },
+                {
+                    data: 'username',
+                    name: 'username'
+                },
+                {
+                    data: 'kas_awal',
+                    name: 'kas_awal',
+                    render: function(data, type, row) {
+                        return formatRupiah(data);
+                    }
+                },
+                {
+                    data: 'kas_masuk',
+                    name: 'kas_masuk',
+                    render: function(data, type, row) {
+                        return formatRupiah(data);
+                    }
+                },
+                {
+                    data: 'kas_keluar',
+                    name: 'kas_keluar',
+                    render: function(data, type, row) {
+                        return formatRupiah(data);
+                    }
+                },
+                {
+                    data: 'kas_akhir',
+                    name: 'kas_akhir',
+                    render: function(data, type, row) {
+                        return formatRupiah(data);
+                    }
+                },
+                {
+                    data: 'date',
+                    name: 'date'
+                },
+                {
+                    data: 'note',
+                    name: 'note'
+                },
+                {
+                    data: 'action',
+                    className: 'align-middle text-center'
+                },
             ]
         });
     });
 
     function deleteItem(e) {
-    let id = e.getAttribute('data-id');
-    const swalWithBootstrapButtons = Swal.mixin({
-        customClass: {
-            confirmButton: 'btn btn-success',
-            cancelButton: 'btn btn-danger'
-        },
-        buttonsStyling: true
-    });
-    swalWithBootstrapButtons.fire({
-        title: 'Are you sure?',
-        text: "Do you want to delete this data?",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Yes, delete it!',
-        cancelButtonText: 'No, cancel!',
-        reverseButtons: true
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
-                type: 'POST', // Change this to 'DELETE'
-                url: "kas/" + id,
-                data: {
-                    "_token": "{{ csrf_token() }}",
-                    "_method": 'DELETE',
-                },
-                success: function(data) {
-                    if (data.code === 200) {
-                        toastr.success('Success', data.message);
-                        // Remove the row from the table
-                        $(e).closest('tr').remove();
-                    } else {
-                        toastr.error('Error', data.message);
+        let id = e.getAttribute('data-id');
+        const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+                confirmButton: 'btn btn-success',
+                cancelButton: 'btn btn-danger'
+            },
+            buttonsStyling: true
+        });
+        swalWithBootstrapButtons.fire({
+            title: 'Are you sure?',
+            text: "Do you want to delete this data?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'No, cancel!',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: 'POST', // Change this to 'DELETE'
+                    url: "kas/" + id,
+                    data: {
+                        "_token": "{{ csrf_token() }}",
+                        "_method": 'DELETE',
+                    },
+                    success: function(data) {
+                        if (data.code === 200) {
+                            toastr.success('Success', data.message);
+                            // Remove the row from the table
+                            $(e).closest('tr').remove();
+                        } else {
+                            toastr.error('Error', data.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        toastr.error('Error', 'Failed to delete Kas data');
                     }
-                },
-                error: function(xhr, status, error) {
-                    toastr.error('Error', 'Failed to delete Kas data');
-                }
-            });
-        } else if (result.dismiss === Swal.DismissReason.cancel) {
-            swalWithBootstrapButtons.fire(
-                'Cancelled',
-                'Data deletion canceled',
-                'error'
-            );
-        }
-    });
-}
-
-    
+                });
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                swalWithBootstrapButtons.fire(
+                    'Cancelled',
+                    'Data deletion canceled',
+                    'error'
+                );
+            }
+        });
+    }
 </script>
 @endsection

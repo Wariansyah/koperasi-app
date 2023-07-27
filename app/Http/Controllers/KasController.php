@@ -27,10 +27,10 @@ class KasController extends Controller
                 ->addColumn('action', function ($row) {
                     // Add any action buttons you want for each row
                     // For example:
-                    $button = '<a href="'.route('kas.edit', $row->id).'" class="btn btn-sm btn-warning">Edit</a>';
+                    $button = '<a href="' . route('kas.edit', $row->id) . '" class="btn btn-sm btn-warning">Edit</a>';
                     $button .= ' <button type="button" class="btn btn-sm btn-danger" data-id="' . $row->id . '" onclick="deleteItem(this)">Delete</button>';
                     return $button;
-                    
+
                     // Replace the example above with your desired action buttons.
                 })
                 ->editColumn('date', function ($row) {
@@ -120,38 +120,38 @@ class KasController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    
 
-     public function update(Request $request, $id)
-     {
-         $request->validate([
-             'username' => 'required|string|max:255',
-             'kas_awal' => 'required|numeric',
-             'kas_masuk' => 'required|numeric',
-             'kas_keluar' => 'required|numeric',
-             'date' => 'required|date',
-             'note' => 'required|string|nullable',
-             // Add other validation rules as needed for 'note' field or any other fields.
-         ]);
-     
-         $data = $request->all();
-         $data['kas_akhir'] = $data['kas_awal'] + $data['kas_masuk'] - $data['kas_keluar'];
-     
-         $kas = Kas::find($id);
-         if (!$kas) {
-             return new JsonResponse(['success' => false, 'message' => 'Kas data not found!'], 404);
-         }
-     
-         $kas->update($data);
-     
-         if ($request->ajax()) {
-             return new JsonResponse(['success' => true, 'message' => 'Data Kas has been updated successfully!']);
-         }
-     
-         return redirect()->route('kas.index')->with('success', 'Data Kas has been updated successfully!');
-     }
-     
-    
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'username' => 'required|string|max:255',
+            'kas_awal' => 'required|numeric',
+            'kas_masuk' => 'required|numeric',
+            'kas_keluar' => 'required|numeric',
+            'date' => 'required|date',
+            'note' => 'required|string|nullable',
+            // Add other validation rules as needed for 'note' field or any other fields.
+        ]);
+
+        $data = $request->all();
+        $data['kas_akhir'] = $data['kas_awal'] + $data['kas_masuk'] - $data['kas_keluar'];
+
+        $kas = Kas::find($id);
+        if (!$kas) {
+            return new JsonResponse(['success' => false, 'message' => 'Kas data not found!'], 404);
+        }
+
+        $kas->update($data);
+
+        if ($request->ajax()) {
+            return new JsonResponse(['success' => true, 'message' => 'Data Kas has been updated successfully!']);
+        }
+
+        return redirect()->route('kas.index')->with('success', 'Data Kas has been updated successfully!');
+    }
+
+
     /**
      * Remove the specified resource from storage.
      *
@@ -159,27 +159,27 @@ class KasController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
-{
-    $kas = Kas::find($id);
-    if (!$kas) {
+    {
+        $kas = Kas::find($id);
+        if (!$kas) {
+            return response()->json([
+                'code' => 404,
+                'message' => 'Kas data not found'
+            ]);
+        }
+
+        if ($kas->delete()) {
+            return response()->json([
+                'code' => 200,
+                'message' => 'Kas data has been deleted successfully'
+            ]);
+        }
+
         return response()->json([
-            'code' => 404,
-            'message' => 'Kas data not found'
+            'code' => 500,
+            'message' => 'Failed to delete Kas data'
         ]);
     }
-
-    if ($kas->delete()) {
-        return response()->json([
-            'code' => 200,
-            'message' => 'Kas data has been deleted successfully'
-        ]);
-    }
-
-    return response()->json([
-        'code' => 500,
-        'message' => 'Failed to delete Kas data'
-    ]);
-}
 
     public function insertKasFromPreviousDay()
     {
