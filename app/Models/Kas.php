@@ -18,5 +18,6 @@ class Kas extends Model
         'kas_masuk',
         'kas_keluar',
         'kas_akhir',
+        'note',
     ];
 }
