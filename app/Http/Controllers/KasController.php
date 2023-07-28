@@ -63,7 +63,6 @@ class KasController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'username' => 'required|string|max:255',
             'kas_awal' => 'required|numeric',
             'kas_masuk' => 'required|numeric',
             'kas_keluar' => 'required|numeric',
@@ -125,7 +124,6 @@ class KasController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'username' => 'required|string|max:255',
             'kas_awal' => 'required|numeric',
             'kas_masuk' => 'required|numeric',
             'kas_keluar' => 'required|numeric',

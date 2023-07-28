@@ -41,10 +41,6 @@
                     <form action="{{ route('kas.index') }}" method="POST"> <!-- Changed route to 'kas.index' and added method="POST" -->
                         @csrf <!-- Added the CSRF token field -->
                         <div class="form-group">
-                            <label for="username">Username</label>
-                            <input type="text" class="form-control" id="username" name="username" required>
-                        </div>
-                        <div class="form-group">
                             <label for="kas_awal">Kas Awal</label>
                             <input type="number" class="form-control" id="kas_awal" name="kas_awal" required>
                         </div>

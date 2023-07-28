@@ -12,10 +12,6 @@
                 </div>
                 <div class="card-body">
                     <div class="form-group">
-                        <label for="username">Username</label>
-                        <input type="text" class="form-control" id="username" name="username" value="{{ $data->username }}" readonly>
-                    </div>
-                    <div class="form-group">
                         <label for="kas_awal">Kas Awal</label>
                         <input type="number" class="form-control" id="kas_awal" name="kas_awal" value="{{ $data->kas_awal }}" readonly>
                     </div>

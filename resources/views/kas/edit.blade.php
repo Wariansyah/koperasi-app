@@ -1,5 +1,3 @@
-<!-- resources/views/kas/edit.blade.php -->
-
 @extends('layouts.app')
 
 @section('content')
@@ -38,13 +36,10 @@
                     </div>
                     @endif
 
+                    <!-- Changed action URL to use 'kas.update' route with the specific data ID -->
                     <form action="{{ route('kas.update', $data->id) }}" method="POST">
                         @csrf
                         @method('PUT')
-                        <div class="form-group">
-                            <label for="username">Username</label>
-                            <input type="text" class="form-control" id="username" name="username" value="{{ $data->username }}" required>
-                        </div>
                         <div class="form-group">
                             <label for="kas_awal">Kas Awal</label>
                             <input type="number" class="form-control" id="kas_awal" name="kas_awal" value="{{ $data->kas_awal }}" required>
@@ -56,6 +51,10 @@
                         <div class="form-group">
                             <label for="kas_keluar">Kas Keluar</label>
                             <input type="number" class="form-control" id="kas_keluar" name="kas_keluar" value="{{ $data->kas_keluar }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="kas_akhir">Kas Akhir</label>
+                            <input type="number" class="form-control" id="kas_akhir" name="kas_akhir" value="{{ $data->kas_akhir }}" required>
                         </div>
                         <div class="form-group">
                             <label for="date">Date</label>

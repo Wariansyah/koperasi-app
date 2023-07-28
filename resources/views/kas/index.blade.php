@@ -1,5 +1,3 @@
-<!-- resources/views/kas/index.blade.php -->
-
 @extends('layouts.app')
 
 @section('content')
@@ -43,8 +41,7 @@
                     <table class="table table-bordered" id="kas-table">
                         <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>Username</th>
+                                <th>Id</th>
                                 <th>Kas Awal</th>
                                 <th>Kas Masuk</th>
                                 <th>Kas Keluar</th>
@@ -65,11 +62,11 @@
 
 @section('script')
 <!-- Include the required Toastr plugin CSS and JavaScript files -->
-<link rel="stylesheet" href="path/to/toastr.css">
-<script src="path/to/toastr.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
 <!-- Include the required SweetAlert plugin JavaScript file -->
-<script src="path/to/sweetalert.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <!-- Include the DataTables library -->
 <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
@@ -84,30 +81,17 @@
     }
 
     $(document).ready(function() {
-        if (sessionStorage.getItem('success')) {
-            let data = sessionStorage.getItem('success');
-            toastr.success('', data, {
-                timeOut: 1500,
-                preventDuplicates: true,
-                progressBar: true,
-                positionClass: 'toast-top-right',
-            });
-
-            sessionStorage.clear();
-        }
+        // ... Existing code ...
 
         $('#kas-table').DataTable({
             processing: true,
             serverSide: true,
             ajax: "{{ route('kas.index') }}",
             type: 'GET',
-            columns: [{
-                    data: 'id',
-                    name: 'id'
-                },
+            columns: [
                 {
-                    data: 'username',
-                    name: 'username'
+                    data: 'id', // Make sure the 'id' column name matches the column name in your database table
+                    name: 'id'
                 },
                 {
                     data: 'kas_awal',
@@ -202,4 +186,6 @@
         });
     }
 </script>
+
 @endsection
+    
