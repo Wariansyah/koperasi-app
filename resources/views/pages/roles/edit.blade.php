@@ -7,7 +7,7 @@
 
 <div class="content">
     <!-- ... -->
-    <div class="col-md-8 offset-md-2">
+    <div class="col-md-12">
         <div class="card">
             <div class="card-body">
                 <form id="editRoleForm" method="POST" action="{{ route('roles.update', $role->id) }}">
@@ -54,24 +54,19 @@
 
         $.ajax({
             url: $(this).attr('action'),
-            type: "POST",
+            type: "POST", // Change this to PUT if needed
             data: formData,
             cache: false,
             contentType: false,
             processData: false,
             success: function(response) {
                 $(".preloader").fadeOut();
-                if (response.success) {
+                if (response.success) { // Check if the success property is true
                     window.location.href = "{{ route('roles.index') }}";
-                    sessionStorage.setItem('success', response.message);
-                }
             },
-            error: function(response) {
-                btn.attr('disabled', false);
-                btn.val("Update Role");
-                $('#name_error').text(response.responseJSON.errors.name);
-            }
+            
         });
     });
 </script>
 @endsection
+  

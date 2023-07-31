@@ -179,30 +179,40 @@ class KasController extends Controller
         ]);
     }
 
-    public function insertKasForNextDay()
+    public function updateKasAwalForNextDay($date)
     {
-        // Get the accumulated value from the previous day's "kas" record
-        $previousDayKas = Kas::where('date', Carbon::yesterday())->latest()->first();
-        $accumulatedValue = $previousDayKas ? $previousDayKas->kas_akhir : 0;
+        // Fetch the 'kas' data for the given date
+        $kasForCurrentDate = Kas::where('date', $date)->first();
 
-        // Get the "kas_masuk" value for the current day (you may get it from the request or any other source)
-        $kasMasuk = 1000; // Replace this with the actual "kas_masuk" value for the current day
+        if (!$kasForCurrentDate) {
+            // No data found for the given date, handle the case accordingly
+            // For example, you might want to throw an error or return a message
+            return "No 'kas' data found for the date: $date";
+        }
 
-        // Calculate the "kas_akhir" for the following day (which will be the "kas_awal" for the new record)
-        $kasAkhir = $accumulatedValue + $kasMasuk;
+        // Calculate the 'kas_awal' for the next day (adding 'kas_akhir' to 'kas_masuk' and subtracting 'kas_keluar')
+        $kasAwalNextDay = $kasForCurrentDate->kas_akhir + $kasForCurrentDate->kas_masuk - $kasForCurrentDate->kas_keluar;
 
-        // Insert the new record with the calculated values for the current day
-        Kas::create([
-            'date' => Carbon::today()->addDay(), // The date for the following day
-            'kas_awal' => $kasAkhir,
-            'kas_masuk' => 0, // Set the "kas_masuk" for the new day to 0 initially
-            'kas_keluar' => 0, // Set the "kas_keluar" for the new day to 0 initially
-            'kas_akhir' => $kasAkhir,
-            'note' => 'Generated for the next day',
-            // Add any other fields you may have in the "kas" table
+        // Insert a new row for the next day with the calculated 'kas_awal' value
+        $nextDate = date('Y-m-d', strtotime($date . ' +1 day'));
+        $newKasRecord = new Kas([
+            'kas_awal' => $kasAwalNextDay,
+            'kas_masuk' => 0, // Assuming you start each day with 0 'kas_masuk'
+            'kas_keluar' => 0, // Assuming you start each day with 0 'kas_keluar'
+            'kas_akhir' => $kasAwalNextDay, // 'kas_akhir' will be the same as 'kas_awal' at the beginning of the day
+            'date' => $nextDate,
+            'note' => 'Automatically generated for the next day',
         ]);
 
-        // Redirect back to the index page or perform any desired action
-        return redirect()->route('kas.index')->with('success', 'New kas record inserted');
+        $newKasRecord->save();
+
+        return "Successfully updated 'kas_awal' for the next day ($nextDate)";
     }
+    public function anyOtherMethod()
+    {
+        $dateToUpdate = '2023-07-28'; // Change this to any date you want to update
+        $result = $this->updateKasAwalForNextDay($dateToUpdate);
+        echo $result; // Output: Successfully updated 'kas_awal' for the next day (2023-07-29)
+    }
+
 }

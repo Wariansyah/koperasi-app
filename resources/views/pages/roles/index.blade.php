@@ -93,7 +93,6 @@
             // Rest of the DataTables settings
         });
     });
-
     function deleteItem(e) {
         let id = e.getAttribute('data-id');
         const swalWithBootstrapButtons = Swal.mixin({
@@ -126,7 +125,10 @@
                                 toastr.success('success', data.message);
                                 // Remove the row from the table
                                 $(e).closest('tr').remove();
-                            } else {
+                                // Reload the page (assuming index is the page where the deleteItem function is called)
+                                window.location.reload();
+                            } 
+                            else {
                                 toastr.error('error', data.message);
                             }
                         }
@@ -142,4 +144,5 @@
         });
     }
 </script>
+
 @endsection

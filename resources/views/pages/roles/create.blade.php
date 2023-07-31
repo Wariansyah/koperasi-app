@@ -7,7 +7,7 @@
 
 <div class="content">
     <!-- ... -->
-    <div class="col-md-8 offset-md-2">
+    <div class="col-md-12">
         <div class="card">
             <div class="card-body">
                 <form id="createRoleForm" method="POST" action="{{ route('roles.store') }}">
@@ -21,10 +21,14 @@
                         <strong>Permission:</strong>
                         <br />
                         <div class="container">
-                            @foreach($permission as $value)
-                            <input class="form-check-input" value="{{ $value->id }}" name="permission[]" type="checkbox" id="flexSwitchCheckDefault">
-                            <label class="form-check-label" for="flexSwitchCheckDefault">{{ $value->name }}</label>
-                            <br />
+                            @foreach ($permission as $value)
+                                <div class="form-check">
+                                    <input class="form-check-input" value="{{ $value->id }}" name="permission[]"
+                                        type="checkbox" id="flexSwitchCheckDefault">
+                                    <label class="form-check-label"
+                                        for="flexSwitchCheckDefault">{{ $value->name }}</label>
+                                    <br />
+                                </div>
                             @endforeach
                         </div>
                     </div>
