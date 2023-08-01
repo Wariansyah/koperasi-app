@@ -18,15 +18,11 @@ class Kernel extends ConsoleKernel
 
     protected function schedule(Schedule $schedule)
     {
-<<<<<<< HEAD
         // Panggil helper function generateDailyKas setiap hari pada pukul 00:01
         $schedule->call(function () {
             generateDailyKas();
         })->dailyAt('00:01');
         // $schedule->command('kas:update')->daily();
-=======
-
->>>>>>> 6da32b511d17466018660ab4b30b15317a01b628
     }
 
     /**
