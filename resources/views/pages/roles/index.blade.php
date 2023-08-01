@@ -111,29 +111,23 @@
             cancelButtonText: 'No, cancel!',
             reverseButtons: true
         }).then((result) => {
-            if (result.value) {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        type: 'POST',
-                        url: "roles/" + id,
-                        data: {
-                            "_token": "{{ csrf_token() }}",
-                            "_method": 'DELETE',
-                        },
-                        success: function(data) {
-                            if (data.success) {
-                                toastr.success('success', data.message);
-                                // Remove the row from the table
-                                $(e).closest('tr').remove();
-                                // Reload the page (assuming index is the page where the deleteItem function is called)
-                                window.location.reload();
-                            } 
-                            else {
-                                toastr.error('error', data.message);
-                            }
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: 'POST',
+                    url: "roles/" + id,
+                    data: {
+                        "_token": "{{ csrf_token() }}",
+                        "_method": 'DELETE',
+                    },
+                    success: function(data) {
+                        if (data.success) {
+                            toastr.success('success', data.message);
+                            // Remove the row from the DataTable
+                            $('#table-role').DataTable().row($(e).closest('tr')).remove().draw(false);
+                        } 
                         }
-                    });
-                }
+                    }
+                });
             } else if (result.dismiss === Swal.DismissReason.cancel) {
                 swalWithBootstrapButtons.fire(
                     'Cancelled',
@@ -144,5 +138,4 @@
         });
     }
 </script>
-
 @endsection
