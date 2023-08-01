@@ -7,7 +7,7 @@
 
     <div class="content">
         <!-- ... -->
-        <div class="col-md-8 offset-md-2">
+        <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
                     <form id="createRoleForm" method="POST" action="{{ route('permissions.store') }}">
