@@ -104,28 +104,31 @@ class UserController extends Controller
             'name' => 'required|string|max:200',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:6',
-            'address' => 'required|string',
-            'phone' => 'required|string',
-            'birthdate' => 'required|date',
-            'birthplace' => 'required|string',
+            'alamat' => 'required|string',
+            'telepon' => 'required|string',
+            'tgl_lahir' => 'required|date',
+            'tmpt_lahir' => 'required|string',
             'no_induk' => 'required|string',
             'jenis_kelamin' => 'required|in:male,female',
             'role' => 'required|exists:roles,id'
         ]);
 
         $data = $request->all();
-        $data['password'] = Hash::make($data['password']);
+        $data['password'] = Hash::make($data['password']); // Enkripsi password dengan Hash::make
+
         $user = User::create($data);
 
         if ($user) {
+            // Jika berhasil menyimpan data pengguna, berikan role
             $user->assignRole($request->input('role'));
-            return redirect()->route('users.index')->with('success', 'User berhasil di simpan');
+            return redirect()->route('users.index')->with('success', 'User berhasil disimpan');
+        } else {
+            // Jika gagal menyimpan data, kembalikan respon JSON dengan kode status 400
+            return response()->json([
+                'code' => 400,
+                'message' => 'User gagal disimpan'
+            ]);
         }
-
-        return response()->json([
-            'code' => 400,
-            'message' => 'User gagal di simpan'
-        ]);
     }
 
     /**

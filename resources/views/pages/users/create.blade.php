@@ -88,10 +88,10 @@
         var btn = $('#createUserBtn');
         btn.attr('disabled', true);
         btn.text("Loading...");
-        let formData = new FormData(this);
         // Resetting the error messages
         $('.text-danger').text('');
 
+        let formData = new FormData(this);
         $.ajax({
             url: "{{ route('users.store') }}",
             type: "POST",
@@ -100,18 +100,26 @@
             contentType: false,
             processData: false,
             success: function(response) {
+                btn.attr('disabled', false);
+                btn.text("Create User");
                 if (response.success) {
+                    // Redirect ke halaman daftar pengguna setelah berhasil menyimpan
                     window.location.href = "{{ route('users.index') }}";
                     sessionStorage.setItem('success', response.message);
                 }
             },
-            error: function(response) {
+            error: function(jqXHR, textStatus, errorThrown) {
                 btn.attr('disabled', false);
                 btn.text("Create User");
                 // Handling validation errors
-                $.each(response.responseJSON.errors, function(key, value) {
-                    $('#' + key + '_error').text(value[0]);
-                });
+                if (jqXHR.responseJSON && jqXHR.responseJSON.errors) {
+                    $.each(jqXHR.responseJSON.errors, function(key, value) {
+                        $('#' + key + '_error').text(value[0]);
+                    });
+                } else {
+                    // Menampilkan pesan kesalahan jika ada masalah di sisi server
+                    console.error(textStatus + ": " + errorThrown);
+                }
             }
         });
     });
