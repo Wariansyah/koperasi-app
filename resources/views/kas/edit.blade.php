@@ -53,10 +53,6 @@
                             <input type="number" class="form-control" id="kas_keluar" name="kas_keluar" value="{{ $data->kas_keluar }}" required>
                         </div>
                         <div class="form-group">
-                            <label for="kas_akhir">Kas Akhir</label>
-                            <input type="number" class="form-control" id="kas_akhir" name="kas_akhir" value="{{ $data->kas_akhir }}" required>
-                        </div>
-                        <div class="form-group">
                             <label for="date">Date</label>
                             <input type="date" class="form-control" id="date" name="date" value="{{ $data->date }}" required>
                         </div>

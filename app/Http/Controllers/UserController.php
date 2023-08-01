@@ -87,131 +87,130 @@ class UserController extends Controller
 
     public function create()
     {
-        $roles  = Role::all();
-        return view('pages.users.create', compact(
-            'roles'
-        ));
+        $roles = Role::all();
+        return view('pages.users.create', compact('roles'));
     }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
 
     public function store(Request $request)
     {
-        try {
-            $request->validate([
-                'name' => 'required|string|max:200',
-                'email' => 'required|email|unique:users,email',
-                'password' => 'required|min:6',
-                'role' => 'required',
-                'no_induk' => 'required|string|max:20',
-                'alamat' => 'nullable|string|max:255',
-                'jenkel' => 'nullable|in:Laki-laki,Perempuan',
-                'tmpt_lahir' => 'nullable|string|max:100',
-                'tgl_lahir' => 'nullable|date',
-                'telepon' => 'nullable|string|max:20',
-            ], [
-                'name.required' => 'Nama wajib diisi',
-                'name.string' => 'Nama harus berupa string',
-                'name.max' => 'Nama tidak boleh lebih dari 200 karakter',
-                'email.required' => 'Email wajib diisi',
-                'email.email' => 'Email tidak valid',
-                'email.unique' => 'Email sudah digunakan',
-                'password.required' => 'Password wajib diisi',
-                'password.min' => 'Password harus minimal 6 karakter',
-                'role.required' => 'Role wajib diisi',
-                'no_induk.required' => 'No Induk wajib diisi',
-                'no_induk.string' => 'No Induk harus berupa string',
-                'no_induk.max' => 'No Induk tidak boleh lebih dari 20 karakter',
-                'alamat.max' => 'Alamat tidak boleh lebih dari 255 karakter',
-                'jenkel.in' => 'Jenis kelamin harus Laki-laki atau Perempuan',
-                'tmpt_lahir.max' => 'Tempat lahir tidak boleh lebih dari 100 karakter',
-                'tgl_lahir.date' => 'Tanggal lahir harus dalam format tanggal yang valid',
-                'telepon.max' => 'Telepon tidak boleh lebih dari 20 karakter',
-            ]);
-
-            // Simpan data user
-            $user = new User([
-                'name' => $request->input('name'),
-                'email' => $request->input('email'),
-                'password' => Hash::make($request->input('password')),
-                'no_induk' => $request->input('no_induk'),
-                'alamat' => $request->input('alamat'),
-                'jenkel' => $request->input('jenkel'),
-                'tmpt_lahir' => $request->input('tmpt_lahir'),
-                'tgl_lahir' => $request->input('tgl_lahir'),
-                'telepon' => $request->input('telepon'),
-            ]);
-
-            if ($user->save()) {
-                // Assign role to user
-                $user->assignRole($request->input('role'));
-
-                // Redirect to the index page with a success message
-                return response()->json(['success' => true]);
-            } else {
-                // Redirect back with an error message if data saving fails
-                return response()->json(['errors' => ['general' => 'User gagal disimpan']]);
-            }
-        } catch (\Exception $e) {
-            // Log or handle the exception
-            Log::error($e->getMessage());
-            return response()->json(['error' => 'Internal Server Error'], 500);
-        }
-    }
-
-
-    public function update(Request $request, $id)
-    {
         $request->validate([
-            'name'      => 'required|string|max:200',
-            'email'     => 'required|email',
-            'no_induk'  => 'required',
-            'alamat'    => 'required',
-            'telepon'   => 'required',
-            'jenkel'    => 'required',
-            'tgl_lahir' => 'required',
-            'tmpt_lahir' => 'required',
-            'password'  => 'required',
-            'role'      => 'required',
+            'name' => 'required|string|max:200',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:6',
+            'address' => 'required|string',
+            'phone' => 'required|string',
+            'birthdate' => 'required|date',
+            'birthplace' => 'required|string',
+            'no_induk' => 'required|string',
+            'jenis_kelamin' => 'required|in:male,female',
+            'role' => 'required|exists:roles,id'
         ]);
 
         $data = $request->all();
-        if (!empty($data['password'])) {
-            $data['password'] = Hash::make($data['password']);
-        } else {
-            $data = Arr::except($data, ['password']);
-        }
+        $data['password'] = Hash::make($data['password']);
+        $user = User::create($data);
 
-        $user = User::find($id);
-        if (!$user) {
-            return response()->json([
-                'code' => 404,
-                'message' => 'User not found'
-            ]);
+        if ($user) {
+            $user->assignRole($request->input('role'));
+            return redirect()->route('users.index')->with('success', 'User berhasil di simpan');
         }
-
-        $user->update($data);
-        DB::table('model_has_roles')->where('model_id', $id)->delete();
-        $user->assignRole($request->input('role'));
 
         return response()->json([
-            'code' => 200,
-            'message' => 'User berhasil di update'
+            'code' => 400,
+            'message' => 'User gagal di simpan'
         ]);
     }
 
-    public function destroy(Request $request, $id)
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
     {
-        $user = User::find($id);
-        if (!$user) {
+        $user = User::findOrFail($id);
+        return view('pages.users.show', compact('user'));
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        $user = User::findOrFail($id);
+        $roles = Role::all();
+        $userRole = $user->roles->pluck('id')->all();
+
+        return view('pages.users.edit', compact('user', 'roles', 'userRole'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'name' => 'required|string|max:200',
+            'email' => 'required|email|unique:users,email,' . $id,
+            'address' => 'required|string',
+            'phone' => 'required|string',
+            'birthdate' => 'required|date',
+            'birthplace' => 'required|string',
+            'no_induk' => 'required|string',
+            'jenis_kelamin' => 'required|in:male,female',
+            'role' => 'required|exists:roles,id'
+        ]);
+
+        $data = $request->all();
+        $user = User::findOrFail($id);
+        $user->update($data);
+        $user->syncRoles([$request->input('role')]);
+
+        if ($user) {
+            return redirect()->route('users.index')->with('success', 'User berhasil diupdate');
+        }
+
+        return response()->json([
+            'code' => 400,
+            'message' => 'User gagal diupdate'
+        ]);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        $user = User::findOrFail($id);
+
+        if ($user->delete()) {
             return response()->json([
-                'code' => 404,
-                'message' => 'User not found'
+                'code' => 200,
+                'message' => 'User berhasil dihapus'
             ]);
         }
 
-        $user->delete();
         return response()->json([
-            'code' => 200,
-            'message' => 'User berhasil di hapus'
+            'code' => 400,
+            'message' => 'User gagal dihapus'
         ]);
     }
 }
