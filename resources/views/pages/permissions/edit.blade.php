@@ -7,7 +7,7 @@
 
 <div class="content">
     <!-- ... -->
-    <div class="col-md-8 offset-md-2">
+    <div class="col-md-12">
         <div class="card">
             <div class="card-body">
                 <form id="editPermissionForm" method="POST" action="{{ route('permissions.update', $permission->id) }}">
@@ -51,21 +51,10 @@
                 $(".preloader").fadeOut();
                 if (response.success) {
                     window.location.href = "{{ route('permissions.index') }}";
-                    sessionStorage.setItem('success', response.message);
-                } else {
-                    btn.attr('disabled', false);
-                    btn.val("Update Permission");
-                    $('#name_error').text(response.errors.name[0]);
-                }
+                },
             },
-            error: function(response) {
-                btn.attr('disabled', false);
-                btn.val("Update Permission");
-                $('#name_error').text(response.responseJSON.errors.name);
-            }
         });
     });
 </script>
-
 @endsection
 
