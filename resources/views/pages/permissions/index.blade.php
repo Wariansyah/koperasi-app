@@ -116,15 +116,15 @@
                             "_token": "{{ csrf_token() }}",
                             "_method": 'DELETE',
                         },
-                        success: function(data) {
-                            if (data.success) {
-                                toastr.success('success', data.message);
-                                // Remove the row from the table
-                                $(e).closest('tr').remove();
-                            } else {
-                                toastr.error('error', data.message);
-                            }
-                        }
+                        // success: function(data) {
+                        //     if (data.success) {
+                        //         toastr.success('success', data.message);
+                        //         // Remove the row from the table
+                        //         $(e).closest('tr').remove();
+                        //     } else {
+                        //         toastr.error('error', data.message);
+                        //     }
+                        // }
                     });
                 }
             } else if (result.dismiss === Swal.DismissReason.cancel) {
