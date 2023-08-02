@@ -32,5 +32,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::put('/roles/{id}', 'RoleController@update')->name('roles.update');
     Route::get('/users' , [UserController::class,'index']);
     Route::resource('/users' , UserController::class);
+    Route::delete('roles/{id}', 'RoleController@destroy')->name('roles.destroy');
+    Route::resource('users', UserController::class);
+    Route::post('/users', 'UserController@store')->name('users.store');
+>>>>>>> df04515e0e0b0921f09cfa83df87dfd742009245
     Route::resource('kas', KasController::class);
 });
