@@ -104,24 +104,23 @@ class UserController extends Controller
             'tmpt_lahir' => 'required|string|max:255',
             'no_induk' => 'required|string|max:50',
             'jenkel' => 'required|in:male,female',
-            'role' => 'required|exists:roles,id',
+            'role_id' => 'required|exists:roles,id',
             // Add other fields and validation rules as needed
         ]);
 
         // Save the user data here
-        $user = new User();
-        $user->name = $validatedData['name'];
-        $user->email = $validatedData['email'];
-        $user->password = bcrypt($validatedData['password']);
-        $user->alamat = $validatedData['alamat'];
-        $user->telepon = $validatedData['telepon'];
-        $user->tgl_lahir = $validatedData['tgl_lahir'];
-        $user->tmpt_lahir = $validatedData['tmpt_lahir'];
-        $user->no_induk = $validatedData['no_induk'];
-        $user->jenkel = $validatedData['jenkel'];
-        $user->role= $validatedData['role'];
-        // Set other fields as needed
-        $user->save();
+        $user = new User([
+            'name' => $request->input('name'),
+            'email' => $request->input('email'),
+            'password' => bcrypt($request->input('password')),
+            'alamat' => $request->input('alamat'),
+            'telepon' => $request->input('telepon'),
+            'tgl_lahir' => $request->input('tgl_lahir'),
+            'tmpt_lahir' => $request->input('tmpt_lahir'),
+            'no_induk' => $request->input('no_induk'),
+            'jenkel' => $request->input('jenkel'),
+            'role_id' => $request->input('role_id'), // Use 'role_id' here
+        ]);
 
         return response()->json(['success' => true, 'message' => 'User created successfully']);
     }
