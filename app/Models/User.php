@@ -23,9 +23,11 @@ class User extends Authenticatable
         'no_induk',
         'alamat',
         'telepon',
+        'status',
         'jenkel',
         'tgl_lahir',
         'tmpt_lahir',
+        'role'
     ];
 
 

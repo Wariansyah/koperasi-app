@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use DataTables;
 use Auth;
 use App\Models\User;
@@ -91,44 +92,38 @@ class UserController extends Controller
         return view('pages.users.create', compact('roles'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:200',
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:6',
-            'alamat' => 'required|string',
-            'telepon' => 'required|string',
+            'password' => 'required|min:6',
+            'alamat' => 'required|string|max:255',
+            'telepon' => 'required|string|max:20',
             'tgl_lahir' => 'required|date',
-            'tmpt_lahir' => 'required|string',
-            'no_induk' => 'required|string',
-            'jenis_kelamin' => 'required|in:male,female',
-            'role' => 'required|exists:roles,id'
+            'tmpt_lahir' => 'required|string|max:255',
+            'no_induk' => 'required|string|max:50',
+            'jenkel' => 'required|in:male,female',
+            'role' => 'required|exists:roles,id',
+            // Add other fields and validation rules as needed
         ]);
 
-        $data = $request->all();
-        $data['password'] = Hash::make($data['password']); // Enkripsi password dengan Hash::make
+        // Save the user data here
+        $user = new User();
+        $user->name = $validatedData['name'];
+        $user->email = $validatedData['email'];
+        $user->password = bcrypt($validatedData['password']);
+        $user->alamat = $validatedData['alamat'];
+        $user->telepon = $validatedData['telepon'];
+        $user->tgl_lahir = $validatedData['tgl_lahir'];
+        $user->tmpt_lahir = $validatedData['tmpt_lahir'];
+        $user->no_induk = $validatedData['no_induk'];
+        $user->jenkel = $validatedData['jenkel'];
+        $user->role= $validatedData['role'];
+        // Set other fields as needed
+        $user->save();
 
-        $user = User::create($data);
-
-        if ($user) {
-            // Jika berhasil menyimpan data pengguna, berikan role
-            $user->assignRole($request->input('role'));
-            return redirect()->route('users.index')->with('success', 'User berhasil disimpan');
-        } else {
-            // Jika gagal menyimpan data, kembalikan respon JSON dengan kode status 400
-            return response()->json([
-                'code' => 400,
-                'message' => 'User gagal disimpan'
-            ]);
-        }
+        return response()->json(['success' => true, 'message' => 'User created successfully']);
     }
 
     /**

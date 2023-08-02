@@ -28,37 +28,37 @@
                         <span id="password_error" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label for="address">Address:</label>
-                        <input type="text" name="address" id="address" class="form-control" required>
-                        <span id="address_error" class="text-danger"></span>
+                        <label for="alamat">Address:</label>
+                        <input type="text" name="alamat" id="alamat" class="form-control" required>
+                        <span id="alamat_error" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label for="phone">Phone:</label>
-                        <input type="text" name="phone" id="phone" class="form-control" required>
-                        <span id="phone_error" class="text-danger"></span>
+                        <label for="telepon">Phone:</label>
+                        <input type="text" name="telepon" id="telepon" class="form-control" required>
+                        <span id="telepon_error" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label for="birthdate">Date of Birth:</label>
-                        <input type="date" name="birthdate" id="birthdate" class="form-control" required>
-                        <span id="birthdate_error" class="text-danger"></span>
+                        <label for="tgl_lahir">Date of Birth:</label>
+                        <input type="date" name="tgl_lahir" id="tgl_lahir" class="form-control" required>
+                        <span id="tgl_lahir_error" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label for="birthplace">Place of Birth:</label>
-                        <input type="text" name="birthplace" id="birthplace" class="form-control" required>
-                        <span id="birthplace_error" class="text-danger"></span>
+                        <label for="tmpt_lahir">Place of Birth:</label>
+                        <input type="text" name="tmpt_lahir" id="tmpt_lahir" class="form-control" required>
+                        <span id="tmpt_lahir_error" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label for="registration_number">Registration Number:</label>
-                        <input type="text" name="registration_number" id="registration_number" class="form-control" required>
-                        <span id="registration_number_error" class="text-danger"></span>
+                        <label for="no_induk">Registration Number:</label>
+                        <input type="text" name="no_induk" id="no_induk" class="form-control" required>
+                        <span id="no_induk_error" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label for="gender">Gender:</label>
-                        <select name="gender" id="gender" class="form-control" required>
+                        <label for="jenkel">Gender:</label>
+                        <select name="jenkel" id="jenkel" class="form-control" required>
                             <option value="male">Male</option>
                             <option value="female">Female</option>
                         </select>
-                        <span id="gender_error" class="text-danger"></span>
+                        <span id="jenkel_error" class="text-danger"></span>
                     </div>
                     <div class="form-group">
                         <label for="role">Role:</label>
@@ -82,7 +82,7 @@
 @endsection
 
 @section('script')
-<script type="application/javascript">
+<script type="text/javascript">
     $("#createUserForm").on('submit', function(e) {
         e.preventDefault();
         var btn = $('#createUserBtn');
@@ -103,7 +103,7 @@
                 btn.attr('disabled', false);
                 btn.text("Create User");
                 if (response.success) {
-                    // Redirect ke halaman daftar pengguna setelah berhasil menyimpan
+                    // Redirect to the user list page after successful save
                     window.location.href = "{{ route('users.index') }}";
                     sessionStorage.setItem('success', response.message);
                 }
@@ -116,9 +116,6 @@
                     $.each(jqXHR.responseJSON.errors, function(key, value) {
                         $('#' + key + '_error').text(value[0]);
                     });
-                } else {
-                    // Menampilkan pesan kesalahan jika ada masalah di sisi server
-                    console.error(textStatus + ": " + errorThrown);
                 }
             }
         });
