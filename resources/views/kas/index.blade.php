@@ -22,21 +22,7 @@
     <div class="row">
         <div class="col-md-12">
             <div class="card">
-                <div class="card-header">
-                    <a href="{{ route('kas.create') }}" class="btn btn-sm btn-primary">Tambah</a>
-                </div>
                 <div class="card-body">
-                    @if (session('success'))
-                    <div class="alert alert-success">
-                        {{ session('success') }}
-                    </div>
-                    @endif
-
-                    @if (session('error'))
-                    <div class="alert alert-danger">
-                        {{ session('error') }}
-                    </div>
-                    @endif
 
                     <table class="table table-bordered" id="kas-table">
                         <thead>
@@ -48,7 +34,6 @@
                                 <th>Kas Akhir</th>
                                 <th>Date</th>
                                 <th>Note</th>
-                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -129,10 +114,7 @@
                     data: 'note',
                     name: 'note'
                 },
-                {
-                    data: 'action',
-                    className: 'align-middle text-center'
-                },
+                
             ]
         });
     });
@@ -188,4 +170,3 @@
 </script>
 
 @endsection
-    
