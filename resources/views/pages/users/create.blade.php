@@ -2,16 +2,33 @@
 
 @section('content')
 <div class="content-header">
-    <!-- ... -->
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">Create Users</h1>
+            </div><!-- /.col -->
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item active">Users</li>
+                </ol>
+            </div><!-- /.col -->
+        </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
 </div>
-
+<!-- /.content-header -->
 <div class="content">
     <!-- ... -->
     <div class="col-md-12">
         <div class="card">
             <div class="card-body">
-                <form id="createUserForm" method="POST" action="{{ route('users.store') }}">
+                <form id="createUserForm" action="{{ route('users.store') }}" method="POST">
                     @csrf
+                    <div class="form-group">
+                        <label for="id">ID:</label>
+                        <input type="text" name="id" id="id" class="form-control" required>
+                        <span id="id_error" class="text-danger"></span>
+                    </div>
                     <div class="form-group">
                         <label for="name">Name:</label>
                         <input type="text" name="name" id="name" class="form-control" required>
@@ -28,27 +45,27 @@
                         <span id="password_error" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label for="alamat">Address:</label>
+                        <label for="alamat">Alamat:</label>
                         <input type="text" name="alamat" id="alamat" class="form-control" required>
                         <span id="alamat_error" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label for="telepon">Phone:</label>
+                        <label for="telepon">Telepon:</label>
                         <input type="text" name="telepon" id="telepon" class="form-control" required>
                         <span id="telepon_error" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label for="tgl_lahir">Date of Birth:</label>
+                        <label for="tgl_lahir">Tanggal Lahir:</label>
                         <input type="date" name="tgl_lahir" id="tgl_lahir" class="form-control" required>
                         <span id="tgl_lahir_error" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label for="tmpt_lahir">Place of Birth:</label>
+                        <label for="tmpt_lahir">Tempat Lahir:</label>
                         <input type="text" name="tmpt_lahir" id="tmpt_lahir" class="form-control" required>
                         <span id="tmpt_lahir_error" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label for="no_induk">Registration Number:</label>
+                        <label for="no_induk">Nomer Induk:</label>
                         <input type="text" name="no_induk" id="no_induk" class="form-control" required>
                         <span id="no_induk_error" class="text-danger"></span>
                     </div>
@@ -84,15 +101,15 @@
 
 @section('script')
 <script type="text/javascript">
-    $("#createUserForm").on('submit', function(e) {
+    $("#createUserBtn").on('click', function(e) {
         e.preventDefault();
-        var btn = $('#createUserBtn');
+        var btn = $(this);
         btn.attr('disabled', true);
         btn.text("Loading...");
-        // Resetting the error messages
-        $('.text-danger').text('');
 
-        let formData = new FormData(this);
+        let form = $('#createUserForm')[0]; // Get the DOM element of the form
+        let formData = new FormData(form); // Create a FormData object from the form data
+
         $.ajax({
             url: "{{ route('users.store') }}",
             type: "POST",

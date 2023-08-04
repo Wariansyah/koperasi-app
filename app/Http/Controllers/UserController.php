@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
 use DataTables;
 use Auth;
@@ -11,6 +12,7 @@ use Hash;
 use Illuminate\Support\Arr;
 use DB;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
@@ -94,22 +96,21 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|string|unique:users',
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:6',
-            'alamat' => 'required|string|max:255',
-            'telepon' => 'required|string|max:20',
-            'tgl_lahir' => 'required|date',
-            'tmpt_lahir' => 'required|string|max:255',
-            'no_induk' => 'required|string|max:50',
-            'jenkel' => 'required|in:male,female',
-            'role_id' => 'required|exists:roles,id',
-            // Add other fields and validation rules as needed
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:6',
+            // Add other validation rules for the remaining fields
         ]);
 
-        // Save the user data here
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
+        }
+
+        // Create the user with the provided data
         $user = new User([
+            'id' => $request->input('id'),
             'name' => $request->input('name'),
             'email' => $request->input('email'),
             'password' => bcrypt($request->input('password')),
@@ -119,11 +120,14 @@ class UserController extends Controller
             'tmpt_lahir' => $request->input('tmpt_lahir'),
             'no_induk' => $request->input('no_induk'),
             'jenkel' => $request->input('jenkel'),
-            'role_id' => $request->input('role_id'), // Use 'role_id' here
+            'role_id' => $request->input('role_id'),
         ]);
 
-        return response()->json(['success' => true, 'message' => 'User created successfully']);
+        $user->save();
+
+        return response()->json(['success' => true, 'message' => 'User created successfully.']);
     }
+
 
     /**
      * Display the specified resource.
@@ -162,8 +166,9 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'name' => 'required|string|max:200',
-            'email' => 'required|email|unique:users,email,' . $id,
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:6',
             'address' => 'required|string',
             'phone' => 'required|string',
             'birthdate' => 'required|date',

@@ -30,9 +30,11 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('roles', RoleController::class);
     Route::resource('permissions', PermissionController::class);
     Route::put('/roles/{id}', 'RoleController@update')->name('roles.update');
-    Route::get('/users' , [UserController::class,'index']);
-    Route::resource('/users' , UserController::class);
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    Route::resource('/users', UserController::class);
     Route::delete('roles/{id}', 'RoleController@destroy')->name('roles.destroy');
     Route::post('/users', 'UserController@store')->name('users.store');
+    Route::resource('users', UserController::class);
+    Route::post('/users', [UserController::class, 'store'])->name('users.store');
     Route::resource('kas', KasController::class);
 });

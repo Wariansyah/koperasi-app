@@ -2,21 +2,22 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Support\Str;
 
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
-    public $incrementing = false;
-
-    protected $guarded = [];
+    protected $primaryKey = 'id'; // Nama kolom ID (asumsi menggunakan 'id')
+    public $incrementing = false; // Kolom ID bukan auto-increment
+    protected $keyType = 'string';
     protected $fillable = [
+        'id', // Pastikan 'id' ada dalam daftar fillable
         'name',
         'email',
         'password',
@@ -29,12 +30,10 @@ class User extends Authenticatable
         'tmpt_lahir',
     ];
 
-
     protected $hidden = [
         'password',
         'remember_token',
     ];
-
 
     protected $casts = [
         'email_verified_at' => 'datetime',
@@ -42,6 +41,18 @@ class User extends Authenticatable
 
     public function role()
     {
-        return $this->belongsTo(Role::class, 'role_id'); // Use 'role_id' here
+        return $this->belongsTo(Role::class, 'role_id'); // Gunakan 'role_id' sebagai foreign key
+    }
+
+    // Generate 16-character unique ID before saving the User
+    public static function boot()
+    {
+        parent::boot();
+
+        self::creating(function ($model) {
+            if (!$model->id) {
+                $model->id = Str::random(16);
+            }
+        });
     }
 }

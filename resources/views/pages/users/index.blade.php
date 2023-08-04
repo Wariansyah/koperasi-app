@@ -3,22 +3,8 @@
 @section('content')
 <!-- Content Header (Page header) -->
 <div class="content-header">
-    <div class="container-fluid">
-        <div class="row mb-2">
-            <div class="col-sm-6">
-                <h1 class="m-0">Users</h1>
-            </div><!-- /.col -->
-            <div class="col-sm-6">
-                <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item"><a href="#">Home</a></li>
-                    <li class="breadcrumb-item active">Users</li>
-                </ol>
-            </div><!-- /.col -->
-        </div><!-- /.row -->
-    </div><!-- /.container-fluid -->
+    <!-- ... -->
 </div>
-<!-- /.content-header -->
-
 <!-- Main content -->
 <section class="content">
     <div class="container-fluid">
@@ -79,117 +65,69 @@
         $('#table-user').DataTable({
             processing: true,
             serverSide: true,
-            ajax: {
-                url: "{{ route('users.index') }}",
-                type: 'GET'
-            },
-            "language": {
-                "oPaginate": {
-                    "sNext": "<i class='fas fa-angle-right'>",
-                    "sPrevious": "<i class='fas fa-angle-left'>",
-                },
-            },
+            ajax: "{{ route('users.index') }}",
             columns: [{
                     data: 'DT_RowIndex',
+                    name: 'DT_RowIndex',
                     className: 'align-middle'
                 },
                 {
                     data: 'name',
+                    name: 'name',
                     className: 'align-middle'
                 },
                 {
                     data: 'email',
+                    name: 'email',
                     className: 'align-middle'
                 },
                 {
-                    data: 'role',
+                    data: 'role', // Ubah 'role' menjadi 'role'
+                    name: 'role', // Ubah 'role' menjadi 'role'
                     className: 'align-middle'
                 },
                 {
                     data: 'no_induk',
+                    name: 'no_induk',
                     className: 'align-middle'
                 },
                 {
                     data: 'alamat',
+                    name: 'alamat',
                     className: 'align-middle'
                 },
                 {
                     data: 'jenkel',
+                    name: 'jenkel',
                     className: 'align-middle'
                 },
                 {
                     data: 'tmpt_lahir',
+                    name: 'tmpt_lahir',
                     className: 'align-middle'
                 },
                 {
                     data: 'tgl_lahir',
+                    name: 'tgl_lahir',
                     className: 'align-middle'
                 },
                 {
                     data: 'telepon',
+                    name: 'telepon',
                     className: 'align-middle'
                 },
                 {
                     data: 'status',
+                    name: 'status',
                     className: 'align-middle text-center'
                 },
                 {
                     data: 'action',
+                    name: 'action',
                     className: 'align-middle text-center'
                 }
             ],
         });
     });
-
-    function deleteItem(e) {
-        let id = e.getAttribute('data-id');
-        const swalWithBootstrapButtons = Swal.mixin({
-            customClass: {
-                confirmButton: 'btn btn-success',
-                cancelButton: 'btn btn-danger'
-            },
-            buttonsStyling: true
-        });
-        swalWithBootstrapButtons.fire({
-            title: 'Are you sure?',
-            text: "Do you want to delete this reminder ?",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Yes, delete it!',
-            cancelButtonText: 'No, cancel!',
-            reverseButtons: true
-        }).then((result) => {
-            if (result.value) {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        type: 'POST',
-                        url: "users/" + id,
-                        data: {
-                            "_token": "{{ csrf_token() }}",
-                            "_method": 'DELETE',
-                        },
-                        success: function(data) {
-                            if (data.success) {
-                                toastr.success('success', data.message);
-                                var oTable = $('#table-user').dataTable();
-                                oTable.fnDraw(false);
-                            } else {
-                                toastr.error('error', data.message);
-                            }
-                        }
-
-                    });
-                }
-            } else if (
-                result.dismiss === Swal.DismissReason.cancel
-            ) {
-                swalWithBootstrapButtons.fire(
-                    'Cancelled',
-                    name + ' cancel deleted',
-                    'error'
-                );
-            }
-        });
-    }
 </script>
 @endsection
