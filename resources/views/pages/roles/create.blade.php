@@ -88,7 +88,6 @@
                 $('#premission_error').text(response.responseJSON.errors.permission);
             }
         });
-
     });
 </script>
 @endsection

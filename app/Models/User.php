@@ -28,6 +28,7 @@ class User extends Authenticatable
         'jenkel',
         'tgl_lahir',
         'tmpt_lahir',
+        'limit_pinjaman',
     ];
 
     protected $hidden = [

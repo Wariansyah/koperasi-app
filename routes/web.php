@@ -36,5 +36,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/users', 'UserController@store')->name('users.store');
     Route::resource('users', UserController::class);
     Route::post('/users', [UserController::class, 'store'])->name('users.store');
+    Route::put('/users/{id}', 'UserController@update')->name('users.update');
+    Route::delete('users/{id}', 'UserController@destroy')->name('users.destroy');
     Route::resource('kas', KasController::class);
 });

@@ -75,10 +75,9 @@
                 $(".preloader").fadeOut();
                 if (response.success) { // Check if the success property is true
                     window.location.href = "{{ route('roles.index') }}";
-            },
-            
+                }
+            }
         });
     });
 </script>
 @endsection
-  

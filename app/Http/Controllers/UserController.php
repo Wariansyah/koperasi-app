@@ -26,9 +26,9 @@ class UserController extends Controller
 
     public function index(Request $request)
     {
+        $auth = auth()->user()->with('permissions')->first();
+        $data = User::all();
 
-        $auth  = auth()->user()->with('permissions')->first();
-        $data  = User::all();
         if ($request->ajax()) {
             return DataTables::of($data)
                 ->addColumn('name', function ($row) {
@@ -65,22 +65,16 @@ class UserController extends Controller
                         return $badge;
                     }
                 })
-                ->addColumn('action', function ($row) use ($auth) {
-                    $button  = '';
-                    if ($auth->can('edit-user')) {
-                        $button .= '&nbsp;&nbsp;';
-                        $button .= '<a href="' . route('users.edit', $row->id) . '" class="btn btn-sm btn-warning btn-icon btn-round"><i class="fas fa-pen-square fa-circle mt-2"></i></a>';
-                    }
-                    if ($auth->can('delete-user')) {
-                        $button .= '&nbsp;&nbsp;';
-                        $button .= '<button onclick="deleteItem(this)" data-name="' . $row->name . '" data-id="' . $row->id . '" class="btn btn-sm btn-danger btn-icon btn-round"><i class="fas fa-trash"></i></button>';
-                    }
-                    if ($button == '') {
-                        $button = 'User does not have the right permissions.';
-                    }
-                    return $button;
+                ->addColumn('action', function ($row) {
+                    $editUrl = route('users.edit', $row->id);
+                    $deleteUrl = route('users.destroy', $row->id);
+
+                    $editButton = '<a href="' . $editUrl . '" class="btn btn-sm btn-warning btn-icon btn-round"><i class="fas fa-pen-square fa-circle mt-2"></i></a>';
+                    $deleteButton = '<button onclick="deleteItem(this)" data-name="' . $row->name . '" data-id="' . $row->id . '" class="btn btn-sm btn-danger btn-icon btn-round delete-button"><i class="fas fa-trash"></i></button>';
+
+                    return $editButton . '&nbsp;&nbsp;' . $deleteButton;
                 })
-                ->rawColumns(['action', 'role', 'status'])
+                ->rawColumns(['role', 'status', 'action'])
                 ->addIndexColumn()
                 ->make(true);
         }
@@ -88,10 +82,10 @@ class UserController extends Controller
         return view('pages.users.index');
     }
 
+
     public function create()
     {
-        $roles = Role::all();
-        return view('pages.users.create', compact('roles'));
+        return view('pages.users.create');
     }
 
     public function store(Request $request)
@@ -99,28 +93,35 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'id' => 'required|string|unique:users',
             'name' => 'required|string|max:255',
+            'no_induk' => 'required|string',
+            'alamat' => 'required|string',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6',
-            // Add other validation rules for the remaining fields
+            'telepon' => 'required|string',
+            'status' => 'required|string',
+            'jenis_kelamin' => 'required|string',
+            'tgl_lahir' => 'required|date',
+            'tempat_lahir' => 'required|string',
+            'limit_pinjaman' => 'required|numeric',
         ]);
 
         if ($validator->fails()) {
             return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
         }
 
-        // Create the user with the provided data
         $user = new User([
             'id' => $request->input('id'),
             'name' => $request->input('name'),
+            'no_induk' => $request->input('no_induk'),
+            'alamat' => $request->input('alamat'),
             'email' => $request->input('email'),
             'password' => bcrypt($request->input('password')),
-            'alamat' => $request->input('alamat'),
             'telepon' => $request->input('telepon'),
+            'status' => $request->input('status'),
+            'jenkel' => $request->input('jenis_kelamin'),
             'tgl_lahir' => $request->input('tgl_lahir'),
-            'tmpt_lahir' => $request->input('tmpt_lahir'),
-            'no_induk' => $request->input('no_induk'),
-            'jenkel' => $request->input('jenkel'),
-            'role_id' => $request->input('role_id'),
+            'tmpt_lahir' => $request->input('tempat_lahir'),
+            'limit_pinjaman' => $request->input('limit_pinjaman'),
         ]);
 
         $user->save();
@@ -165,33 +166,47 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:6',
-            'address' => 'required|string',
-            'phone' => 'required|string',
-            'birthdate' => 'required|date',
-            'birthplace' => 'required|string',
+            'email' => 'required|email|unique:users,email,' . $id,
+            'alamat' => 'required|string',
+            'telepon' => 'required|string',
+            'status' => 'required|string',
+            'tgl_lahir' => 'required|date',
+            'tmpt_lahir' => 'required|string',
             'no_induk' => 'required|string',
-            'jenis_kelamin' => 'required|in:male,female',
-            'role' => 'required|exists:roles,id'
+            'jenkel' => 'required|string',
+            'limit_pinjaman' => 'required|string',
         ]);
 
-        $data = $request->all();
-        $user = User::findOrFail($id);
-        $user->update($data);
-        $user->syncRoles([$request->input('role')]);
-
-        if ($user) {
-            return redirect()->route('users.index')->with('success', 'User berhasil diupdate');
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
         }
 
+        $user = User::findOrFail($id);
+        $user->name = $request->input('name');
+        $user->email = $request->input('email');
+        $user->alamat = $request->input('alamat');
+        $user->telepon = $request->input('telepon');
+        $user->status = $request->input('status');
+        $user->tgl_lahir = $request->input('tgl_lahir');
+        $user->tmpt_lahir = $request->input('tmpt_lahir');
+        $user->no_induk = $request->input('no_induk');
+        $user->jenkel = $request->input('jenkel');
+        $user->limit_pinjaman = $request->input('limit_pinjaman');
+
+        if ($request->has('password')) {
+            $user->password = bcrypt($request->input('password'));
+        }
+
+        $user->save();
+
         return response()->json([
-            'code' => 400,
-            'message' => 'User gagal diupdate'
+            'success' => true,
+            'message' => 'User successfully updated'
         ]);
     }
+
 
     /**
      * Remove the specified resource from storage.
@@ -205,14 +220,14 @@ class UserController extends Controller
 
         if ($user->delete()) {
             return response()->json([
-                'code' => 200,
-                'message' => 'User berhasil dihapus'
+                'success' => true,
+                'message' => 'User successfully deleted'
             ]);
         }
 
         return response()->json([
-            'code' => 400,
-            'message' => 'User gagal dihapus'
+            'success' => false,
+            'message' => 'Failed to delete user'
         ]);
     }
 }

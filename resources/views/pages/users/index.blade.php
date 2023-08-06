@@ -1,11 +1,10 @@
 @extends('layouts.app')
 
 @section('content')
-<!-- Content Header (Page header) -->
 <div class="content-header">
-    <!-- ... -->
+    <!-- Content header code here -->
 </div>
-<!-- Main content -->
+
 <section class="content">
     <div class="container-fluid">
         <div class="row">
@@ -14,120 +13,115 @@
                     <div class="card-header">
                         <a href="{{ route('users.create') }}" class="btn btn-sm btn-primary">Tambah</a>
                     </div>
-                    <!-- /.card-header -->
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table id="table-user" style="width: 100%" class="table table-bordered table-hover">
+                            <table id="table-user" class="table table-bordered table-hover">
                                 <thead>
                                     <tr>
                                         <th>#</th>
                                         <th>Nama</th>
-                                        <th>Email</th>
-                                        <th>Role</th>
-                                        <th>No Induk</th>
+                                        <th>No. Induk</th>
                                         <th>Alamat</th>
-                                        <th>Jenis Kelamin</th>
-                                        <th>Tempat Lahir</th>
-                                        <th>Tanggal Lahir</th>
+                                        <th>Email</th>
                                         <th>Telepon</th>
                                         <th>Status</th>
+                                        <th>Jenis Kelamin</th>
+                                        <th>Tgl Lahir</th>
+                                        <th>Tempat Lahir</th>
+                                        <th>Limit Pinjaman</th>
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
                             </table>
                         </div>
                     </div>
-                    <!-- /.card-body -->
                 </div>
             </div>
-            <!-- ./col -->
         </div>
-    </div><!-- /.container-fluid -->
+    </div>
 </section>
-<!-- /.content -->
+
 @endsection
 
 @section('script')
-<script type="application/javascript">
+<script>
     $(document).ready(function() {
-        if (sessionStorage.getItem('success')) {
-            let data = sessionStorage.getItem('success');
-            toastr.success('', data, {
-                timeOut: 1500,
-                preventDuplicates: true,
-                progressBar: true,
-                positionClass: 'toast-top-right',
-            });
-
-            sessionStorage.clear();
-        }
-
         $('#table-user').DataTable({
             processing: true,
             serverSide: true,
             ajax: "{{ route('users.index') }}",
             columns: [{
                     data: 'DT_RowIndex',
-                    name: 'DT_RowIndex',
-                    className: 'align-middle'
+                    name: 'DT_RowIndex'
                 },
                 {
                     data: 'name',
-                    name: 'name',
-                    className: 'align-middle'
-                },
-                {
-                    data: 'email',
-                    name: 'email',
-                    className: 'align-middle'
-                },
-                {
-                    data: 'role', // Ubah 'role' menjadi 'role'
-                    name: 'role', // Ubah 'role' menjadi 'role'
-                    className: 'align-middle'
+                    name: 'name'
                 },
                 {
                     data: 'no_induk',
-                    name: 'no_induk',
-                    className: 'align-middle'
+                    name: 'no_induk'
                 },
                 {
                     data: 'alamat',
-                    name: 'alamat',
-                    className: 'align-middle'
+                    name: 'alamat'
                 },
                 {
-                    data: 'jenkel',
-                    name: 'jenkel',
-                    className: 'align-middle'
-                },
-                {
-                    data: 'tmpt_lahir',
-                    name: 'tmpt_lahir',
-                    className: 'align-middle'
-                },
-                {
-                    data: 'tgl_lahir',
-                    name: 'tgl_lahir',
-                    className: 'align-middle'
+                    data: 'email',
+                    name: 'email'
                 },
                 {
                     data: 'telepon',
-                    name: 'telepon',
-                    className: 'align-middle'
+                    name: 'telepon'
                 },
                 {
                     data: 'status',
-                    name: 'status',
-                    className: 'align-middle text-center'
+                    name: 'status'
+                },
+                {
+                    data: 'jenkel',
+                    name: 'jenkel'
+                },
+                {
+                    data: 'tgl_lahir',
+                    name: 'tgl_lahir'
+                },
+                {
+                    data: 'tmpt_lahir',
+                    name: 'tmpt_lahir'
+                },
+                {
+                    data: 'limit_pinjaman',
+                    name: 'limit_pinjaman'
                 },
                 {
                     data: 'action',
-                    name: 'action',
-                    className: 'align-middle text-center'
-                }
-            ],
+                    name: 'action'
+                },
+            ]
         });
     });
+
+    function deleteItem(button) {
+        var id = $(button).data('id');
+        var name = $(button).data('name');
+
+        if (confirm('Are you sure you want to delete ' + name + '?')) {
+            $.ajax({
+                url: '/users/' + id,
+                type: 'DELETE',
+                data: {
+                    _token: $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    // Remove the deleted row from the table
+                    $(button).closest('tr').remove();
+                },
+                error: function(xhr) {
+                    console.log(xhr.responseText);
+                }
+            });
+        }
+    }
 </script>
 @endsection
