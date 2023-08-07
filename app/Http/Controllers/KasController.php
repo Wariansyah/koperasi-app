@@ -36,30 +36,35 @@ class KasController extends Controller
 
     public function updateKasAwalForNextDay($date)
     {
-        // Fetch the 'kas' data for the given date
-        $kasForCurrentDate = Kas::where('date', $date)->first();
+        $currentDate = Carbon::parse($date);
+        $nextDate = $currentDate->copy()->addDay();
+
+        $kasForCurrentDate = Kas::where('date', $currentDate)->first();
 
         if (!$kasForCurrentDate) {
-            // No data found for the given date, handle the case accordingly
-            // For example, you might want to throw an error or return a message
             return "No 'kas' data found for the date: $date";
         }
 
-        // Calculate the 'kas_awal' for the next day (adding 'kas_akhir' to 'kas_masuk' and subtracting 'kas_keluar')
         $kasAwalNextDay = $kasForCurrentDate->kas_akhir + $kasForCurrentDate->kas_masuk - $kasForCurrentDate->kas_keluar;
 
-        // Insert a new row for the next day with the calculated 'kas_awal' value
-        $nextDate = date('Y-m-d', strtotime($date . ' +1 day'));
-        $newKasRecord = new Kas([
-            'kas_awal' => $kasAwalNextDay,
-            'kas_masuk' => 0, // Assuming you start each day with 0 'kas_masuk'
-            'kas_keluar' => 0, // Assuming you start each day with 0 'kas_keluar'
-            'kas_akhir' => $kasAwalNextDay, // 'kas_akhir' will be the same as 'kas_awal' at the beginning of the day
-            'date' => $nextDate,
-            'note' => 'Automatically generated for the next day',
-        ]);
+        $nextDayRecord = Kas::where('date', $nextDate)->first();
 
-        $newKasRecord->save();
+        if ($nextDayRecord) {
+            $nextDayRecord->update([
+                'kas_awal' => $kasAwalNextDay,
+                'kas_akhir' => $kasAwalNextDay,
+                'note' => 'Automatically updated kas_awal',
+            ]);
+        } else {
+            $newKasRecord = Kas::create([
+                'kas_awal' => $kasAwalNextDay,
+                'kas_masuk' => 0,
+                'kas_keluar' => 0,
+                'kas_akhir' => $kasAwalNextDay,
+                'date' => $nextDate,
+                'note' => 'Automatically generated for the next day',
+            ]);
+        }
 
         return "Successfully updated 'kas_awal' for the next day ($nextDate)";
     }
