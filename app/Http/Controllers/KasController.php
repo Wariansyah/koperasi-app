@@ -22,9 +22,17 @@ class KasController extends Controller
         if ($request->ajax()) {
             $data = Kas::all(); // Use the Kas model to fetch data
             return DataTables::of($data)
-                ->editColumn('date', function ($row) {
-                    // You can format the date if needed
-                    return Carbon::parse($row->date)->format('Y-m-d');
+                ->editColumn('kas_awal', function ($row) {
+                    return formatRupiah($row->kas_awal);
+                })
+                ->editColumn('kas_masuk', function ($row) {
+                    return formatRupiah($row->kas_masuk);
+                })
+                ->editColumn('kas_keluar', function ($row) {
+                    return formatRupiah($row->kas_keluar);
+                })
+                ->editColumn('kas_akhir', function ($row) {
+                    return formatRupiah($row->kas_akhir);
                 })
                 ->make(true);
         }
@@ -53,7 +61,6 @@ class KasController extends Controller
             $nextDayRecord->update([
                 'kas_awal' => $kasAwalNextDay,
                 'kas_akhir' => $kasAwalNextDay,
-                'note' => 'Automatically updated kas_awal',
             ]);
         } else {
             $newKasRecord = Kas::create([
@@ -62,7 +69,6 @@ class KasController extends Controller
                 'kas_keluar' => 0,
                 'kas_akhir' => $kasAwalNextDay,
                 'date' => $nextDate,
-                'note' => 'Automatically generated for the next day',
             ]);
         }
 
