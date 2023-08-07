@@ -64,6 +64,7 @@
                             <option value="">-- Pilih Status --</option>
                             <option value="Aktif">Aktif</option>
                             <option value="Tidak Aktif">Tidak Aktif</option>
+                            <option value="Blokir">Blokir</option>
                         </select>
                         <span id="status_error" class="text-danger"></span>
                     </div>
@@ -104,6 +105,22 @@
 
 @section('script')
 <script type="application/javascript">
+    $(document).ready(function() {
+        // Set default value for status
+        $('#status').val('Aktif');
+
+        // Set status to Aktif when selected
+        $('#status').on('change', function() {
+            if ($(this).val() === 'Aktif') {
+                $(this).val('Aktif');
+                // Update the display status
+                $('#status').html('<span class="badge badge-success text-white">Aktif</span>');
+                $('#status').html('<span class="badge badge-warning text-white">Tidak Aktif</span>');
+                $('#status').html('<span class="badge badge-danger text-white">Blokir</span>');
+            }
+        });
+    });
+
     $("#createUserForm").on('submit', function(e) {
         e.preventDefault();
         var btn = $('#createUserBtn');
