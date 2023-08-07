@@ -53,90 +53,66 @@
 @endsection
 @section('script')
 <script type="application/javascript">
-$(document).ready(function() {
-    if (sessionStorage.getItem('success')) {
-        let data = sessionStorage.getItem('success');
-        toastr.success('', data, {
-            timeOut: 1500,
-            preventDuplicates: true,
-            progressBar: true,
-            positionClass: 'toast-top-right',
-        });
+    $(document).ready(function() {
+        if (sessionStorage.getItem('success')) {
+            let data = sessionStorage.getItem('success');
+            toastr.success('', data, {
+                timeOut: 1500,
+                preventDuplicates: true,
+                progressBar: true,
+                positionClass: 'toast-top-right',
+            });
 
-        sessionStorage.clear();
-    }
+            sessionStorage.clear();
+        }
 
-    $('#table-role').DataTable({
-        processing: true,
-        serverSide: true,
-        ajax: {
-            url: "{{ route('roles.index') }}",
-            type: 'GET',
-        },
-        columns: [
-            {
-                data: 'DT_RowIndex',
-                className: 'align-middle'
+        $('#table-role').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: "{{ route('roles.index') }}",
+                type: 'GET',
             },
-            {
-                data: 'name',
-                className: 'align-middle'
-            },
-            {
-                data: 'permissions',
-                className: 'align-middle'
-            },
-            {
-                data: 'action',
-                className: 'align-middle text-center'
-            }
-        ],
-        // Rest of the DataTables settings
-    });
-});
-
-function deleteItem(e) {
-    let id = e.getAttribute('data-id');
-    const swalWithBootstrapButtons = Swal.mixin({
-        customClass: {
-            confirmButton: 'btn btn-success',
-            cancelButton: 'btn btn-danger'
-        },
-        buttonsStyling: true
-    });
-    swalWithBootstrapButtons.fire({
-        title: 'Are you sure?',
-        text: "Do you want to delete this reminder?",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Yes, delete it!',
-        cancelButtonText: 'No, cancel!',
-        reverseButtons: true
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
-                type: 'POST',
-                url: "roles/" + id,
-                data: {
-                    "_token": "{{ csrf_token() }}",
-                    "_method": 'DELETE',
+            columns: [{
+                    data: 'DT_RowIndex',
+                    className: 'align-middle'
                 },
-                success: function(data) {
-                    if (data.success) {
-                        toastr.success('success', data.message);
-                        // Remove the row from the DataTable
-                        $('#table-role').DataTable().row($(e).closest('tr')).remove().draw(false);
-                    } 
+                {
+                    data: 'name',
+                    className: 'align-middle'
+                },
+                {
+                    data: 'permissions',
+                    className: 'align-middle'
+                },
+                {
+                    data: 'action',
+                    className: 'align-middle text-center'
+                }
+            ],
+            // Rest of the DataTables settings
+        });
+    });
+
+    function deleteItem(button) {
+        var id = $(button).data('id');
+
+        if (confirm('Are you sure you want to delete ' + name + '?')) {
+            $.ajax({
+                url: '/roles/' + id,
+                type: 'DELETE',
+                data: {
+                    _token: $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    // Remove the deleted row from the table
+                    $(button).closest('tr').remove();
+                },
+                error: function(xhr) {
+                    console.log(xhr.responseText);
                 }
             });
-        } else if (result.dismiss === Swal.DismissReason.cancel) {
-            swalWithBootstrapButtons.fire(
-                'Cancelled',
-                name + ' cancel deleted',
-                'error'
-            );
         }
-    });
-}
+    }
 </script>
 @endsection

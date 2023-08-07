@@ -89,52 +89,25 @@
         });
     });
 
-    function deleteItem(e) {
-        let id = e.getAttribute('data-id');
-        const swalWithBootstrapButtons = Swal.mixin({
-            customClass: {
-                confirmButton: 'btn btn-success',
-                cancelButton: 'btn btn-danger'
-            },
-            buttonsStyling: true
-        });
-        swalWithBootstrapButtons.fire({
-            title: 'Are you sure?',
-            text: "Do you want to delete this reminder?",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Yes, delete it!',
-            cancelButtonText: 'No, cancel!',
-            reverseButtons: true
-        }).then((result) => {
-            if (result.value) {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        type: 'POST',
-                        url: "permissions/" + id,
-                        data: {
-                            "_token": "{{ csrf_token() }}",
-                            "_method": 'DELETE',
-                        },
-                        success: function(data) {
-                            if (data.success) {
-                                toastr.success('success', data.message);
-                                // Remove the row from the table
-                                $(e).closest('tr').remove();
-                            } else {
-                                toastr.error('error', data.message);
-                            }
-                        }
-                    });
+    function deleteItem(button) {
+        var id = $(button).data('id');
+
+        if (confirm('Are you sure you want to delete ' + name + '?')) {
+            $.ajax({
+                url: '/permissions/' + id,
+                type: 'DELETE',
+                data: {
+                    _token: $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    // Remove the deleted row from the table
+                    $(button).closest('tr').remove();
+                },
+                error: function(xhr) {
+                    console.log(xhr.responseText);
                 }
-            } else if (result.dismiss === Swal.DismissReason.cancel) {
-                swalWithBootstrapButtons.fire(
-                    'Cancelled',
-                    name + ' cancel deleted',
-                    'error'
-                );
-            }
-        });
+            });
+        }
     }
 </script>
 @endsection

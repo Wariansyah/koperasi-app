@@ -80,26 +80,26 @@ class PermissionController extends Controller
             'name.string' => 'Nama harus berupa string',
             'name.max' => 'Nama tidak boleh lebih dari 200 karakter',
         ]);
-    
+
         $data = $request->all();
         $permission = Permission::findOrFail($id);
         $permission->update(['name' => $data['name']]); // Hanya update nama permission
-    
+
         if (isset($data['role'])) {
             $roles = $data['role'];
             $permission->roles()->sync($roles); // Sinkronisasi role yang terkait dengan permission
         }
-    
+
         if ($permission) {
             return redirect()->route('permissions.index')->with('success', 'Permission berhasil diupdate');
         }
-    
+
         return response()->json([
             'code' => 400,
             'message' => 'Permission gagal diupdate'
         ]);
     }
-    
+
 
     public function destroy($id)
     {

@@ -29,6 +29,9 @@ Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('ho
 Route::group(['middleware' => ['auth']], function () {
     Route::resource('roles', RoleController::class);
     Route::resource('permissions', PermissionController::class);
+    Route::post('/permissions', [PermissionController::class, 'store'])->name('permissions.store');
+    Route::put('/permissions/{id}', 'PermissionController@update')->name('permissions.update');
+    Route::delete('permissions/{id}', 'PermissionController@destroy')->name('permissions.destroy');
     Route::put('/roles/{id}', 'RoleController@update')->name('roles.update');
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
     Route::resource('/users', UserController::class);
