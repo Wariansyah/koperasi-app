@@ -24,11 +24,6 @@
                 <form id="createUserForm" method="POST" action="{{ route('users.store') }}">
                     @csrf
                     <div class="form-group">
-                        <label for="id">ID:</label>
-                        <input type="text" name="id" id="id" class="form-control" required>
-                        <span id="id_error" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
                         <label for="name">Nama:</label>
                         <input type="text" name="name" id="name" class="form-control" required>
                         <span id="name_error" class="text-danger"></span>
@@ -127,7 +122,6 @@
         btn.attr('disabled', true);
         btn.val("Loading...");
         let formData = new FormData(this);
-        $('#id_error').text('');
         $('#name_error').text('');
         $('#no_induk_error').text('');
         $('#alamat_error').text('');
@@ -157,7 +151,6 @@
             error: function(response) {
                 btn.attr('disabled', false);
                 btn.val("Simpan");
-                $('#id_error').text(response.responseJSON.errors.id);
                 $('#name_error').text(response.responseJSON.errors.nama);
                 $('#no_induk_error').text(response.responseJSON.errors.no_induk);
                 $('#alamat_error').text(response.responseJSON.errors.alamat);

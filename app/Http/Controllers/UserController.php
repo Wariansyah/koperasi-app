@@ -91,13 +91,12 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'id' => 'required|string|unique:users',
             'name' => 'required|string|max:255',
-            'no_induk' => 'required|string',
+            'no_induk' => 'required|string|unique:users',
             'alamat' => 'required|string',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6',
-            'telepon' => 'required|string',
+            'telepon' => 'required|string|unique:users',
             'status' => 'required|string',
             'jenis_kelamin' => 'required|string',
             'tgl_lahir' => 'required|date',
@@ -110,7 +109,6 @@ class UserController extends Controller
         }
 
         $user = new User([
-            'id' => $request->input('id'),
             'name' => $request->input('name'),
             'no_induk' => $request->input('no_induk'),
             'alamat' => $request->input('alamat'),
