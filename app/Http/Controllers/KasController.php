@@ -21,7 +21,11 @@ class KasController extends Controller
     {
         if ($request->ajax()) {
             $data = Kas::all();
+    
             return DataTables::of($data)
+                ->addColumn('user_id', function ($row) {
+                    return $row->user->name; // Assuming you have a User relationship in your Kas model
+                })
                 ->editColumn('kas_awal', function ($row) {
                     return formatRupiah($row->kas_awal);
                 })
@@ -34,14 +38,15 @@ class KasController extends Controller
                 ->editColumn('kas_akhir', function ($row) {
                     return formatRupiah($row->kas_akhir);
                 })
-                ->addColumn('date', function ($row) {
-                    return $row->date->format('Y-m-d');
-                })
+                
+                ->rawColumns(['user_id', 'date']) // Add rawColumns for HTML content
                 ->make(true);
         }
-
+    
         return view('kas.index');
     }
+    
+    
 
 
     // ... (other methods)
@@ -51,7 +56,9 @@ class KasController extends Controller
         $currentDate = Carbon::parse($date);
         $nextDate = $currentDate->copy()->addDay();
 
-        $kasForCurrentDate = Kas::where('date', $currentDate)->first();
+        $kasForCurrentDate = Kas::where('date', $currentDate)
+            ->where('user_id', auth()->id()) // Add the user_id filter
+            ->first();
 
         if (!$kasForCurrentDate) {
             return "No 'kas' data found for the date: $date";
@@ -59,7 +66,9 @@ class KasController extends Controller
 
         $kasAwalNextDay = $kasForCurrentDate->kas_akhir + $kasForCurrentDate->kas_masuk - $kasForCurrentDate->kas_keluar;
 
-        $nextDayRecord = Kas::where('date', $nextDate)->first();
+        $nextDayRecord = Kas::where('date', $nextDate)
+            ->where('user_id', auth()->id()) // Add the user_id filter
+            ->first();
 
         if ($nextDayRecord) {
             $nextDayRecord->update([
@@ -68,6 +77,7 @@ class KasController extends Controller
             ]);
         } else {
             $newKasRecord = Kas::create([
+                'user_id' => auth()->id(), // Set the user_id
                 'kas_awal' => $kasAwalNextDay,
                 'kas_masuk' => 0,
                 'kas_keluar' => 0,

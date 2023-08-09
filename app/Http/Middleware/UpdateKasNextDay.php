@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Middleware;
 
 use Closure;
@@ -7,6 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Kas;
 use Carbon\Carbon;
 use App\Models\User;
+use App\Http\Controllers\UserController;
 
 class UpdateKasNextDay
 {
@@ -19,8 +19,8 @@ class UpdateKasNextDay
 
             // Pastikan user memiliki hak akses yang sesuai untuk melakukan operasi ini,
             // misalnya berdasarkan peran (role) atau izin (permission).
-            $user = User::find($user->id);
-            $lastUpdateDate = $user->last_kas_update_date;
+            $loggedInUser = User::find($user->id); // Retrieve the logged-in user from the database
+            $lastUpdateDate = $loggedInUser->last_kas_update_date; // Use the retrieved user
 
             $currentDate = Carbon::now();
 
@@ -35,6 +35,7 @@ class UpdateKasNextDay
 
                     if (!$nextDayRecord) {
                         $newKasRecord = new Kas([
+                            'user_id' => $loggedInUser->id, // Associate the user_id
                             'kas_awal' => $kasAwalNextDay,
                             'kas_masuk' => 0,
                             'kas_keluar' => 0,
@@ -45,8 +46,8 @@ class UpdateKasNextDay
                     }
 
                     // Update last_kas_update_date pada user
-                    $user->last_kas_update_date = $currentDate;
-                    $user->save();
+                    $loggedInUser->last_kas_update_date = $currentDate;
+                    $loggedInUser->save();
                 }
             }
         }
