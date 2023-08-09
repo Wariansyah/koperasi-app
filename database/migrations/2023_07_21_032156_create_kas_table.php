@@ -15,6 +15,7 @@ class CreateKasTable extends Migration
     {
         Schema::create('kas', function (Blueprint $table) {
             $table->id();
+            $table->string('user_id');
             $table->integer('kas_awal');
             $table->integer('kas_masuk');
             $table->integer('kas_keluar');

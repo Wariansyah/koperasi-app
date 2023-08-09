@@ -1,93 +1,84 @@
 @extends('layouts.app')
 
 @section('content')
-<!-- Content Header (Page header) -->
 <div class="content-header">
-    <!-- ... (existing code) ... -->
+    <!-- Content header code here -->
 </div>
-<!-- /.content-header -->
-<div class="container">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-body">
-                    <table class="table table-bordered" id="kas-table">
-                        <thead>
-                            <tr>
-                                <th>Id</th>
-                                <th>Kas Awal</th>
-                                <th>Kas Masuk</th>
-                                <th>Kas Keluar</th>
-                                <th>Kas Akhir</th>
-                                <th>Date</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <a href="{{ route('kas.create') }}" class="btn btn-sm btn-primary">Tambah</a>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table id="table-kas" class="table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Id</th>
+                                        <th>User ID</th>
+                                        <th>Kas Awal</th>
+                                        <th>Kas Masuk</th>
+                                        <th>Kas Keluar</th>
+                                        <th>Kas Akhir</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
+
 @endsection
 
 @section('script')
-<!-- Include the required Toastr plugin CSS and JavaScript files -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-
-<!-- Include the required SweetAlert plugin JavaScript file -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-<!-- Include the DataTables library -->
-<script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
-
-<!-- Include the FormatHelper.js script -->
-<script src="{{ asset('Helpers/FormatHelper.js') }}"></script>
-
-<script type="application/javascript">
-    // Define the formatRupiah function in JavaScript
-    function formatRupiah(nominal) {
-        return "Rp. " + new Intl.NumberFormat("id-ID").format(nominal);
-    }
-
+<script>
     $(document).ready(function() {
-        $('#kas-table').DataTable({
+        $('#table-kas').DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{ route('kas.index') }}", // Make sure this route matches your controller's route
-            type: 'GET',
-            columns: [
+            ajax: "{{ route('kas.index') }}",
+            columns: [{
+                    data: 'DT_RowIndex',
+                    name: 'DT_RowIndex'
+                },
                 {
-                    data: 'id',
-                    name: 'id'
+                    data: 'user_id',
+                    name: 'user_id'
                 },
                 {
                     data: 'kas_awal',
                     name: 'kas_awal',
                     render: function(data, type, row) {
-                        return formatRupiah(data);
+                        return formatRupiah(data); // Memanggil fungsi formatRupiah
                     }
                 },
                 {
                     data: 'kas_masuk',
                     name: 'kas_masuk',
                     render: function(data, type, row) {
-                        return formatRupiah(data);
+                        return formatRupiah(data); // Memanggil fungsi formatRupiah
                     }
                 },
                 {
                     data: 'kas_keluar',
                     name: 'kas_keluar',
                     render: function(data, type, row) {
-                        return formatRupiah(data);
+                        return formatRupiah(data); // Memanggil fungsi formatRupiah
                     }
                 },
                 {
                     data: 'kas_akhir',
                     name: 'kas_akhir',
                     render: function(data, type, row) {
-                        return formatRupiah(data);
+                        return formatRupiah(data); // Memanggil fungsi formatRupiah
                     }
                 },
                 {
@@ -98,8 +89,25 @@
         });
     });
 
-    function deleteItem(e) {
-        // ... (existing code) ...
-    }
+    // function deleteItem(button) {
+    //     var id = $(button).data('id');
+
+    //     if (confirm('Are you sure you want to delete this data?')) {
+    //         $.ajax({
+    //             url: '/kas/' + id,
+    //             type: 'DELETE',
+    //             data: {
+    //                 _token: $('meta[name="csrf-token"]').attr('content')
+    //             },
+    //             success: function(response) {
+    //                 // Remove the deleted row from the table
+    //                 $(button).closest('tr').remove();
+    //             },
+    //             error: function(xhr) {
+    //                 console.log(xhr.responseText);
+    //             }
+    //         });
+    //     }
+    // }
 </script>
 @endsection

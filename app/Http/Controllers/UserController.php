@@ -27,7 +27,7 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $auth = auth()->user()->with('permissions')->first();
-        $data = User::all();
+        $data = User::with('role')->get();
 
         if ($request->ajax()) {
             return DataTables::of($data)
@@ -85,7 +85,8 @@ class UserController extends Controller
 
     public function create()
     {
-        return view('pages.users.create');
+        $roles = Role::all(); // Fetch all roles from the database
+        return view('pages.users.create', compact('roles'));
     }
 
     public function store(Request $request)

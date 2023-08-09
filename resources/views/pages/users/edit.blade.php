@@ -103,7 +103,8 @@
         var btn = $('#editUserBtn');
         btn.attr('disabled', true);
         btn.val("Loading...");
-        let formData = new FormData(this);
+        var formData = new FormData(this);
+        formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
         $('#name_error').text('');
         $('#no_induk_error').text('');
         $('#alamat_error').text('');
@@ -141,19 +142,19 @@
                             $('#tgl_lahir_error').text(response.errors.tgl_lahir);
                             $('#tmpt_lahir_error').text(response.errors.tmpt_lahir[0]);
                             $('#limit_pinjaman_error').text(response.errors.limit_pinjaman[0]);
+                        }
+                        // Handle other error fields if needed
                     }
-                    // Handle other error fields if needed
+                    btn.attr('disabled', false);
+                    btn.val("Update User");
                 }
+            },
+            error: function(xhr, status, error) {
+                // Handle error cases
                 btn.attr('disabled', false);
                 btn.val("Update User");
             }
-        },
-        error: function(xhr, status, error) {
-            // Handle error cases
-            btn.attr('disabled', false);
-            btn.val("Update User");
-        }
+        });
     });
-});
 </script>
 @endsection
