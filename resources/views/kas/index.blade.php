@@ -28,12 +28,11 @@
                         <thead>
                             <tr>
                                 <th>Id</th>
+                                <th>User_Id</th>
                                 <th>Kas Awal</th>
                                 <th>Kas Masuk</th>
                                 <th>Kas Keluar</th>
                                 <th>Kas Akhir</th>
-                                <th>Date</th>
-                                <th>Note</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
