@@ -20,7 +20,6 @@ class CreateKasTable extends Migration
             $table->integer('kas_keluar');
             $table->integer('kas_akhir');
             $table->date('date');
-            $table->text('note')->nullable();
             $table->timestamps();
         });
     }

@@ -1,10 +1,12 @@
 <?php
 
+use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\{PermissionController, UserController, RoleController};
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\KasController;
+use App\Http\Middleware\UpdateKasNextDay;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -20,7 +22,7 @@ Auth::routes();
 
 Route::get('/login', function () {
     return view('auth.login');
-})->name('login');
+})->name('login')->Middleware('UpdateKasNextDay');
 
 Route::post('/postlogin', [LoginController::class, 'postlogin'])->name('postlogin');
 Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
@@ -41,5 +43,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/users', [UserController::class, 'store'])->name('users.store');
     Route::put('/users/{id}', 'UserController@update')->name('users.update');
     Route::delete('users/{id}', 'UserController@destroy')->name('users.destroy');
+    Route::get('/kas', [KasController::class, 'index'])->name('kas.index');
     Route::resource('kas', KasController::class);
-});
+    
+})->middleware('web');

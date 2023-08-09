@@ -20,7 +20,7 @@ class KasController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = Kas::all(); // Use the Kas model to fetch data
+            $data = Kas::all();
             return DataTables::of($data)
                 ->editColumn('kas_awal', function ($row) {
                     return formatRupiah($row->kas_awal);
@@ -34,11 +34,15 @@ class KasController extends Controller
                 ->editColumn('kas_akhir', function ($row) {
                     return formatRupiah($row->kas_akhir);
                 })
+                ->addColumn('date', function ($row) {
+                    return $row->date->format('Y-m-d');
+                })
                 ->make(true);
         }
 
         return view('kas.index');
     }
+
 
     // ... (other methods)
 
