@@ -34,13 +34,11 @@
                         <br />
                         <div class="container">
                             @foreach ($permission as $value)
-                                <div class="form-check">
-                                    <input class="form-check-input" value="{{ $value->id }}" name="permission[]"
-                                        type="checkbox" id="flexSwitchCheckDefault">
-                                    <label class="form-check-label"
-                                        for="flexSwitchCheckDefault">{{ $value->name }}</label>
-                                    <br />
-                                </div>
+                            <div class="form-check">
+                                <input class="form-check-input" value="{{ $value->id }}" name="permission[]" type="checkbox" id="flexSwitchCheckDefault">
+                                <label class="form-check-label" for="flexSwitchCheckDefault">{{ $value->name }}</label>
+                                <br />
+                            </div>
                             @endforeach
                         </div>
                     </div>
@@ -58,35 +56,36 @@
 
 @section('script')
 <script type="application/javascript">
-    $("#create-user").on('submit', function(e) {
-        e.preventDefault();
-        var btn = $('#btn-create');
-        btn.attr('disabled', true);
-        btn.val("Loading...");
-        let formData = new FormData(this);
-        $('#name_error').text('');
-        $('#permission_error').text('');
+    $(document).ready(function() {
+        $("#createRoleForm").on('submit', function(e) {
+            e.preventDefault();
+            var btn = $('#createRoleBtn');
+            btn.attr('disabled', true);
+            btn.html("Loading...");
+            var formData = new FormData(this);
+            $('#name_error').text('');
+            $('#permission_error').text('');
 
-        $.ajax({
-            url: "{{ route('roles.store') }}",
-            type: "POST",
-            data: formData,
-            cache: false,
-            contentType: false,
-            processData: false,
-            success: function(response) {
-                $(".preloader").fadeOut();
-                if (response.success) {
-                    window.location.href = "{{ route('roles.index') }}";
-                    sessionStorage.setItem('success', response.message);
+            $.ajax({
+                url: "{{ route('roles.store') }}",
+                type: "POST",
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    if (response.success) {
+                        window.location.href = "{{ route('roles.index') }}";
+                        sessionStorage.setItem('success', response.message);
+                    }
+                },
+                error: function(response) {
+                    btn.attr('disabled', false);
+                    btn.html("Create Role");
+                    $('#name_error').text(response.responseJSON.errors.name);
+                    $('#permission_error').text(response.responseJSON.errors.permission);
                 }
-            },
-            error: function(response) {
-                btn.attr('disabled', false);
-                btn.val("Simpan");
-                $('#name_error').text(response.responseJSON.errors.name);
-                $('#premission_error').text(response.responseJSON.errors.permission);
-            }
+            });
         });
     });
 </script>

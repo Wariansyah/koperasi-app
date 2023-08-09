@@ -16,18 +16,18 @@ use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
-    function __construct()
-    {
-        $this->middleware('permission:list-user|create-user|edit-user|delete-user', ['only' => ['index','store']]);
-        $this->middleware('permission:create-user', ['only' => ['create','store']]);
-        $this->middleware('permission:edit-user', ['only' => ['edit','update']]);
-        $this->middleware('permission:delete-user', ['only' => ['destroy']]);
-    }
+    // function __construct()
+    // {
+    //     $this->middleware('permission:list-user|create-user|edit-user|delete-user', ['only' => ['index','store']]);
+    //     $this->middleware('permission:create-user', ['only' => ['create','store']]);
+    //     $this->middleware('permission:edit-user', ['only' => ['edit','update']]);
+    //     $this->middleware('permission:delete-user', ['only' => ['destroy']]);
+    // }
 
     public function index(Request $request)
     {
         $auth = auth()->user()->with('permissions')->first();
-        $data = User::all();
+        $data = User::with('role')->get();
 
         if ($request->ajax()) {
             return DataTables::of($data)
@@ -85,7 +85,8 @@ class UserController extends Controller
 
     public function create()
     {
-        return view('pages.users.create');
+        $roles = Role::all(); // Fetch all roles from the database
+        return view('pages.users.create', compact('roles'));
     }
 
     public function store(Request $request)
