@@ -18,7 +18,7 @@
                             <table id="table-user" class="table table-bordered table-hover">
                                 <thead>
                                     <tr>
-                                        <th>#</th>
+                                        <th>Id</th>
                                         <th>Nama</th>
                                         <th>No. Induk</th>
                                         <th>Alamat</th>
