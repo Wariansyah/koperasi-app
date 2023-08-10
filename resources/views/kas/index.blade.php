@@ -15,7 +15,7 @@
                             <table id="table-kas" class="table table-bordered table-hover">
                                 <thead>
                                     <tr>
-                                        <th>Id</th>
+                                        <th>#</th>
                                         <th>User ID</th>
                                         <th>Kas Awal</th>
                                         <th>Kas Masuk</th>
@@ -55,6 +55,17 @@
     }
 
     $(document).ready(function() {
+        if (sessionStorage.getItem('success')) {
+            let data = sessionStorage.getItem('success');
+            toastr.success('', data, {
+                timeOut: 1500,
+                preventDuplicates: true,
+                progressBar: true,
+                positionClass: 'toast-top-right',
+            });
+
+            sessionStorage.clear();
+        }
         $('#table-kas').DataTable({
             processing: true,
             serverSide: true,
