@@ -2,19 +2,7 @@
 
 @section('content')
 <div class="content-header">
-    <div class="container-fluid">
-        <div class="row mb-2">
-            <div class="col-sm-6">
-                <h1 class="m-0">Edit Permissions</h1>
-            </div><!-- /.col -->
-            <div class="col-sm-6">
-                <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item"><a href="#">Home</a></li>
-                    <li class="breadcrumb-item active">Permissions</li>
-                </ol>
-            </div><!-- /.col -->
-        </div><!-- /.row -->
-    </div><!-- /.container-fluid -->
+    <!-- ... -->
 </div>
 
 <div class="content">
@@ -26,7 +14,7 @@
                     @csrf
                     @method('PUT')
                     <div class="form-group">
-                        <label for="name">Permission Name:</label>
+                        <label for="name">Name:</label>
                         <input type="text" name="name" id="name" class="form-control" value="{{ $permission->name }}" required>
                         <span id="name_error" class="text-danger"></span>
                     </div>
@@ -49,9 +37,10 @@
         var btn = $('#editPermissionBtn');
         btn.attr('disabled', true);
         btn.val("Loading...");
-        let formData = new FormData(this);
+        var formData = new FormData(this);
+        formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
         $('#name_error').text('');
-
+        
         $.ajax({
             url: $(this).attr('action'),
             type: "POST",
@@ -60,13 +49,25 @@
             contentType: false,
             processData: false,
             success: function(response) {
-                $(".preloader").fadeOut();
                 if (response.success) {
                     window.location.href = "{{ route('permissions.index') }}";
+                } else {
+                    btn.attr('disabled', false);
+                    btn.val("Update Permission");
+                    if (response.errors) {
+                        if (response.errors.name) {
+                            $('#name_error').text(response.errors.name[0]);
+                        }
+                        // Handle other error fields if needed
+                    }
                 }
             },
+            error: function(xhr, status, error) {
+                // Handle error cases
+                btn.attr('disabled', false);
+                btn.val("Update Permission");
+            }
         });
     });
 </script>
 @endsection
-
