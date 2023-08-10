@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Kas;
 use Carbon\Carbon;
 use App\Models\User;
-use App\Http\Controllers\UserController;
 
 class UpdateKasNextDay
 {
@@ -17,21 +16,24 @@ class UpdateKasNextDay
         if (Auth::check()) {
             $user = Auth::user();
 
-            // Pastikan user memiliki hak akses yang sesuai untuk melakukan operasi ini,
-            // misalnya berdasarkan peran (role) atau izin (permission).
             $loggedInUser = User::find($user->id); // Retrieve the logged-in user from the database
             $lastUpdateDate = $loggedInUser->last_kas_update_date; // Use the retrieved user
 
             $currentDate = Carbon::now();
 
             if (!$lastUpdateDate || $currentDate->isAfter($lastUpdateDate)) {
-                $kasForCurrentDate = Kas::where('date', $currentDate->toDateString())->first();
+                $currentKasRecord = Kas::where('user_id', $loggedInUser->id)
+                    ->whereDate('date', $currentDate->toDateString())
+                    ->first();
 
-                if ($kasForCurrentDate) {
-                    $kasAwalNextDay = $kasForCurrentDate->kas_akhir + $kasForCurrentDate->kas_masuk - $kasForCurrentDate->kas_keluar;
+                if ($currentKasRecord) {
+                    // Calculate the initial balance for the next day using the current day's closing balance
+                    $kasAwalNextDay = $currentKasRecord->kas_akhir + $loggedInUser->kas_masuk - $loggedInUser->kas_keluar;
 
                     $nextDate = $currentDate->copy()->addDay();
-                    $nextDayRecord = Kas::where('date', $nextDate->toDateString())->first();
+                    $nextDayRecord = Kas::where('user_id', $loggedInUser->id)
+                        ->whereDate('date', $nextDate->toDateString())
+                        ->first();
 
                     if (!$nextDayRecord) {
                         $newKasRecord = new Kas([

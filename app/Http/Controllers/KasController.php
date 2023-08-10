@@ -9,6 +9,7 @@ use DataTables;
 use Carbon\Carbon;
 use Response;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 
 class KasController extends Controller
 {
@@ -24,31 +25,33 @@ class KasController extends Controller
     
             return DataTables::of($data)
                 ->addColumn('user_id', function ($row) {
-                    return $row->user->name; // Assuming you have a User relationship in your Kas model
+                    return $row->user->name;
                 })
                 ->editColumn('kas_awal', function ($row) {
-                    return formatRupiah($row->kas_awal);
+                    return $this->formatRupiah($row->kas_awal);
                 })
                 ->editColumn('kas_masuk', function ($row) {
-                    return formatRupiah($row->kas_masuk);
+                    return $this->formatRupiah($row->kas_masuk);
                 })
                 ->editColumn('kas_keluar', function ($row) {
-                    return formatRupiah($row->kas_keluar);
+                    return $this->formatRupiah($row->kas_keluar);
                 })
                 ->editColumn('kas_akhir', function ($row) {
-                    return formatRupiah($row->kas_akhir);
+                    return $this->formatRupiah($row->kas_akhir);
                 })
-                
-                ->rawColumns(['user_id', 'date']) // Add rawColumns for HTML content
+                ->rawColumns(['user_id'])
                 ->make(true);
         }
     
         return view('kas.index');
     }
     
+    // Helper function to format number as IDR currency
+    public function formatRupiah($number)
+    {
+        return 'Rp ' . number_format($number, 0, ',', '.');
+    }
     
-
-
     // ... (other methods)
 
     public function updateKasAwalForNextDay($date)
@@ -57,17 +60,18 @@ class KasController extends Controller
         $nextDate = $currentDate->copy()->addDay();
 
         $kasForCurrentDate = Kas::where('date', $currentDate)
-            ->where('user_id', auth()->id()) // Add the user_id filter
+            ->where('user_id', auth()->id())
             ->first();
 
         if (!$kasForCurrentDate) {
             return "No 'kas' data found for the date: $date";
         }
 
+        // Calculate the initial balance for the next day
         $kasAwalNextDay = $kasForCurrentDate->kas_akhir + $kasForCurrentDate->kas_masuk - $kasForCurrentDate->kas_keluar;
 
         $nextDayRecord = Kas::where('date', $nextDate)
-            ->where('user_id', auth()->id()) // Add the user_id filter
+            ->where('user_id', auth()->id())
             ->first();
 
         if ($nextDayRecord) {
@@ -77,7 +81,7 @@ class KasController extends Controller
             ]);
         } else {
             $newKasRecord = Kas::create([
-                'user_id' => auth()->id(), // Set the user_id
+                'user_id' => auth()->id(),
                 'kas_awal' => $kasAwalNextDay,
                 'kas_masuk' => 0,
                 'kas_keluar' => 0,
