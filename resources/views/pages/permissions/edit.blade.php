@@ -63,7 +63,7 @@
                 $(".preloader").fadeOut();
                 if (response.success) {
                     window.location.href = "{{ route('permissions.index') }}";
-                },
+                }
             },
         });
     });
