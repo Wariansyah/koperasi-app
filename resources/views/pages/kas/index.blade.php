@@ -36,7 +36,7 @@
 @endsection
 
 @section('script')
-<script>
+<script type="application/javascript">
     // Fungsi untuk mengformat angka menjadi format mata uang Rupiah
     function formatRupiah(angka) {
         var number_string = angka.toString();
@@ -71,8 +71,8 @@
             serverSide: true,
             ajax: "{{ route('kas.index') }}",
             columns: [{
-                    data: 'id',
-                    name: 'id'
+                    data: 'DT_RowIndex',
+                    name: 'DT_RowIndex'
                 },
                 {
                     data: 'user_id',
