@@ -27,31 +27,37 @@
                         <label for="name">Nama:</label>
                         <input type="text" name="name" id="name" class="form-control" required>
                         <span id="name_error" class="text-danger"></span>
+                        @error('name'){{ $message }}@enderror
                     </div>
                     <div class="form-group">
                         <label for="no_induk">No. Induk:</label>
                         <input type="text" name="no_induk" id="no_induk" class="form-control" required>
                         <span id="no_induk_error" class="text-danger"></span>
+                        @error('no_induk'){{ $message }}@enderror
                     </div>
                     <div class="form-group">
                         <label for="alamat">Alamat:</label>
                         <input type="text" name="alamat" id="alamat" class="form-control" required>
                         <span id="alamat_error" class="text-danger"></span>
+                        @error('alamat'){{ $message }}@enderror
                     </div>
                     <div class="form-group">
                         <label for="email">Email:</label>
                         <input type="email" name="email" id="email" class="form-control" required>
                         <span id="email_error" class="text-danger"></span>
+                        @error('email'){{ $message }}@enderror
                     </div>
                     <div class="form-group">
                         <label for="telepon">Telepon:</label>
                         <input type="text" name="telepon" id="telepon" class="form-control" required>
                         <span id="telepon_error" class="text-danger"></span>
+                        @error('telepon'){{ $message }}@enderror
                     </div>
                     <div class="form-group">
                         <label for="password">Password:</label>
                         <input type="password" name="password" id="password" class="form-control" required>
                         <span id="password_error" class="text-danger"></span>
+                        @error('password'){{ $message }}@enderror
                     </div>
                     <div class="form-group">
                         <label for="status">Status:</label>
@@ -62,6 +68,7 @@
                             <option value="Blokir">Blokir</option>
                         </select>
                         <span id="status_error" class="text-danger"></span>
+                        @error('status'){{ $message }}@enderror
                     </div>
                     <div class="form-group">
                         <label for="jenis_kelamin">Jenis Kelamin:</label>
@@ -71,27 +78,40 @@
                             <option value="Perempuan">Perempuan</option>
                         </select>
                         <span id="jenis_kelamin_error" class="text-danger"></span>
+                        @error('jenis_kelamin'){{ $message }}@enderror
                     </div>
                     <div class="form-group">
                         <label for="tgl_lahir">Tanggal Lahir:</label>
                         <input type="date" name="tgl_lahir" id="tgl_lahir" class="form-control" required>
                         <span id="tgl_lahir_error" class="text-danger"></span>
+                        @error('tgl_lahir'){{ $message }}@enderror
                     </div>
                     <div class="form-group">
                         <label for="tempat_lahir">Tempat Lahir:</label>
                         <input type="text" name="tempat_lahir" id="tempat_lahir" class="form-control" required>
                         <span id="tempat_lahir_error" class="text-danger"></span>
+                        @error('tempat_lahir'){{ $message }}@enderror
                     </div>
                     <div class="form-group">
                         <label for="limit_pinjaman">Limit Pinjaman:</label>
                         <input type="number" name="limit_pinjaman" id="limit_pinjaman" class="form-control" required>
                         <span id="limit_pinjaman_error" class="text-danger"></span>
+                        @error('limit_pinjaman'){{ $message }}@enderror
                     </div>
                     <div class="form-group">
                         <button type="submit" id="createUserBtn" class="btn btn-primary">Create User</button>
                         <a href="{{ route('users.index') }}" class="btn btn-secondary">Cancel</a>
                     </div>
                 </form>
+                @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+                @endif
             </div>
         </div>
     </div>

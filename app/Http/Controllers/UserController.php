@@ -104,11 +104,11 @@ class UserController extends Controller
             'tempat_lahir' => 'required|string',
             'limit_pinjaman' => 'required|numeric',
         ]);
-
+        
         if ($validator->fails()) {
             return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
         }
-
+        
         $user = new User([
             'name' => $request->input('name'),
             'no_induk' => $request->input('no_induk'),
@@ -122,13 +122,11 @@ class UserController extends Controller
             'tmpt_lahir' => $request->input('tempat_lahir'),
             'limit_pinjaman' => $request->input('limit_pinjaman'),
         ]);
-
+        
         $user->save();
-
+        
         return response()->json(['success' => true, 'message' => 'User created successfully.']);
     }
-
-
     /**
      * Display the specified resource.
      *
