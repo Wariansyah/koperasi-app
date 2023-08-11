@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Spatie\Permission\Models\Permission;
+use Illuminate\Support\Facades\Validator;
 use DataTables;
 
 class PermissionController extends Controller
@@ -73,30 +74,21 @@ class PermissionController extends Controller
     }
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'name' => 'required|unique:permissions,name,' . $id,
-        ], [
-            'name.required' => 'Nama wajib diisi',
-            'name.string' => 'Nama harus berupa string',
-            'name.max' => 'Nama tidak boleh lebih dari 200 karakter',
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
         ]);
 
-        $data = $request->all();
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
+        }
+
         $permission = Permission::findOrFail($id);
-        $permission->update(['name' => $data['name']]); // Hanya update nama permission
-
-        if (isset($data['role'])) {
-            $roles = $data['role'];
-            $permission->roles()->sync($roles); // Sinkronisasi role yang terkait dengan permission
-        }
-
-        if ($permission) {
-            return redirect()->route('permissions.index')->with('success', 'Permission berhasil diupdate');
-        }
+        $permission->name = $request->input('name');
+        $permission->save();
 
         return response()->json([
-            'code' => 400,
-            'message' => 'Permission gagal diupdate'
+            'success' => true,
+            'message' => 'Permission name successfully updated'
         ]);
     }
 

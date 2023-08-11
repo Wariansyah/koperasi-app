@@ -77,30 +77,29 @@ class RoleController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|unique:roles,name',
-            'permission' => 'required',
-        ], [
-            'name.required' => 'Nama wajib diisi',
-            'name.string' => 'Nama harus berupa string',
-            'name.max' => 'Nama tidak boleh lebih dari 200 karakter',
-            'permission.required' => 'permission wajib diisi',
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'permission' => 'required|array', // Menambah validasi untuk permission
+            // ...
         ]);
 
-
-        $data = $request->all();
-        $role = Role::create($data);
-        $role->syncPermissions($request->input('permission'));
-        if ($role) {
-            return redirect()->route('roles.index')->with('success', 'Role berhasil di simpan');
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
         }
 
-
-        return response()->json([
-            'code' => 400,
-            'message' => 'Role gagal di simpan'
+        $role = new Role([
+            'name' => $request->input('name'),
         ]);
+
+        $role->save();
+
+        // Attach permissions to the role
+        $permissions = $request->input('permission');
+        $role->permissions()->attach($permissions);
+
+        return response()->json(['success' => true, 'message' => 'Role created successfully.']);
     }
+
 
     /**
      * Display the specified resource.
@@ -144,29 +143,28 @@ class RoleController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'name' => 'required|unique:roles,name,' . $id,
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
             'permission' => 'required|array',
-        ], [
-            'name.required' => 'Nama wajib diisi',
-            'name.string' => 'Nama harus berupa string',
-            'name.max' => 'Nama tidak boleh lebih dari 200 karakter',
-            'permission.required' => 'Permission wajib diisi',
-            'permission.array' => 'Permission harus berupa array',
         ]);
 
-        $data = $request->all();
-        $role = Role::findOrFail($id);
-        $role->update($data);
-        $role->syncPermissions($request->input('permission'));
-
-        if ($role) {
-            return redirect()->route('roles.index')->with('success', 'Role berhasil diupdate');
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
         }
 
+        $role = Role::findOrFail($id);
+        $role->name = $request->input('name');
+
+        $permissions = $request->input('permission');
+        // Lakukan operasi yang sesuai untuk menyimpan permission
+        // Misalnya, jika menggunakan relasi permissions pada model Role, Anda dapat menggunakan:
+        $role->permissions()->sync($permissions);
+
+        $role->save();
+
         return response()->json([
-            'code' => 400,
-            'message' => 'Role gagal diupdate'
+            'success' => true,
+            'message' => 'Role successfully updated'
         ]);
     }
 

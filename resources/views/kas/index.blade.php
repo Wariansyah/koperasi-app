@@ -53,19 +53,6 @@
         rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
         return 'Rp ' + rupiah;
     }
-
-    $(document).ready(function() {
-        if (sessionStorage.getItem('success')) {
-            let data = sessionStorage.getItem('success');
-            toastr.success('', data, {
-                timeOut: 1500,
-                preventDuplicates: true,
-                progressBar: true,
-                positionClass: 'toast-top-right',
-            });
-
-            sessionStorage.clear();
-        }
         $('#table-kas').DataTable({
             processing: true,
             serverSide: true,
@@ -100,7 +87,6 @@
                 },
             ]
         });
-    });
 
     function deleteItem(button) {
         var id = $(button).data('id');

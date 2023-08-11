@@ -66,6 +66,27 @@
             $('#name_error').text('');
             $('#permission_error').text('');
 
+            // Add your custom validation logic here
+            var name = formData.get('name');
+            var permissions = formData.getAll('permission[]');
+
+            // Perform validation checks
+            var validationError = false;
+            if (name.trim() === '') {
+                $('#name_error').text('Role Name is required.');
+                validationError = true;
+            }
+            if (permissions.length === 0) {
+                $('#permission_error').text('At least one permission must be selected.');
+                validationError = true;
+            }
+
+            if (validationError) {
+                btn.attr('disabled', false);
+                btn.html("Create Role");
+                return; // Stop form submission
+            }
+
             $.ajax({
                 url: "{{ route('roles.store') }}",
                 type: "POST",
@@ -89,4 +110,5 @@
         });
     });
 </script>
+
 @endsection
