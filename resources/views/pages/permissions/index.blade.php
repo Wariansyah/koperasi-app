@@ -90,9 +90,19 @@
     });
 
     function deleteItem(button) {
-        var id = $(button).data('id');
+    var id = $(button).data('id');
+    var name = $(button).data('name'); // Assuming you have a 'data-name' attribute
 
-        if (confirm('Are you sure you want to delete ' + name + '?')) {
+    Swal.fire({
+        title: 'Apakah Anda yakin ingin melanjutkan?',
+        text: "Tindakan ini tidak dapat dibatalkan!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, hapus!',
+        cancelButtonText: 'Tidak, batalkan!',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
             $.ajax({
                 url: '/permissions/' + id,
                 type: 'DELETE',
@@ -100,14 +110,28 @@
                     _token: $('meta[name="csrf-token"]').attr('content')
                 },
                 success: function(response) {
-                    // Remove the deleted row from the table
-                    $(button).closest('tr').remove();
+                    Swal.fire(
+                        'Terhapus!',
+                        'Role Anda telah dihapus.',
+                        'success'
+                    ).then(() => {
+                        // Remove the deleted row from the table
+                        $(button).closest('tr').remove();
+                    });
                 },
                 error: function(xhr) {
                     console.log(xhr.responseText);
                 }
             });
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+            Swal.fire(
+                'Dibatalkan',
+                'Role Anda aman :)',
+                'error'
+            );
         }
-    }
+    });
+}
+
 </script>
 @endsection

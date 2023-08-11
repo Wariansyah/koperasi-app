@@ -20,8 +20,11 @@ class KasController extends Controller
      */
     public function index(Request $request)
     {
+        $user = auth()->user();
+        
+        $data = Kas::where('user_id', $user->id)->orderBy('date','DESC')->get();
+        // dd($data->toArray());
         if ($request->ajax()) {
-            $data = Kas::all();
     
             return DataTables::of($data)
                 ->addColumn('user_id', function ($row) {
@@ -39,11 +42,12 @@ class KasController extends Controller
                 ->editColumn('kas_akhir', function ($row) {
                     return $this->formatRupiah($row->kas_akhir);
                 })
+                ->addIndexColumn()
                 ->rawColumns(['user_id'])
                 ->make(true);
         }
     
-        return view('kas.index');
+        return view('pages.kas.index');
     }
     
     // Helper function to format number as IDR currency

@@ -38,7 +38,7 @@
                         </div>
                     @endif
 
-                    <form action="{{ route('kas.index') }}" method="POST"> <!-- Changed route to 'kas.index' and added method="POST" -->
+                    <form action="{{ route('pages.kas.index') }}" method="POST"> <!-- Changed route to 'kas.index' and added method="POST" -->
                         @csrf <!-- Added the CSRF token field -->
                         <div class="form-group">
                             <label for="kas_awal">Kas Awal</label>

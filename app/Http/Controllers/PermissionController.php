@@ -35,6 +35,7 @@ class PermissionController extends Controller
                     $btn .= ' <button type="button" class="btn btn-sm btn-danger" data-id="' . $row->id . '" onclick="deleteItem(this)">Delete</button>';
                     return $btn;
                 })
+                ->addIndexColumn()
                 ->rawColumns(['action'])
                 ->make(true);
         }

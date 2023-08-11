@@ -5,7 +5,7 @@
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1 class="m-0">Create Roles</h1>
+                <h1 class="m-0">Create New Role</h1>
             </div><!-- /.col -->
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
@@ -18,7 +18,6 @@
 </div>
 
 <div class="content">
-    <!-- ... -->
     <div class="col-md-12">
         <div class="card">
             <div class="card-body">
@@ -33,11 +32,10 @@
                         <strong>Permission:</strong>
                         <br />
                         <div class="container">
-                            @foreach ($permission as $value)
+                            @foreach($permission as $value)
                             <div class="form-check">
-                                <input class="form-check-input" value="{{ $value->id }}" name="permission[]" type="checkbox" id="flexSwitchCheckDefault">
-                                <label class="form-check-label" for="flexSwitchCheckDefault">{{ $value->name }}</label>
-                                <br />
+                                <input class="form-check-input" value="{{ $value->id }}" name="permission[]" type="checkbox" id="flexSwitchCheckDefault{{ $value->id }}">
+                                <label class="form-check-label" for="flexSwitchCheckDefault{{ $value->id }}">{{ $value->name }}</label>
                             </div>
                             @endforeach
                         </div>
@@ -50,7 +48,6 @@
             </div>
         </div>
     </div>
-    <!-- ... -->
 </div>
 @endsection
 
@@ -66,49 +63,43 @@
             $('#name_error').text('');
             $('#permission_error').text('');
 
-            // Add your custom validation logic here
-            var name = formData.get('name');
-            var permissions = formData.getAll('permission[]');
-
-            // Perform validation checks
-            var validationError = false;
-            if (name.trim() === '') {
-                $('#name_error').text('Role Name is required.');
-                validationError = true;
-            }
-            if (permissions.length === 0) {
-                $('#permission_error').text('At least one permission must be selected.');
-                validationError = true;
-            }
-
-            if (validationError) {
-                btn.attr('disabled', false);
-                btn.html("Create Role");
-                return; // Stop form submission
-            }
-
-            $.ajax({
-                url: "{{ route('roles.store') }}",
-                type: "POST",
-                data: formData,
-                cache: false,
-                contentType: false,
-                processData: false,
-                success: function(response) {
-                    if (response.success) {
+        $.ajax({
+            url: $(this).attr('action'),
+            type: "POST",
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function(response) {
+                if (response.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Role berhasil dibuat',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
                         window.location.href = "{{ route('roles.index') }}";
-                        sessionStorage.setItem('success', response.message);
-                    }
-                },
-                error: function(response) {
+                    });
+                } else {
                     btn.attr('disabled', false);
-                    btn.html("Create Role");
-                    $('#name_error').text(response.responseJSON.errors.name);
-                    $('#permission_error').text(response.responseJSON.errors.permission);
+                    btn.val("Create Role");
+                    if (response.errors) {
+                        if (response.errors.name) {
+                            $('#name_error').text(response.errors.name[0]);
+                        }
+                        if (response.errors.permission) {
+                            $('#permission_error').text(response.errors.permission[0]);
+                        }
+                    }
                 }
-            });
+            },
+            error: function(xhr, status, error) {
+                btn.attr('disabled', false);
+                btn.val("Create Role");
+            }
         });
     });
+});
 </script>
 
 @endsection
