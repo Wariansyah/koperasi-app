@@ -75,32 +75,31 @@ class RoleController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|unique:roles,name',
-            'permission' => 'required',
-        ], [
-            'name.required' => 'Nama wajib diisi',
-            'name.string' => 'Nama harus berupa string',
-            'name.max' => 'Nama tidak boleh lebih dari 200 karakter',
-            'permission.required' => 'permission wajib diisi',
-        ]);
-
-
-        $data = $request->all();
-        $role = Role::create($data);
-        $role->syncPermissions($request->input('permission'));
-        if ($role) {
-            return redirect()->route('roles.index')->with('success', 'Role berhasil di simpan');
-        }
-
-
-        return response()->json([
-            'code' => 400,
-            'message' => 'Role gagal di simpan'
-        ]);
-    }
+     public function store(Request $request)
+     {
+         $validator = Validator::make($request->all(), [
+             'name' => 'required|string|max:255',
+             'permission' => 'required|array',
+         ]);
+     
+         if ($validator->fails()) {
+             return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
+         }
+     
+         $role = new Role();
+         $role->name = $request->input('name');
+     
+         $permissions = $request->input('permission');
+         // Lakukan operasi yang sesuai untuk menyimpan permission
+         // Misalnya, jika menggunakan relasi permissions pada model Role, Anda dapat menggunakan:
+         $role->save();
+         $role->permissions()->attach($permissions); // Attach the permissions
+     
+         return response()->json([
+             'success' => true,
+             'message' => 'Role successfully created'
+         ]);
+     }
 
     /**
      * Display the specified resource.
@@ -144,32 +143,30 @@ class RoleController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'name' => 'required|unique:roles,name,' . $id,
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
             'permission' => 'required|array',
-        ], [
-            'name.required' => 'Nama wajib diisi',
-            'name.string' => 'Nama harus berupa string',
-            'name.max' => 'Nama tidak boleh lebih dari 200 karakter',
-            'permission.required' => 'Permission wajib diisi',
-            'permission.array' => 'Permission harus berupa array',
         ]);
 
-        $data = $request->all();
-        $role = Role::findOrFail($id);
-        $role->update($data);
-        $role->syncPermissions($request->input('permission'));
-
-        if ($role) {
-            return redirect()->route('roles.index')->with('success', 'Role berhasil diupdate');
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
         }
 
+        $role = Role::findOrFail($id);
+        $role->name = $request->input('name');
+
+        $permissions = $request->input('permission');
+        // Lakukan operasi yang sesuai untuk menyimpan permission
+        // Misalnya, jika menggunakan relasi permissions pada model Role, Anda dapat menggunakan:
+        $role->permissions()->sync($permissions);
+
+        $role->save();
+
         return response()->json([
-            'code' => 400,
-            'message' => 'Role gagal diupdate'
+            'success' => true,
+            'message' => 'Role successfully updated'
         ]);
     }
-
     /**
      * Remove the specified resource from storage.
      *
@@ -178,18 +175,7 @@ class RoleController extends Controller
      */
     public function destroy($id)
     {
-        $role = Role::findOrFail($id);
-
-        if ($role->delete()) {
-            return response()->json([
-                'code' => 200,
-                'message' => 'Role berhasil dihapus'
-            ]);
-        }
-
-        return response()->json([
-            'code' => 400,
-            'message' => 'Role gagal dihapus'
-        ]);
+        DB::table("roles")->where('id',$id)->delete();
+        return response()->json(array('success' => true));
     }
 }

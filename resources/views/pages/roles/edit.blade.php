@@ -5,7 +5,7 @@
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1 class="m-0">Edit Roles</h1>
+                <h1 class="m-0">Edit Role</h1>
             </div><!-- /.col -->
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
@@ -18,7 +18,6 @@
 </div>
 
 <div class="content">
-    <!-- ... -->
     <div class="col-md-12">
         <div class="card">
             <div class="card-body">
@@ -50,7 +49,6 @@
             </div>
         </div>
     </div>
-    <!-- ... -->
 </div>
 @endsection
 
@@ -61,21 +59,44 @@
         var btn = $('#editRoleBtn');
         btn.attr('disabled', true);
         btn.val("Loading...");
-        let formData = new FormData(this);
+        var formData = new FormData(this);
+        formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
         $('#name_error').text('');
+        $('#permission_error').text('');
 
         $.ajax({
             url: $(this).attr('action'),
-            type: "POST", // Change this to PUT if needed
+            type: "POST",
             data: formData,
             cache: false,
             contentType: false,
             processData: false,
             success: function(response) {
-                $(".preloader").fadeOut();
-                if (response.success) { // Check if the success property is true
-                    window.location.href = "{{ route('roles.index') }}";
+                if (response.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Role berhasil diperbarui',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        window.location.href = "{{ route('roles.index') }}";
+                    });
+                } else {
+                    btn.attr('disabled', false);
+                    btn.val("Update Role");
+                    if (response.errors) {
+                        if (response.errors.name) {
+                            $('#name_error').text(response.errors.name[0]);
+                        }
+                        if (response.errors.permission) {
+                            $('#permission_error').text(response.errors.permission[0]);
+                        }
+                    }
                 }
+            },
+            error: function(xhr, status, error) {
+                btn.attr('disabled', false);
+                btn.val("Update Role");
             }
         });
     });
