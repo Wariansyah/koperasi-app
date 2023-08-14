@@ -40,7 +40,7 @@ class UserController extends Controller
                 ->addColumn('role', function ($row) {
                     if (!empty($row->getRoleNames())) {
                         foreach ($row->getRoleNames() as $role) {
-                            if ($role == 'SUPER-ADMIN') {
+                            if ($role == 'Admin') {
                                 $badge = '<span class="badge badge-danger text-white">' . $role . '</span>';
                                 return $badge;
                             } else {
@@ -108,7 +108,7 @@ class UserController extends Controller
         $userData['status'] = 'Belum Aktif';
         $userData['password'] = Hash::make($request->input('password'));
 
-        $user = User::create($userData);
+        $userData = User::create($userData);
 
         return response()->json(['success' => true, 'message' => 'User created successfully.']);
     }
