@@ -8,7 +8,7 @@ use App\Http\Controllers\Controller;
 use DataTables;
 use Auth;
 use App\Models\User;
-use Hash;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Arr;
 use DB;
 use Spatie\Permission\Models\Role;
@@ -52,7 +52,7 @@ class UserController extends Controller
                 })
                 ->addColumn('status', function ($row) {
                     if ($row->status == '0') {
-                        $badge = '<span class="badge badge-info text-white">Belum Ativasi</span>';
+                        $badge = '<span class="badge badge-info text-white">Belum Aktivasi</span>';
                         return $badge;
                     } elseif ($row->status == '1') {
                         $badge = '<span class="badge badge-success text-white">Aktif</span>';
@@ -91,40 +91,25 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $request->validate([
             'name' => 'required|string|max:255',
             'no_induk' => 'required|string|unique:users',
             'alamat' => 'required|string',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6',
             'telepon' => 'required|string|unique:users',
-            'status' => 'required|string',
-            'jenis_kelamin' => 'required|string',
+            'jenkel' => 'required|string', // Validate jenis_kelamin field
             'tgl_lahir' => 'required|date',
-            'tempat_lahir' => 'required|string',
+            'tmpt_lahir' => 'required|string',
             'limit_pinjaman' => 'required|numeric',
         ]);
-        
-        if ($validator->fails()) {
-            return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
-        }
-        
-        $user = new User([
-            'name' => $request->input('name'),
-            'no_induk' => $request->input('no_induk'),
-            'alamat' => $request->input('alamat'),
-            'email' => $request->input('email'),
-            'password' => bcrypt($request->input('password')),
-            'telepon' => $request->input('telepon'),
-            'status' => $request->input('status'),
-            'jenkel' => $request->input('jenis_kelamin'),
-            'tgl_lahir' => $request->input('tgl_lahir'),
-            'tmpt_lahir' => $request->input('tempat_lahir'),
-            'limit_pinjaman' => $request->input('limit_pinjaman'),
-        ]);
-        
-        $user->save();
-        
+
+        $userData = $request->all();
+        $userData['status'] = 'Belum Aktif';
+        $userData['password'] = Hash::make($request->input('password'));
+
+        $user = User::create($userData);
+
         return response()->json(['success' => true, 'message' => 'User created successfully.']);
     }
     /**
@@ -163,46 +148,37 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $validator = Validator::make($request->all(), [
+        $user = User::find($id);
+
+        if (!$user) {
+            return response()->json(['success' => false, 'message' => 'User not found.'], 404);
+        }
+
+        $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $id,
+            'no_induk' => 'required|string|unique:users,no_induk,' . $id,
             'alamat' => 'required|string',
-            'telepon' => 'required|string',
-            'status' => 'required|string',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $id,
+            'password' => 'nullable|string|min:6', // Allow password to be nullable for update
+            'telepon' => 'required|string|unique:users,telepon,' . $id,
+            'jenkel' => 'required|string',
             'tgl_lahir' => 'required|date',
             'tmpt_lahir' => 'required|string',
-            'no_induk' => 'required|string',
-            'jenkel' => 'required|string',
-            'limit_pinjaman' => 'required|string',
+            'limit_pinjaman' => 'required|numeric',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
-        }
+        $userData = $request->except('password');
 
-        $user = User::findOrFail($id);
-        $user->name = $request->input('name');
-        $user->email = $request->input('email');
-        $user->alamat = $request->input('alamat');
-        $user->telepon = $request->input('telepon');
-        $user->status = $request->input('status');
-        $user->tgl_lahir = $request->input('tgl_lahir');
-        $user->tmpt_lahir = $request->input('tmpt_lahir');
-        $user->no_induk = $request->input('no_induk');
-        $user->jenkel = $request->input('jenkel');
-        $user->limit_pinjaman = $request->input('limit_pinjaman');
-
+        // Update the password if provided
         if ($request->has('password')) {
-            $user->password = bcrypt($request->input('password'));
+            $userData['password'] = Hash::make($request->input('password'));
         }
 
-        $user->save();
+        $user->update($userData);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'User successfully updated'
-        ]);
+        return response()->json(['success' => true, 'message' => 'User updated successfully.']);
     }
+
 
 
     /**

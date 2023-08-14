@@ -60,25 +60,14 @@
                         @error('password'){{ $message }}@enderror
                     </div>
                     <div class="form-group">
-                        <label for="status">Status:</label>
-                        <select name="status" id="status" class="form-control" required>
-                            <option value="">-- Pilih Status --</option>
-                            <option value="Aktif">Aktif</option>
-                            <option value="Tidak Aktif">Tidak Aktif</option>
-                            <option value="Blokir">Blokir</option>
-                        </select>
-                        <span id="status_error" class="text-danger"></span>
-                        @error('status'){{ $message }}@enderror
-                    </div>
-                    <div class="form-group">
-                        <label for="jenis_kelamin">Jenis Kelamin:</label>
-                        <select name="jenis_kelamin" id="jenis_kelamin" class="form-control" required>
+                        <label for="jenkel">Jenis Kelamin:</label>
+                        <select name="jenkel" id="jenkel" class="form-control" required>
                             <option value="">-- Pilih Jenis Kelamin --</option>
                             <option value="Laki-laki">Laki-laki</option>
                             <option value="Perempuan">Perempuan</option>
                         </select>
-                        <span id="jenis_kelamin_error" class="text-danger"></span>
-                        @error('jenis_kelamin'){{ $message }}@enderror
+                        <span id="jenkel_error" class="text-danger"></span>
+                        @error('jenkel'){{ $message }}@enderror
                     </div>
                     <div class="form-group">
                         <label for="tgl_lahir">Tanggal Lahir:</label>
@@ -87,10 +76,10 @@
                         @error('tgl_lahir'){{ $message }}@enderror
                     </div>
                     <div class="form-group">
-                        <label for="tempat_lahir">Tempat Lahir:</label>
-                        <input type="text" name="tempat_lahir" id="tempat_lahir" class="form-control" required>
-                        <span id="tempat_lahir_error" class="text-danger"></span>
-                        @error('tempat_lahir'){{ $message }}@enderror
+                        <label for="tmpt_lahir">Tempat Lahir:</label>
+                        <input type="text" name="tmpt_lahir" id="tmpt_lahir" class="form-control" required>
+                        <span id="tmpt_lahir_error" class="text-danger"></span>
+                        @error('tmpt_lahir'){{ $message }}@enderror
                     </div>
                     <div class="form-group">
                         <label for="limit_pinjaman">Limit Pinjaman:</label>
@@ -148,10 +137,9 @@
         $('#email_error').text('');
         $('#telepon_error').text('');
         $('#password_error').text('');
-        $('#status_error').text('');
-        $('#jenis_kelamin_error').text('');
+        $('#jenkel_error').text('');
         $('#tgl_lahir_error').text('');
-        $('#tempat_lahir_error').text('');
+        $('#tmpt_lahir_error').text('');
         $('#limit_pinjaman_error').text('');
 
         $.ajax({
@@ -166,6 +154,8 @@
                 if (response.success) {
                     window.location.href = "{{ route('users.index') }}";
                     sessionStorage.setItem('success', response.message);
+                    // Display the gender data
+                    $('#jenkel').html('<span class="badge badge-primary">' + response.jenkel + '</span>');
                 }
             },
             error: function(response) {
@@ -177,10 +167,9 @@
                 $('#email_error').text(response.responseJSON.errors.email);
                 $('#telepon_error').text(response.responseJSON.errors.telepon);
                 $('#password_error').text(response.responseJSON.errors.password);
-                $('#status_error').text(response.responseJSON.errors.status);
-                $('#jenis_kelamin_error').text(response.responseJSON.errors.jenis_kelamin);
+                $('#jenkel_error').text(response.responseJSON.errors.jenkel);
                 $('#tgl_lahir_error').text(response.responseJSON.errors.tgl_lahir);
-                $('#tempat_lahir_error').text(response.responseJSON.errors.tmpt_lahir);
+                $('#tmpt_lahir_error').text(response.responseJSON.errors.tmpt_lahir);
                 $('#limit_pinjaman_error').text(response.responseJSON.errors.limit_pinjaman);
             }
         });
