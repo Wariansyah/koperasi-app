@@ -74,31 +74,32 @@ class RoleController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'permission' => 'required|array',
-        ]);
 
-        if ($validator->fails()) {
-            return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
-        }
-
-        $role = new Role();
-        $role->name = $request->input('name');
-
-        $permissions = $request->input('permission');
-        // Lakukan operasi yang sesuai untuk menyimpan permission
-        // Misalnya, jika menggunakan relasi permissions pada model Role, Anda dapat menggunakan:
-        $role->save();
-        $role->permissions()->attach($permissions); // Attach the permissions
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Role successfully created'
-        ]);
-    }
+     public function store(Request $request)
+     {
+         $validator = Validator::make($request->all(), [
+             'name' => 'required|string|max:255',
+             'permission' => 'required|array',
+         ]);
+     
+         if ($validator->fails()) {
+             return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
+         }
+     
+         $role = new Role();
+         $role->name = $request->input('name');
+     
+         $permissions = $request->input('permission');
+         // Lakukan operasi yang sesuai untuk menyimpan permission
+         // Misalnya, jika menggunakan relasi permissions pada model Role, Anda dapat menggunakan:
+         $role->save();
+         $role->permissions()->attach($permissions); // Attach the permissions
+     
+         return response()->json([
+             'success' => true,
+             'message' => 'Role successfully created'
+         ]);
+     }
 
 
     /**
@@ -175,7 +176,7 @@ class RoleController extends Controller
      */
     public function destroy($id)
     {
-        DB::table("roles")->where('id', $id)->delete();
+        DB::table("roles")->where('id',$id)->delete();
         return response()->json(array('success' => true));
     }
 }

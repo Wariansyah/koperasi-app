@@ -28,45 +28,59 @@
     </div>
     <!-- ... -->
 </div>
+
 @endsection
 
 @section('script')
 <script type="application/javascript">
-    $("#editPermissionForm").on('submit', function(e) {
-        e.preventDefault();
-        var btn = $('#editPermissionBtn');
-        btn.attr('disabled', true);
-        btn.val("Loading...");
-        var formData = new FormData(this);
-        formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
-        $('#name_error').text('');
-        
-        $.ajax({
-            url: $(this).attr('action'),
-            type: "POST",
-            data: formData,
-            cache: false,
-            contentType: false,
-            processData: false,
-            success: function(response) {
-                if (response.success) {
-                    window.location.href = "{{ route('permissions.index') }}";
-                } else {
+    $(document).ready(function() {
+        $("#editPermissionForm").on('submit', function(e) {
+            e.preventDefault();
+            var btn = $('#editPermissionBtn');
+            btn.attr('disabled', true);
+            btn.val("Loading...");
+            var formData = new FormData(this);
+            formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
+            $('#name_error').text('');
+
+            $.ajax({
+                url: $(this).attr('action'),
+                type: "POST",
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    console.log(response); 
+                    if (response.success) {
+                        window.location.href = "{{ route('permissions.index') }}";
+                    } else {
+                        btn.attr('disabled', false);
+                        btn.val("Update Permission");
+                        if (response.errors) {
+                            if (response.errors.name) {
+                                $('#name_error').text(response.errors.name[0]);
+                            }
+                        }
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.log(xhr.responseText); 
                     btn.attr('disabled', false);
                     btn.val("Update Permission");
-                    if (response.errors) {
-                        if (response.errors.name) {
-                            $('#name_error').text(response.errors.name[0]);
+                    if (xhr.status === 422) {
+                        var errors = JSON.parse(xhr.responseText).errors;
+                        if (errors.name) {
+                            $('#name_error').text(errors.name[0]);
                         }
-                        // Handle other error fields if needed
                     }
                 }
-            },
-            error: function(xhr, status, error) {
-                // Handle error cases
-                btn.attr('disabled', false);
-                btn.val("Update Permission");
-            }
+            });
+        });
+
+        // Listen to input changes and clear validation message when input changes
+        $('#name').on('input', function() {
+            $('#name_error').text('');
         });
     });
 </script>

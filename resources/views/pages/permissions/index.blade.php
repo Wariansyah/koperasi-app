@@ -53,24 +53,12 @@
 @section('script')
 <script type="application/javascript">
     $(document).ready(function() {
-        if (sessionStorage.getItem('success')) {
-            let data = sessionStorage.getItem('success');
-            toastr.success('', data, {
-                timeOut: 1500,
-                preventDuplicates: true,
-                progressBar: true,
-                positionClass: 'toast-top-right',
-            });
-
-            sessionStorage.clear();
-        }
-
+        
         $('#table-permission').DataTable({
             processing: true,
             serverSide: true,
             ajax: {
-                url: "{{ route('permissions.index') }}",
-                type: 'GET',
+                url: "{{ route('permissions.index') }}"
             },
             columns: [{
                     data: 'DT_RowIndex',
