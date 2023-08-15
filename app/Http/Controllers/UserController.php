@@ -92,9 +92,9 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:users',
             'no_induk' => 'required|string|unique:users',
-            'alamat' => 'required|string',
+            'alamat' => 'required|string|unique:users',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6',
             'telepon' => ['required', 'string', 'unique:users', 'regex:/^\d{10,12}$/'],
