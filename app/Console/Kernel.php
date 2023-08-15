@@ -16,24 +16,18 @@ class Kernel extends ConsoleKernel
      */
 
 
-    protected function schedule(Schedule $schedule)
-    {
-        // Panggil helper function generateDailyKas setiap hari pada pukul 00:01
-        $schedule->call(function () {
-            generateDailyKas();
-        })->dailyAt('00:01');
-        // $schedule->command('kas:update')->daily();
-    }
+     protected function schedule(Schedule $schedule)
+     {
+         $schedule->command('update:kas_awal')->dailyAt('11:30'); // Ubah waktu sesuai kebutuhan
+     }
+     
 
     /**
      * Register the commands for the application.
      *
      * @return void
      */
-    protected function commands()
-    {
-        $this->load(__DIR__ . '/Commands');
-
-        require base_path('routes/console.php');
-    }
+    protected $commands = [
+        \App\Console\Commands\UpdateKasAwalForNextDay::class,
+    ];
 }

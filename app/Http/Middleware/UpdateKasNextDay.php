@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Middleware;
 
 use Closure;
@@ -17,7 +18,7 @@ class UpdateKasNextDay
             $user = Auth::user();
 
             $loggedInUser = User::find($user->id); // Retrieve the logged-in user from the database
-            $lastUpdateDate = $loggedInUser->last_kas_update_date; // Use the retrieved user
+            $lastUpdateDate = $loggedInUser->last_kas_update_date; // Use the retrieved user's last_kas_update_date
 
             $currentDate = Carbon::now();
 
@@ -28,7 +29,7 @@ class UpdateKasNextDay
 
                 if ($currentKasRecord) {
                     // Calculate the initial balance for the next day using the current day's closing balance
-                    $kasAwalNextDay = $currentKasRecord->kas_akhir + $loggedInUser->kas_masuk - $loggedInUser->kas_keluar;
+                    $kasAwalNextDay = $currentKasRecord->kas_akhir + $currentKasRecord->kas_masuk - $currentKasRecord->kas_keluar;
 
                     $nextDate = $currentDate->copy()->addDay();
                     $nextDayRecord = Kas::where('user_id', $loggedInUser->id)
@@ -47,7 +48,7 @@ class UpdateKasNextDay
                         $newKasRecord->save();
                     }
 
-                    // Update last_kas_update_date pada user
+                    // Update last_kas_update_date on the user
                     $loggedInUser->last_kas_update_date = $currentDate;
                     $loggedInUser->save();
                 }

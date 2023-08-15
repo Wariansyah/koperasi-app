@@ -30,8 +30,8 @@
                         </p>
                     </a>
                 </li>
-                <li class="nav-item{{ request()->is('users*') || request()->is('roles*') ? ' menu-open' : '' }}">
-                    <a href="#" class="nav-link {{ request()->is('users*') ? 'active' : '' }}">
+                <li class="nav-item{{ request()->is('kas*') ? ' menu-open' : '' }}">
+                    <a href="#" class="nav-link {{ request()->is('kas*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-users"></i>
                         <p>
                             Keuangan
@@ -46,10 +46,9 @@
                                 <p>Kas</p>
                             </a>
                         </li>
-
                     </ul>
                 </li>
-                <li class="nav-item{{ request()->is('users*') || request()->is('roles*') ? ' menu-open' : '' }}">
+                <li class="nav-item{{ request()->is('users*') || request()->is('roles*') || request()->is('permissions*') ? ' menu-open' : '' }}">
                     <a href="#" class="nav-link {{ request()->is('users*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-users"></i>
                         <p>
