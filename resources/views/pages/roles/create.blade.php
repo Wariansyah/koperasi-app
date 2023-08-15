@@ -27,6 +27,7 @@
                         <label for="name">Role Name:</label>
                         <input type="text" name="name" id="name" class="form-control" required>
                         <span id="name_error" class="text-danger"></span>
+                        @error('name-error'){{ $message }}@enderror
                     </div>
                     <div class="form-group">
                         <strong>Permission:</strong>
@@ -53,60 +54,58 @@
 
 @section('script')
 <script type="application/javascript">
-    $(document).ready(function() {
-        $("#createRoleForm").on('submit', function(e) {
-            e.preventDefault();
-            var btn = $('#createRoleBtn');
-            btn.attr('disabled', true);
-            btn.html("Loading...");
-            var formData = new FormData(this);
-            $('#name_error').text('');
-            $('#permission_error').text('');
+    $("#createRoleForm").on('submit', function(e) {
+        e.preventDefault();
+        var btn = $('#createRoleBtn');
+        btn.attr('disabled', true);
+        btn.val("Loading...");
+        var formData = new FormData(this);
+        formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
+        $('#name_error').text('');
+        $('#permission_error').text('');
 
-            if ($('#name').val() === '') {
-                $('#name_error').text('Role Name harus diisi.');
-                btn.attr('disabled', false);
-                btn.html("Create Role");
-                return;
-            }
-
-            $.ajax({
-                url: $(this).attr('action'),
-                type: "POST",
-                data: formData,
-                cache: false,
-                contentType: false,
-                processData: false,
-                success: function(response) {
-                    if (response.success) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Role berhasil dibuat',
-                            showConfirmButton: false,
-                            timer: 1500
-                        }).then(() => {
-                            window.location.href = "{{ route('roles.index') }}";
-                        });
-                    } else {
-                        btn.attr('disabled', false);
-                        btn.val("Create Role");
-                        if (response.errors) {
-                            if (response.errors.name) {
-                                $('#name_error').text(response.errors.name[0]);
-                            }
-                            if (response.errors.permission) {
-                                $('#permission_error').text(response.errors.permission[0]);
-                            }
-                        }
-                    }
-                },
-                error: function(xhr, status, error) {
+        $.ajax({
+            url: $(this).attr('action'),
+            type: "POST",
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function(response) {
+                if (response.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Role berhasil dibuat',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        window.location.href = "{{ route('roles.index') }}";
+                    });
+                } else {
                     btn.attr('disabled', false);
                     btn.val("Create Role");
+                    if (response.errors) {
+                        if (response.errors.name) {
+                            $('#name_error').text(response.errors.name[0]);
+                        }
+                    }
                 }
-            });
+            },
+            error: function(xhr, status, error) {
+                    btn.attr('disabled', false);
+                    btn.val("Create Role"); 
+                    if (xhr.status === 422) {
+                        var errors = JSON.parse(xhr.responseText).errors;
+                            if (errors.name) {
+                                $('#name_error').text(errors.name[0]);
+                            }       
+                    }
+            }
+
+        });
+        $('#name').on('input', function(){
+            $('#name_error').text('');
         });
     });
 </script>
-
 @endsection

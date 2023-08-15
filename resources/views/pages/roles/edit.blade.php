@@ -88,16 +88,24 @@
                         if (response.errors.name) {
                             $('#name_error').text(response.errors.name[0]);
                         }
-                        if (response.errors.permission) {
-                            $('#permission_error').text(response.errors.permission[0]);
-                        }
                     }
                 }
             },
             error: function(xhr, status, error) {
+                console.log(xhr.responseText);
                 btn.attr('disabled', false);
-                btn.val("Update Role");
+                btn.val("Update Role"); 
+                if (xhr.status === 422) {
+                    var errors = JSON.parse(xhr.responseText).errors;
+                        if (errors.name) {
+                            $('#name_error').text(errors.name[0]);
+                        }       
+                }
             }
+
+        });
+        $('#name_error').on('input', function(){
+            $('#name_error').text('');
         });
     });
 </script>
