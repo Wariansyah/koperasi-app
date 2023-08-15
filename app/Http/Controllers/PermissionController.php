@@ -58,14 +58,17 @@ class PermissionController extends Controller
             'name' => 'required|unique:permissions,name',
         ], [
             'name.required' => 'Nama Permission wajib diisi',
-            'name.unique' => 'Nama Permission sudah ada',
+            'name.unique' => 'The name has already been taken.',
         ]);
     
         Permission::create([
             'name' => $request->name,
         ]);
     
-        return redirect()->route('permissions.index')->with('success', 'Permission berhasil disimpan');
+        return response()->json([
+            'success' => true,
+            'message' => 'Permission berhasil dibuat'
+        ]);
     }
     
 
@@ -82,15 +85,19 @@ class PermissionController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'name' => 'required|max:255|unique:permissions,name,' . $id,
-        ]);
+            'name' => 'required|unique:permissions,name',
+        ], [
+            'name.required' => 'Nama Permission wajib diisi',
+            'name.unique' => 'The name has already been taken.',
+        ]); 
+        
         $permission = Permission::findOrFail($id);
         $permission->name = $request->input('name');
         $permission->save();
 
         return response()->json([
             'success' => true,
-            'message' => 'Permission name successfully updated'
+            'message' => 'Permission berhasil dibuat'
         ]);
     }
 
