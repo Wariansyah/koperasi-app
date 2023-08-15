@@ -145,7 +145,7 @@ class RoleController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:roles,name,' . $id,
             'permission' => 'required|array',
         ]);
 
@@ -154,11 +154,22 @@ class RoleController extends Controller
         }
 
         $role = Role::findOrFail($id);
-        $role->name = $request->input('name');
+        $newName = $request->input('name');
+
+       
+        if ($role->name !== $newName) {
+            
+            $uniqueCheck = Role::where('name', $newName)->where('id', '<>', $id)->count();
+            if ($uniqueCheck > 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Role name already exists'
+                ], 422);
+            }
+            $role->name = $newName;
+        }
 
         $permissions = $request->input('permission');
-        // Lakukan operasi yang sesuai untuk menyimpan permission
-        // Misalnya, jika menggunakan relasi permissions pada model Role, Anda dapat menggunakan:
         $role->permissions()->sync($permissions);
 
         $role->save();

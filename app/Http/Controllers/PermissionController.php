@@ -84,20 +84,37 @@ class PermissionController extends Controller
     }
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'name' => 'required',
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255|unique:permissions,name,' . $id,
         ], [
             'name.required' => 'Nama Permission wajib diisi',
             'name.unique' => 'The name has already been taken.',
-        ]); 
-        
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
+        }
+
         $permission = Permission::findOrFail($id);
-        $permission->name = $request->input('name');
+        $newName = $request->input('name');
+
+        
+        if ($permission->name !== $newName) {
+            $uniqueCheck = Permission::where('name', $newName)->where('id', '<>', $id)->count();
+            if ($uniqueCheck > 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Permission name already exists'
+                ], 422);
+            }
+            $permission->name = $newName;
+        }
+
         $permission->save();
 
         return response()->json([
             'success' => true,
-            'message' => 'Permission berhasil dibuat'
+            'message' => 'Permission berhasil diupdate'
         ]);
     }
 
