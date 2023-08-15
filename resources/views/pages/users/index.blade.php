@@ -106,22 +106,38 @@
         var id = $(button).data('id');
         var name = $(button).data('name');
 
-        if (confirm('Are you sure you want to delete ' + name + '?')) {
-            $.ajax({
-                url: '/users/' + id,
-                type: 'DELETE',
-                data: {
-                    _token: $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(response) {
-                    // Remove the deleted row from the table
-                    $(button).closest('tr').remove();
-                },
-                error: function(xhr) {
-                    console.log(xhr.responseText);
-                }
-            });
-        }
+        Swal.fire({
+            title: 'Kamu Yakin?',
+            text: 'Kamu ingin menghapus user ' + name + '.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Hapus!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/users/' + id,
+                    type: 'DELETE',
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        // Remove the deleted row from the table
+                        $(button).closest('tr').remove();
+
+                        Swal.fire(
+                            'Deleted!',
+                            name + ' Telah dihapus',
+                            'success'
+                        );
+                    },
+                    error: function(xhr) {
+                        console.log(xhr.responseText);
+                    }
+                });
+            }
+        });
     }
 </script>
 @endsection

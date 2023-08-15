@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    
+
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Admin Panel</title>
 
@@ -150,8 +150,7 @@
 
                 sessionStorage.clear();
             }
-            const status = '{{ session('
-            status ') }}';
+            const status = "{{ session('status ') }}";
             if (status) {
                 toastr.error('', status, {
                     timeOut: 1500,
@@ -164,8 +163,7 @@
                 sessionStorage.clear();
             }
 
-            const success = '{{ session('
-            success ') }}';
+            const success = "{{ session('success ') }}";
             if (success) {
                 toastr.success('', success, {
                     timeOut: 1500,

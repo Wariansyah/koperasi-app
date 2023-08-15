@@ -63,43 +63,50 @@
             $('#name_error').text('');
             $('#permission_error').text('');
 
-        $.ajax({
-            url: $(this).attr('action'),
-            type: "POST",
-            data: formData,
-            cache: false,
-            contentType: false,
-            processData: false,
-            success: function(response) {
-                if (response.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Role berhasil dibuat',
-                        showConfirmButton: false,
-                        timer: 1500
-                    }).then(() => {
-                        window.location.href = "{{ route('roles.index') }}";
-                    });
-                } else {
-                    btn.attr('disabled', false);
-                    btn.val("Create Role");
-                    if (response.errors) {
-                        if (response.errors.name) {
-                            $('#name_error').text(response.errors.name[0]);
-                        }
-                        if (response.errors.permission) {
-                            $('#permission_error').text(response.errors.permission[0]);
+            if ($('#name').val() === '') {
+                $('#name_error').text('Role Name harus diisi.');
+                btn.attr('disabled', false);
+                btn.html("Create Role");
+                return;
+            }
+
+            $.ajax({
+                url: $(this).attr('action'),
+                type: "POST",
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Role berhasil dibuat',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(() => {
+                            window.location.href = "{{ route('roles.index') }}";
+                        });
+                    } else {
+                        btn.attr('disabled', false);
+                        btn.val("Create Role");
+                        if (response.errors) {
+                            if (response.errors.name) {
+                                $('#name_error').text(response.errors.name[0]);
+                            }
+                            if (response.errors.permission) {
+                                $('#permission_error').text(response.errors.permission[0]);
+                            }
                         }
                     }
+                },
+                error: function(xhr, status, error) {
+                    btn.attr('disabled', false);
+                    btn.val("Create Role");
                 }
-            },
-            error: function(xhr, status, error) {
-                btn.attr('disabled', false);
-                btn.val("Create Role");
-            }
+            });
         });
     });
-});
 </script>
 
 @endsection

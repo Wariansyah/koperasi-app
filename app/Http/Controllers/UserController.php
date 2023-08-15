@@ -97,21 +97,31 @@ class UserController extends Controller
             'alamat' => 'required|string',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6',
-            'telepon' => 'required|string|unique:users',
-            'jenkel' => 'required|string', // Validate jenis_kelamin field
+            'telepon' => ['required', 'string', 'unique:users', 'regex:/^\d{10,12}$/'],
+            'jenkel' => 'required|string',
             'tgl_lahir' => 'required|date',
             'tmpt_lahir' => 'required|string',
+            'role' => 'required|exists:roles,id',
             'limit_pinjaman' => 'required|numeric',
         ]);
 
         $userData = $request->all();
-        $userData['status'] = 'Belum Aktif';
+        $userData = $request->all();
+        if ($request->input('status') === 'Blokir') {
+            $userData['status'] = '0';
+        } elseif ($request->input('status') === 'Aktif') {
+            $userData['status'] = '1';
+        } else {
+            $userData['status'] = '3';
+        }
         $userData['password'] = Hash::make($request->input('password'));
+        $userData['role_id'] = $request->input('role');
 
         $userData = User::create($userData);
 
         return response()->json(['success' => true, 'message' => 'User created successfully.']);
     }
+
     /**
      * Display the specified resource.
      *
@@ -159,7 +169,7 @@ class UserController extends Controller
             'no_induk' => 'required|string|unique:users,no_induk,' . $id,
             'alamat' => 'required|string',
             'email' => 'required|string|email|max:255|unique:users,email,' . $id,
-            'password' => 'nullable|string|min:6', // Allow password to be nullable for update
+            'password' => 'nullable|string|min:6',
             'telepon' => 'required|string|unique:users,telepon,' . $id,
             'jenkel' => 'required|string',
             'tgl_lahir' => 'required|date',
@@ -178,6 +188,7 @@ class UserController extends Controller
 
         return response()->json(['success' => true, 'message' => 'User updated successfully.']);
     }
+
 
 
 

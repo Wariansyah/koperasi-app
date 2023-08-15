@@ -64,8 +64,8 @@
                         <label for="jenkel">Jenis Kelamin:</label>
                         <select name="jenkel" id="jenkel" class="form-control" required>
                             <option value="">-- Pilih Jenis Kelamin --</option>
-                            <option value="Laki-laki">Laki-laki</option>
-                            <option value="Perempuan">Perempuan</option>
+                            <option value="Laki-laki" {{ $user->jenkel === 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
+                            <option value="Perempuan" {{ $user->jenkel === 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
                         </select>
                         <span id="jenkel_error" class="text-danger"></span>
                     </div>
@@ -126,31 +126,40 @@
             processData: false,
             success: function(response) {
                 if (response.success) {
-                    window.location.href = "{{ route('users.index') }}";
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'User Update',
+                        text: 'User Berhasi Diupdate.',
+                        showConfirmButton: false,
+                        timer: 1500 // Auto close after 1.5 seconds
+                    }).then(function() {
+                        window.location.href = "{{ route('users.index') }}";
+                    });
                 } else {
-                    btn.attr('disabled', false);
-                    btn.val("Update User");
                     if (response.errors) {
-                        if (response.errors.name) {
-                            $('#name_error').text(response.errors.name[0]);
-                            $('#no_induk_error').text(response.errors.no_induk[0]);
-                            $('#alamat_error').text(response.errors.alamat[0]);
-                            $('#email_error').text(response.errors.email[0]);
-                            $('#password_error').text(response.errors.password[0]);
-                            $('#status_error').text(response.errors.status[0]);
-                            $('#jenkel_error').text(response.errors.jenkel[0]);
-                            $('#tgl_lahir_error').text(response.errors.tgl_lahir);
-                            $('#tmpt_lahir_error').text(response.errors.tmpt_lahir[0]);
-                            $('#limit_pinjaman_error').text(response.errors.limit_pinjaman[0]);
-                        }
-                        // Handle other error fields if needed
+                        // Handle error fields
+                        // ...
                     }
-                    btn.attr('disabled', false);
-                    btn.val("Update User");
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Update Failed',
+                        text: 'An error occurred while updating the user.',
+                        confirmButtonText: 'OK'
+                    });
                 }
+
+                btn.attr('disabled', false);
+                btn.val("Update User");
             },
             error: function(xhr, status, error) {
                 // Handle error cases
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Update Failed',
+                    text: 'An error occurred while updating the user.',
+                    confirmButtonText: 'OK'
+                });
+
                 btn.attr('disabled', false);
                 btn.val("Update User");
             }
