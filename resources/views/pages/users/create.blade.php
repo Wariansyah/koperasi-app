@@ -60,17 +60,6 @@
                         @error('password'){{ $message }}@enderror
                     </div>
                     <div class="form-group">
-                        <label for="status">Status:</label>
-                        <select name="status" id="status" class="form-control" required>
-                            <option value="">-- Pilih Status --</option>
-                            <option value="Aktif">Aktif</option>
-                            <option value="Tidak Aktif">Tidak Aktif</option>
-                            <option value="Blokir">Blokir</option>
-                        </select>
-                        <span id="status_error" class="text-danger"></span>
-                        @error('status'){{ $message }}@enderror
-                    </div>
-                    <div class="form-group">
                         <label for="jenis_kelamin">Jenis Kelamin:</label>
                         <select name="jenis_kelamin" id="jenis_kelamin" class="form-control" required>
                             <option value="">-- Pilih Jenis Kelamin --</option>
@@ -148,7 +137,6 @@
         $('#email_error').text('');
         $('#telepon_error').text('');
         $('#password_error').text('');
-        $('#status_error').text('');
         $('#jenis_kelamin_error').text('');
         $('#tgl_lahir_error').text('');
         $('#tempat_lahir_error').text('');
@@ -177,7 +165,6 @@
                 $('#email_error').text(response.responseJSON.errors.email);
                 $('#telepon_error').text(response.responseJSON.errors.telepon);
                 $('#password_error').text(response.responseJSON.errors.password);
-                $('#status_error').text(response.responseJSON.errors.status);
                 $('#jenis_kelamin_error').text(response.responseJSON.errors.jenis_kelamin);
                 $('#tgl_lahir_error').text(response.responseJSON.errors.tgl_lahir);
                 $('#tempat_lahir_error').text(response.responseJSON.errors.tmpt_lahir);

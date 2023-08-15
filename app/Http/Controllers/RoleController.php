@@ -75,32 +75,6 @@ class RoleController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-<<<<<<< HEAD
-    public function store(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'permission' => 'required|array', // Menambah validasi untuk permission
-            // ...
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
-        }
-
-        $role = new Role([
-            'name' => $request->input('name'),
-        ]);
-
-        $role->save();
-
-        // Attach permissions to the role
-        $permissions = $request->input('permission');
-        $role->permissions()->attach($permissions);
-
-        return response()->json(['success' => true, 'message' => 'Role created successfully.']);
-    }
-=======
      public function store(Request $request)
      {
          $validator = Validator::make($request->all(), [
@@ -126,7 +100,6 @@ class RoleController extends Controller
              'message' => 'Role successfully created'
          ]);
      }
->>>>>>> b271fe611c0cb2a29be012b7c213649aff71c4d2
 
 
     /**

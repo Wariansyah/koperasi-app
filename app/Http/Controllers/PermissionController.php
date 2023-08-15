@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Validation\Rules\Unique;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\Validator;
 use DataTables;
@@ -59,15 +60,20 @@ class PermissionController extends Controller
             'name.required' => 'Nama Permission wajib diisi',
             'name.unique' => 'Nama Permission sudah ada',
         ]);
-
+    
         Permission::create([
             'name' => $request->name,
         ]);
-
+    
         return redirect()->route('permissions.index')->with('success', 'Permission berhasil disimpan');
     }
+    
 
-
+    public function show($id)
+    {
+        $user = User::findOrFail($id);
+        return view('pages.users.show', compact('user'));
+    }
     public function edit($id)
     {
         $permission = Permission::findOrFail($id);
@@ -75,14 +81,9 @@ class PermissionController extends Controller
     }
     public function update(Request $request, $id)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
+        $request->validate([
+            'name' => 'required|max:255|unique:permissions,name,' . $id,
         ]);
-
-        if ($validator->fails()) {
-            return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
-        }
-
         $permission = Permission::findOrFail($id);
         $permission->name = $request->input('name');
         $permission->save();
