@@ -49,7 +49,7 @@
                     </ul>
                 </li>
                 <li class="nav-item{{ request()->is('users*') || request()->is('roles*') || request()->is('permissions*') ? ' menu-open' : '' }}">
-                    <a href="#" class="nav-link {{ request()->is('users*') ? 'active' : '' }}">
+                    <a href="#" class="nav-link {{ request()->is('users*') || request()->is('roles*') || request()->is('permissions*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-users"></i>
                         <p>
                             Management Users
@@ -78,6 +78,8 @@
                                 <p>Permissions</p>
                             </a>
                         </li>
+                    </ul>
+                </li>
                     </ul>
                 </li>
             </ul>
