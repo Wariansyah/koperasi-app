@@ -190,7 +190,7 @@
                     confirmButtonText: 'OK'
                 });
 
-                $('#name_error').text(response.responseJSON.errors.nama);
+                $('#name_error').text(response.responseJSON.errors.name);
                 $('#no_induk_error').text(response.responseJSON.errors.no_induk);
                 $('#alamat_error').text(response.responseJSON.errors.alamat);
                 $('#email_error').text(response.responseJSON.errors.email);

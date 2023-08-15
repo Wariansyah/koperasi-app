@@ -92,7 +92,7 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255|unique:users',
+            'name' => 'required|string|max:255|unique:users,name',
             'no_induk' => 'required|string|unique:users',
             'alamat' => 'required|string|unique:users',
             'email' => 'required|string|email|max:255|unique:users',
@@ -103,6 +103,7 @@ class UserController extends Controller
             'tmpt_lahir' => 'required|string',
             'role' => 'required|exists:roles,id',
             'limit_pinjaman' => 'required|numeric',
+            'status' => 'required|string|in:Belum Aktivasi,Aktif,Tidak Aktif',
         ]);
 
         $userData = $request->all();
@@ -120,6 +121,7 @@ class UserController extends Controller
 
         return response()->json(['success' => true, 'message' => 'User created successfully.']);
     }
+
 
     /**
      * Display the specified resource.
