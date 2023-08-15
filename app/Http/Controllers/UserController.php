@@ -106,13 +106,12 @@ class UserController extends Controller
         ]);
 
         $userData = $request->all();
-        $userData = $request->all();
-        if ($request->input('status') === 'Blokir') {
-            $userData['status'] = '0';
+        if ($request->input('status') === 'Belum Aktivasi') {
+            $userData['status'] = '3';
         } elseif ($request->input('status') === 'Aktif') {
             $userData['status'] = '1';
         } else {
-            $userData['status'] = '3';
+            $userData['status'] = '0';
         }
         $userData['password'] = Hash::make($request->input('password'));
         $userData['role_id'] = $request->input('role');
