@@ -94,16 +94,14 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required|string|max:255|unique:users,name',
             'no_induk' => 'required|string|unique:users',
-            'alamat' => 'required|string|unique:users',
+            'alamat' => 'required|string',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6',
             'telepon' => ['required', 'string', 'unique:users', 'regex:/^\d{10,12}$/'],
             'jenkel' => 'required|string',
             'tgl_lahir' => 'required|date',
             'tmpt_lahir' => 'required|string',
-            'role' => 'required|exists:roles,id',
             'limit_pinjaman' => 'required|numeric',
-            'status' => 'required|string|in:Belum Aktivasi,Aktif,Tidak Aktif',
         ]);
 
         $userData = $request->all();
@@ -115,8 +113,6 @@ class UserController extends Controller
             $userData['status'] = '0';
         }
         $userData['password'] = Hash::make($request->input('password'));
-        $userData['role_id'] = $request->input('role');
-
         $userData = User::create($userData);
 
         return response()->json(['success' => true, 'message' => 'User created successfully.']);
