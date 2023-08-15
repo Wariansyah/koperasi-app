@@ -85,7 +85,7 @@ class PermissionController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'name' => 'required|unique:permissions,name',
+            'name' => 'required',
         ], [
             'name.required' => 'Nama Permission wajib diisi',
             'name.unique' => 'The name has already been taken.',

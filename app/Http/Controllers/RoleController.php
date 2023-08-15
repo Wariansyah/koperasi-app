@@ -145,7 +145,7 @@ class RoleController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255|unique:roles,name',
+            'name' => 'required|string|max:255',
             'permission' => 'required|array',
         ]);
 
