@@ -20,13 +20,27 @@ class RoleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    // function __construct()
-    // {
-    //     $this->middleware('permission:role-list|role-create|role-edit|role-delete', ['only' => ['index', 'store']]);
-    //     $this->middleware('permission:role-create', ['only' => ['create', 'store']]);
-    //     $this->middleware('permission:role-edit', ['only' => ['edit', 'update']]);
-    //     $this->middleware('permission:role-delete', ['only' => ['destroy']]);
-    // }
+    function __construct()
+    {
+        $this->middleware('permission:role-list|role-create|role-edit|role-delete', ['only' => ['index', 'store']]);
+        $this->middleware('permission:role-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:role-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:role-delete', ['only' => ['destroy']]);
+
+        $this->middleware(function ($request, $next) {
+            $user = auth()->user();
+    
+            // Check if the user has the "Admin" or "superAdmin" role
+            if ($user->hasAnyRole(['Admin', 'superAdmin'])) {
+                return $next($request);
+            }
+    
+            // For other roles, continue checking permissions
+            $this->middleware('permission');
+    
+            return $next($request);
+        });
+    }
 
     /**
      * Display a listing of the resource.

@@ -11,13 +11,27 @@ use DataTables;
 
 class PermissionController extends Controller
 {
-    // function __construct()
-    // {
-    //     $this->middleware('permission:permission-list|permission-create|permission-edit|permission-delete', ['only' => ['index', 'store']]);
-    //     $this->middleware('permission:permission-create', ['only' => ['create', 'store']]);
-    //     $this->middleware('permission:permission-edit', ['only' => ['edit', 'update']]);
-    //     $this->middleware('permission:permission-delete', ['only' => ['destroy']]);
-    // }
+    function __construct()
+    {
+        $this->middleware('permission:permission-list|permission-create|permission-edit|permission-delete', ['only' => ['index', 'store']]);
+        $this->middleware('permission:permission-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:permission-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:permission-delete', ['only' => ['destroy']]);
+
+        $this->middleware(function ($request, $next) {
+            $user = auth()->user();
+    
+            // Check if the user has the "Admin" or "superAdmin" role
+            if ($user->hasAnyRole(['Admin', 'superAdmin'])) {
+                return $next($request);
+            }
+    
+            // For other roles, continue checking permissions
+            $this->middleware('permission');
+    
+            return $next($request);
+        });
+    }
 
     public function index(Request $request)
     {
@@ -26,7 +40,7 @@ class PermissionController extends Controller
             return Datatables::of($data)
                 ->addIndexColumn()
                 ->addColumn('name', function ($row) {
-                    return $row->name; // Ubah 'name' sesuai dengan kolom yang tepat di tabel "permissions"
+                    return $row->name;
                 })
                 ->addColumn('roles', function ($row) {
                     return $row->roles->pluck('name')->implode(', ');
@@ -36,7 +50,6 @@ class PermissionController extends Controller
                     $btn .= ' <button type="button" class="btn btn-sm btn-danger" data-id="' . $row->id . '" onclick="deleteItem(this)">Delete</button>';
                     return $btn;
                 })
-                ->addIndexColumn()
                 ->rawColumns(['action'])
                 ->make(true);
         }

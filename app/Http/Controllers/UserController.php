@@ -16,14 +16,33 @@ use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
-    // function __construct()
-    // {
-    //     $this->middleware('permission:list-user|create-user|edit-user|delete-user', ['only' => ['index','store']]);
-    //     $this->middleware('permission:create-user', ['only' => ['create','store']]);
-    //     $this->middleware('permission:edit-user', ['only' => ['edit','update']]);
-    //     $this->middleware('permission:delete-user', ['only' => ['destroy']]);
-    // }
+    function __construct()
+    {
+        $this->middleware('permission:list-user|create-user|edit-user|delete-user', ['only' => ['index', 'store']]);
+        $this->middleware('permission:create-user', ['only' => ['create', 'store']]);
+        $this->middleware('permission:edit-user', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:delete-user', ['only' => ['destroy']]);
 
+        // Additional middleware for superAdmin
+        $this->middleware(function ($request, $next) {
+            $user = auth()->user();
+
+            // Check if the user has the "Admin" or "superAdmin" role
+            if ($user->hasAnyRole(['Admin', 'superAdmin'])) {
+                return $next($request);
+            }
+
+            // For other roles, continue checking permissions
+            $this->middleware('permission');
+
+            return $next($request);
+        });
+    }
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function index(Request $request)
     {
         $auth = auth()->user()->with('permissions')->first();
