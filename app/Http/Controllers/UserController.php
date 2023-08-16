@@ -94,13 +94,14 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required|string|max:255|unique:users,name',
             'no_induk' => 'required|string|unique:users',
-            'alamat' => 'required|string',
+            'alamat' => 'required|string|unique:users',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6',
             'telepon' => ['required', 'string', 'unique:users', 'regex:/^\d{10,12}$/'],
             'jenkel' => 'required|string',
             'tgl_lahir' => 'required|date',
             'tmpt_lahir' => 'required|string',
+            'role' => 'required|exists:roles,id',
             'limit_pinjaman' => 'required|numeric',
         ]);
 
@@ -113,6 +114,8 @@ class UserController extends Controller
             $userData['status'] = '0';
         }
         $userData['password'] = Hash::make($request->input('password'));
+        $userData['role_id'] = $request->input('role');
+
         $userData = User::create($userData);
 
         return response()->json(['success' => true, 'message' => 'User created successfully.']);
@@ -155,39 +158,44 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $user = User::find($id);
-
-        if (!$user) {
-            return response()->json(['success' => false, 'message' => 'User not found.'], 404);
-        }
+        $user = User::findOrFail($id);
 
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:users,name,' . $id,
             'no_induk' => 'required|string|unique:users,no_induk,' . $id,
-            'alamat' => 'required|string',
+            'alamat' => 'required|string|unique:users,alamat,' . $id,
             'email' => 'required|string|email|max:255|unique:users,email,' . $id,
-            'password' => 'nullable|string|min:6',
-            'telepon' => 'required|string|unique:users,telepon,' . $id,
+            'password' => 'nullable|string|min:6', // Password validation is optional during update
+            'telepon' => ['required', 'string', 'unique:users,telepon,' . $id, 'regex:/^\d{10,12}$/'],
             'jenkel' => 'required|string',
             'tgl_lahir' => 'required|date',
             'tmpt_lahir' => 'required|string',
+            'role' => 'required|exists:roles,id',
             'limit_pinjaman' => 'required|numeric',
         ]);
 
-        $userData = $request->except('password');
+        $userData = $request->except('password'); // Exclude password if it's not provided
 
-        // Update the password if provided
         if ($request->has('password')) {
             $userData['password'] = Hash::make($request->input('password'));
         }
+
+        if ($request->has('status')) {
+            if ($request->input('status') === 'Belum Aktivasi') {
+                $userData['status'] = '3';
+            } elseif ($request->input('status') === 'Aktif') {
+                $userData['status'] = '1';
+            } else {
+                $userData['status'] = '0';
+            }
+        }
+
+        $userData['role_id'] = $request->input('role');
 
         $user->update($userData);
 
         return response()->json(['success' => true, 'message' => 'User updated successfully.']);
     }
-
-
-
 
     /**
      * Remove the specified resource from storage.

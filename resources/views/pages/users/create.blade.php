@@ -82,6 +82,17 @@
                         @error('tmpt_lahir'){{ $message }}@enderror
                     </div>
                     <div class="form-group">
+                        <label for="role">Role:</label>
+                        <select name="role" id="role" class="form-control" required>
+                            <option value="">-- Pilih Role --</option>
+                            @foreach($roles as $role)
+                            <option value="{{ $role->id }}">{{ $role->name }}</option>
+                            @endforeach
+                        </select>
+                        <span id="role_error" class="text-danger"></span>
+                        @error('role'){{ $message }}@enderror
+                    </div>
+                    <div class="form-group">
                         <label for="limit_pinjaman">Limit Pinjaman:</label>
                         <input type="number" name="limit_pinjaman" id="limit_pinjaman" class="form-control" required>
                         <span id="limit_pinjaman_error" class="text-danger"></span>
@@ -140,6 +151,7 @@
         $('#jenkel_error').text('');
         $('#tgl_lahir_error').text('');
         $('#tmpt_lahir_error').text('');
+        $('#role_error').text('');
         $('#limit_pinjaman_error').text('');
 
         $.ajax({
@@ -186,6 +198,7 @@
                 $('#jenkel_error').text(response.responseJSON.errors.jenkel);
                 $('#tgl_lahir_error').text(response.responseJSON.errors.tgl_lahir);
                 $('#tmpt_lahir_error').text(response.responseJSON.errors.tmpt_lahir);
+                $('#role_error').text(response.responseJSON.errors.role);
                 $('#limit_pinjaman_error').text(response.responseJSON.errors.limit_pinjaman);
             }
         });

@@ -8,6 +8,7 @@ use Illuminate\Validation\Rules\Unique;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\Validator;
 use DataTables;
+use App\Models\User;
 
 class PermissionController extends Controller
 {
