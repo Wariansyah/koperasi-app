@@ -12,19 +12,19 @@ use App\Models\User;
 
 class PermissionController extends Controller
 {
-    // function __construct()
-    // {
-    //     $this->middleware('permission:permission-list|permission-create|permission-edit|permission-delete', ['only' => ['index', 'store']]);
-    //     $this->middleware('permission:permission-create', ['only' => ['create', 'store']]);
-    //     $this->middleware('permission:permission-edit', ['only' => ['edit', 'update']]);
-    //     $this->middleware('permission:permission-delete', ['only' => ['destroy']]);
-    // }
+    function __construct()
+    {
+        $this->middleware('permission:permission-list|permission-create|permission-edit|permission-delete', ['only' => ['index', 'store']]);
+        $this->middleware('permission:permission-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:permission-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:permission-delete', ['only' => ['destroy']]);
+    }
 
     public function index(Request $request)
     {
         if ($request->ajax()) {
             $data = Permission::with('roles')->get();
-            return Datatables::of($data)
+            return DataTables()::of($data)
                 ->addIndexColumn()
                 ->addColumn('name', function ($row) {
                     return $row->name; // Ubah 'name' sesuai dengan kolom yang tepat di tabel "permissions"
@@ -33,8 +33,8 @@ class PermissionController extends Controller
                     return $row->roles->pluck('name')->implode(', ');
                 })
                 ->addColumn('action', function ($row) {
-                    $btn = '<a href="' . route('permissions.edit', $row->id) . '" class="btn btn-sm btn-info">Edit</a>';
-                    $btn .= ' <button type="button" class="btn btn-sm btn-danger" data-id="' . $row->id . '" onclick="deleteItem(this)">Delete</button>';
+                    $btn = '<a href="' . route('permissions.edit', $row->id) . '" class="btn btn-sm btn-warning"><i class="fas fa-pen-square fa-circle mt-2"></i></a>';
+                    $btn .= ' <button type="button" class="btn btn-sm btn-danger" data-id="' . $row->id . '" onclick="deleteItem(this)"><i class="fas fa-trash"></i></button>';
                     return $btn;
                 })
                 ->addIndexColumn()

@@ -26,7 +26,7 @@ class KasController extends Controller
         // dd($data->toArray());
         if ($request->ajax()) {
     
-            return DataTables::of($data)
+            return DataTables()::of($data)
                 ->addColumn('user_id', function ($row) {
                     return $row->user->name;
                 })
