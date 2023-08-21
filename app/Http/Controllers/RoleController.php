@@ -188,6 +188,6 @@ class RoleController extends Controller
     public function destroy($id)
     {
         DB::table("roles")->where('id',$id)->delete();
-        return response()->json(array('success' => true));
+        return response()->json(array('success' => true));
     }
 }
