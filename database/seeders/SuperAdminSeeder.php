@@ -21,7 +21,7 @@ class SuperAdminSeeder extends Seeder
         $micro_id = explode(" ", microtime());
         $micro_id = $micro_id[1].substr($micro_id[0],2,6);
 
-        $admin = User::create([
+        $user = User::create([
             'id'        => $micro_id,
             'name'      => 'superAdmin',
             'email'     => 'super@gmail.com',
@@ -34,6 +34,6 @@ class SuperAdminSeeder extends Seeder
    
         $role->syncPermissions($permissions);
      
-        $admin->assignRole([$role->id]);
+        $user->assignRole([$role->id]);
     }
 }

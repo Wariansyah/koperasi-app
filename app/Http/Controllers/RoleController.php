@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
-use DB;
+use Illuminate\Support\Facades\DB;
 use DataTables;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
@@ -27,19 +27,6 @@ class RoleController extends Controller
         $this->middleware('permission:role-edit', ['only' => ['edit', 'update']]);
         $this->middleware('permission:role-delete', ['only' => ['destroy']]);
 
-        $this->middleware(function ($request, $next) {
-            $user = auth()->user();
-    
-            // Check if the user has the "Admin" or "superAdmin" role
-            if ($user->hasAnyRole(['Admin', 'superAdmin'])) {
-                return $next($request);
-            }
-    
-            // For other roles, continue checking permissions
-            $this->middleware('permission');
-    
-            return $next($request);
-        });
     }
 
     /**
@@ -51,14 +38,14 @@ class RoleController extends Controller
     {
         if ($request->ajax()) {
             $data = Role::with('permissions')->get();
-            return Datatables::of($data)
+            return Datatables()::of($data)
                 ->addIndexColumn()
                 ->addColumn('permissions', function ($row) {
                     return $row->permissions->pluck('name')->implode(', ');
                 })
                 ->addColumn('action', function ($row) {
-                    $btn = '<a href="' . route('roles.edit', $row->id) . '" class="btn btn-sm btn-info">Edit</a>';
-                    $btn .= ' <button type="button" class="btn btn-sm btn-danger" data-id="' . $row->id . '" onclick="deleteItem(this)">Delete</button>';
+                    $btn = '<a href="' . route('roles.edit', $row->id) . '" class="btn btn-sm btn-warning"><i class="fas fa-pen-square fa-circle mt-2"></i></a>';
+                    $btn .= ' <button type="button" class="btn btn-sm btn-danger" data-id="' . $row->id . '" onclick="deleteItem(this)"><i class="fas fa-trash"></i></button>';
                     return $btn;
                 })
                 ->rawColumns(['action'])
