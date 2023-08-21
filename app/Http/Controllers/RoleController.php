@@ -170,7 +170,7 @@ class RoleController extends Controller
         }
 
         $permissions = $request->input('permission');
-        $role->givePermissionTo($permissions);
+        $role->givepermission($permissions);
 
         $role->save();
 
