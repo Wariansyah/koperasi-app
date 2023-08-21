@@ -79,11 +79,10 @@ class RoleController extends Controller
     {
         $this->validate($request, [
             'name' => 'required|unique:roles,name',
-            'permission' => 'required|array',
+            'permission' => 'required',
         ]);
         $role = Role::create(['name' => $request->input('name')]);
-        $role->save();
-        $role->syncPermissions($request->input('permission')); // Attach the permissions
+        $role->syncPermissions($request->input('permission')); 
 
         return response()->json([
             'success' => true,
