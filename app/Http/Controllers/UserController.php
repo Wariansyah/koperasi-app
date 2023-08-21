@@ -18,12 +18,17 @@ class UserController extends Controller
 {
     function __construct()
     {
-        $this->middleware('permission:list-user|create-user|edit-user|delete-user', ['only' => ['index', 'store']]);
-        $this->middleware('permission:create-user', ['only' => ['create', 'store']]);
-        $this->middleware('permission:edit-user', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:list-user|create-user|edit-user|delete-user', ['only' => ['index','store']]);
+        $this->middleware('permission:create-user', ['only' => ['create','store']]);
+        $this->middleware('permission:edit-user', ['only' => ['edit','update']]);
         $this->middleware('permission:delete-user', ['only' => ['destroy']]);
     }
-
+    
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function index(Request $request)
     {
         $auth = User::with('roles')->find(auth()->user()->id);
