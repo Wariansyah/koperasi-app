@@ -93,7 +93,7 @@ class RoleController extends Controller
          // Lakukan operasi yang sesuai untuk menyimpan permission
          // Misalnya, jika menggunakan relasi permissions pada model Role, Anda dapat menggunakan:
          $role->save();
-         $role->permissions()->attach($permissions); // Attach the permissions
+         $role->givePermissionTo($permissions); // Attach the permissions
      
          return response()->json([
              'success' => true,
@@ -170,7 +170,7 @@ class RoleController extends Controller
         }
 
         $permissions = $request->input('permission');
-        $role->permissions()->sync($permissions);
+        $role->givePermissionTo($permissions);
 
         $role->save();
 
