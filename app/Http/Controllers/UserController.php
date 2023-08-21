@@ -107,7 +107,7 @@ class UserController extends Controller
 
         $userData = $request->all();
         $micro_id = explode(" ", microtime());
-        $micro_id = $micro_id[1].substr($micro_id[0],2,6);
+        $micro_id = $micro_id[1] . substr($micro_id[0], 2, 6);
         $userData['id'] = $micro_id;
         if ($request->input('status') === 'Belum Aktivasi') {
             $userData['status'] = '3';
@@ -193,7 +193,7 @@ class UserController extends Controller
             }
         }
 
-        $userData['role_id'] = $request->input('role');
+        $user->assignRole($request->input('roles'));
 
         $user->update($userData);
 
