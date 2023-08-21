@@ -78,12 +78,11 @@ class RoleController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'name' => 'required|string|max:255|unique:roles,name',
-            'permission' => 'required|array',
+            'name' => 'required|unique:roles,name',
+            'permission' => 'required',
         ]);
         $role = Role::create(['name' => $request->input('name')]);
-        $role->save();
-        $role->syncPermissions($request->input('permission')); // Attach the permissions
+        $role->syncPermissions($request->input('permission')); 
 
         return response()->json([
             'success' => true,
@@ -135,8 +134,8 @@ class RoleController extends Controller
     public function update(Request $request, $id)
     {
         $this->validate($request, [
-            'name' => 'required|string|max:255|unique:roles,name,' . $id,
-            'permission' => 'required|array',
+            'name' => 'required',
+            'permission' => 'required',
         ]);
 
         $role = Role::find($id);
