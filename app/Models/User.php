@@ -46,14 +46,14 @@ class User extends Authenticatable
     }
 
     // Generate 16-character unique ID before saving the User
-    public static function boot()
-    {
-        parent::boot();
+    // public static function boot()
+    // {
+    //     parent::boot();
 
-        self::creating(function ($model) {
-            if (!$model->id) {
-                $model->id = Str::random(16);
-            }
-        });
-    }
+    //     self::creating(function ($model) {
+    //         if (!$model->id) {
+    //             $model->id = Str::random(16);
+    //         }
+    //     });
+    // }
 }

@@ -80,15 +80,16 @@
                         <span id="tmpt_lahir_error" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label for="role">Role:</label>
+                        <label for="role">Peran:</label>
                         <select name="role" id="role" class="form-control" required>
-                            <option value="">-- Pilih Role --</option>
+                            <option value="">-- Pilih Peran --</option>
                             @foreach($roles as $role)
-                            <option value="{{ $role->id }}">{{ $role->name }}</option>
+                            <option value="{{ $role->id }}" {{ $user->hasRole($role->name) ? 'selected' : '' }}>
+                                {{ $role->name }}
+                            </option>
                             @endforeach
                         </select>
                         <span id="role_error" class="text-danger"></span>
-                        @error('role'){{ $message }}@enderror
                     </div>
                     <div class="form-group">
                         <label for="limit_pinjaman">Limit Pinjaman:</label>

@@ -18,7 +18,6 @@ class UserController extends Controller
 {
     function __construct()
     {
-
         $this->middleware('permission:list-user|create-user|edit-user|delete-user', ['only' => ['index','store']]);
         $this->middleware('permission:create-user', ['only' => ['create','store']]);
         $this->middleware('permission:edit-user', ['only' => ['edit','update']]);
@@ -112,6 +111,9 @@ class UserController extends Controller
         ]);
 
         $userData = $request->all();
+        $micro_id = explode(" ", microtime());
+        $micro_id = $micro_id[1] . substr($micro_id[0], 2, 6);
+        $userData['id'] = $micro_id;
         if ($request->input('status') === 'Belum Aktivasi') {
             $userData['status'] = '3';
         } elseif ($request->input('status') === 'Aktif') {
@@ -120,9 +122,9 @@ class UserController extends Controller
             $userData['status'] = '0';
         }
         $userData['password'] = Hash::make($request->input('password'));
-        $userData['role_id'] = $request->input('role');
+        $user = User::create($userData);
+        $user->assignRole($request->input('role'));
 
-        $userData = User::create($userData);
 
         return response()->json(['success' => true, 'message' => 'User created successfully.']);
     }
@@ -150,7 +152,8 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
         $roles = Role::all();
-        $userRole = $user->roles->pluck('id')->all();
+        $userRole = $user->roles->first();
+        // dd($userRole);
 
         return view('pages.users.edit', compact('user', 'roles', 'userRole'));
     }
@@ -196,7 +199,7 @@ class UserController extends Controller
             }
         }
 
-        $userData['role_id'] = $request->input('role');
+        $user->assignRole($request->input('role'));
 
         $user->update($userData);
 

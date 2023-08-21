@@ -63,7 +63,7 @@ class RoleController extends Controller
      */
     public function create()
     {
-        $permission  = Permission::all();
+        $permission  = Permission::get();
         return view('pages.roles.create', compact(
             'permission'
         ));
@@ -76,31 +76,20 @@ class RoleController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-     public function store(Request $request)
-     {
-         $validator = Validator::make($request->all(), [
-             'name' => 'required|string|max:255|unique:roles,name',
-             'permission' => 'required|array',
-         ]);
-     
-         if ($validator->fails()) {
-             return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
-         }
-     
-         $role = new Role();
-         $role->name = $request->input('name');
-     
-         $permissions = $request->input('permission');
-         // Lakukan operasi yang sesuai untuk menyimpan permission
-         // Misalnya, jika menggunakan relasi permissions pada model Role, Anda dapat menggunakan:
-         $role->save();
-         $role->permissions()->attach($permissions); // Attach the permissions
-     
-         return response()->json([
-             'success' => true,
-             'message' => 'Role successfully created'
-         ]);
-     }
+    public function store(Request $request)
+    {
+        $this->validate($request, [
+            'name' => 'required|unique:roles,name',
+            'permission' => 'required',
+        ]);
+        $role = Role::create(['name' => $request->input('name')]);
+        $role->syncPermissions($request->input('permission')); 
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Role successfully created'
+        ]);
+    }
 
 
     /**
@@ -145,35 +134,16 @@ class RoleController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255|unique:roles,name,' . $id,
-            'permission' => 'required|array',
+        $this->validate($request, [
+            'name' => 'required',
+            'permission' => 'required',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
-        }
-
-        $role = Role::findOrFail($id);
-        $newName = $request->input('name');
-
-       
-        if ($role->name !== $newName) {
-            
-            $uniqueCheck = Role::where('name', $newName)->where('id', '<>', $id)->count();
-            if ($uniqueCheck > 0) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Role name already exists'
-                ], 422);
-            }
-            $role->name = $newName;
-        }
-
-        $permissions = $request->input('permission');
-        $role->permissions()->sync($permissions);
-
+        $role = Role::find($id);
+        $role->name = $request->input('name');
         $role->save();
+
+        $role->syncPermissions($request->input('permission'));
 
         return response()->json([
             'success' => true,
@@ -188,7 +158,7 @@ class RoleController extends Controller
      */
     public function destroy($id)
     {
-        DB::table("roles")->where('id',$id)->delete();
+        DB::table("roles")->where('id', $id)->delete();
         return response()->json(array('success' => true));
     }
 }
