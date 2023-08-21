@@ -148,6 +148,7 @@ class UserController extends Controller
         $user = User::findOrFail($id);
         $roles = Role::all();
         $userRole = $user->roles->first();
+        // dd($userRole);
 
         return view('pages.users.edit', compact('user', 'roles', 'userRole'));
     }
@@ -193,7 +194,7 @@ class UserController extends Controller
             }
         }
 
-        $user->assignRole($request->input('roles'));
+        $user->assignRole($request->input('role'));
 
         $user->update($userData);
 
