@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Produk;
+use App\Models\Ledger;
 use Illuminate\Http\Request;
 
 class ProdukController extends Controller
@@ -22,8 +23,8 @@ class ProdukController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = Produk::all(); // Menggunakan model Produk
-            return Datatables()::of($data)
+            $data = Produk::with('ledger')->get();
+            return DataTables()::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
                     $btn = '<a href="' . route('produk.edit', $row->id) . '" class="btn btn-sm btn-warning"><i class="fas fa-pen-square fa-circle mt-2"></i></a>';
@@ -34,7 +35,7 @@ class ProdukController extends Controller
                 ->make(true);
         }
 
-        return view('pages.produk.index'); // Menggunakan view produk.index
+        return view('pages.produk.index');
     }
 
     /**
@@ -44,7 +45,8 @@ class ProdukController extends Controller
      */
     public function create()
     {
-        return view('pages.produk.create'); // Menggunakan view produk.create
+        $ledgers = Ledger::all();
+        return view('pages.produk.create', compact('ledgers'));
     }
 
     /**
@@ -57,15 +59,26 @@ class ProdukController extends Controller
     {
         $request->validate([
             'kode' => 'required|string|max:255|unique:produk,kode',
-            'ledger' => 'required|string|unique:produk,ledger',
+            'ledger' => 'required|string|exists:ledger,kode',
             'keterangan' => 'required|string|unique:produk,keterangan',
         ]);
 
         $produkData = $request->all();
-        $produk = Produk::create($produkData);
+
+        // Retrieve the Ledger model based on the provided kode value
+        $ledger = Ledger::where('kode', $request->input('ledger'))->first();
+
+        // Create the produk entry and associate it with the Ledger model
+        $produk = new Produk();
+        $produk->fill($produkData);
+        $produk->kode = $request->input('kode');
+        $produk->ledger()->associate($ledger);
+        $produk->save();
 
         return response()->json(['success' => true, 'message' => 'Produk created successfully.']);
     }
+
+
 
 
     /**
@@ -76,10 +89,10 @@ class ProdukController extends Controller
      */
     public function show($id)
     {
-        $produk = Produk::find($id);
-
+        $produk = Produk::with('ledger')->find($id);
         return view('pages.produk.show', compact('produk'));
     }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -87,12 +100,13 @@ class ProdukController extends Controller
      * @param  \App\Models\Produk  $produk
      * @return \Illuminate\Http\Response
      */
-    public function edit(string $id)
+    public function edit($id)
     {
-        $produk = Produk::find($id);
-
-        return view('pages.produk.edit', compact('produk'));
+        $produk = Produk::with('ledger')->find($id);
+        $ledgers = Ledger::all();
+        return view('pages.produk.edit', compact('produk', 'ledgers'));
     }
+
 
     /**
      * Update the specified resource in storage.
@@ -103,16 +117,20 @@ class ProdukController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $this->validate($request, [
-            'kode' => 'required',
-            'ledger' => 'required',
-            'keterangan' => 'required',
+        $request->validate([
+            'kode' => 'required|string|max:255|unique:produk,kode,' . $id,
+            'ledger' => 'required|string|exists:ledger,kode',
+            'keterangan' => 'required|string|unique:produk,keterangan,' . $id,
         ]);
+        $produkData = $request->all();
 
+        // Retrieve the Ledger model based on the provided kode value
+        $ledger = Ledger::where('kode', $request->input('ledger'))->first();
+
+        // Update the produk entry and associate it with the Ledger model
         $produk = Produk::find($id);
-        $produk->kode = $request->input('kode');
-        $produk->ledger = $request->input('ledger');
-        $produk->keterangan = $request->input('keterangan');
+        $produk->fill($produkData);
+        $produk->ledger()->associate($ledger);
         $produk->save();
 
         return response()->json([

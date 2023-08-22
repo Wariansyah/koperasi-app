@@ -48,8 +48,8 @@
                         </li>
                     </ul>
                 </li>
-                <li class="nav-item{{ request()->is('produk*') ? ' menu-open' : '' }}">
-                    <a href="#" class="nav-link {{ request()->is('produk*') ? 'active' : '' }}">
+                <li class="nav-item{{ request()->is('produk*') || request()->is('ledgers*') ? ' menu-open' : '' }}">
+                    <a href="#" class="nav-link {{ request()->is('produk*') || request()->is('ledgers*')? 'active' : '' }}">
                         <i class="nav-icon fas fa-users"></i>
                         <p>
                             Produk
