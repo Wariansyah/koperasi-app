@@ -3,9 +3,10 @@
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\{PermissionController, UserController, RoleController};
+use App\Http\Controllers\{ PermissionController, UserController, RoleController};
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\KasController;
+use App\Http\Controllers\CompanyController;
 use App\Http\Middleware\UpdateKasNextDay;
 /*
 |--------------------------------------------------------------------------
@@ -46,5 +47,10 @@ Route::group(['middleware' => ['auth']], function () {
     Route::delete('users/{id}', 'UserController@destroy')->name('users.destroy');
     Route::get('/kas', [KasController::class, 'index'])->name('kas.index');
     Route::resource('kas', KasController::class);
+    Route::get('/companies', [CompanyController::class, 'index'])->name('companies.index');
+    Route::resource('companies', CompanyController::class);
+    Route::post('/companies', [CompanyController::class, 'store'])->name('companies.store');
+    Route::put('/companies/{id}', [CompanyController::class, 'update'])->name('companies.update');
+    Route::delete('/companies/{id}', [CompanyController::class, 'destroy'])->name('companies.destroy');
     
 })->middleware('web');
