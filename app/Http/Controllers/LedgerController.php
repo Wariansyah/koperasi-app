@@ -103,8 +103,16 @@ class LedgerController extends Controller
             return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
         }
 
+        $formattedKode = preg_replace('/\D/', '', $request->input('kode'));
+        $formattedKode = substr_replace($formattedKode, '.', 1, 0);
+        $formattedKode = substr_replace($formattedKode, '.', 4, 0);
+        $formattedKode = substr_replace($formattedKode, '.', 7, 0);
+
+        $ledgerData = $request->all();
+        $ledgerData['kode'] = $formattedKode;
+
         $ledger = Ledger::find($id);
-        $ledger->kode = $request->input('kode');
+        $ledger->kode = $formattedKode;
         $ledger->name = $request->input('name');
         $ledger->keterangan = $request->input('keterangan');
         $ledger->save();

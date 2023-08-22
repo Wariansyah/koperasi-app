@@ -36,7 +36,7 @@
                     </div>
                     <div class="form-group">
                         <label for="keterangan">Keterangan:</label>
-                        <input type="text" name="keterangan" id="keterangan" class="form-control" value="{{ $ledger->keterangan }}" required>
+                        <textarea name="keterangan" id="keterangan" class="form-control" required>{{ $ledger->keterangan }}</textarea>
                         <span id="keterangan_error" class="text-danger"></span>
                     </div>
                     <div class="form-group">
@@ -52,6 +52,21 @@
 
 @section('script')
 <script type="application/javascript">
+    function formatKode(kode) {
+        var digits = kode.replace(/\D/g, '');
+        var formatted = '';
+        formatted += digits.slice(0, 1);
+        for (var i = 1; i < digits.length && i < 7; i += 2) {
+            formatted += '.' + digits.slice(i, i + 2);
+        }
+        return formatted;
+    }
+
+    const kodeInput = document.getElementById('kode');
+    kodeInput.addEventListener('input', function() {
+        this.value = formatKode(this.value);
+    });
+
     $("#editLedgerForm").on('submit', function(e) {
         e.preventDefault();
         var btn = $('#editLedgerBtn');
@@ -112,7 +127,6 @@
                     }
                 }
             }
-
         });
 
         $('#kode, #name, #keterangan').on('input', function() {
@@ -120,4 +134,5 @@
         });
     });
 </script>
+
 @endsection
