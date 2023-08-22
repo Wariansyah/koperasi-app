@@ -43,20 +43,39 @@ class LedgerController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'kode' => 'required|string|max:255|unique:ledger,kode',
+            'kode' => 'required|string|max:255|unique:ledger',
             'name' => 'required|string|unique:ledger,name',
-            'keterangan' => 'required|string|unique:ledger,keterangan',
+            'keterangan' => 'required|string',
         ]);
-
+    
         if ($validator->fails()) {
             return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
         }
-
+    
+        $formattedKode = preg_replace('/\D/', '', $request->input('kode'));
+        $formattedKode = substr_replace($formattedKode, '.', 1, 0);
+        $formattedKode = substr_replace($formattedKode, '.', 4, 0);
+        $formattedKode = substr_replace($formattedKode, '.', 7, 0);
+    
         $ledgerData = $request->all();
+        $ledgerData['kode'] = $formattedKode;
+    
+        // Check if the kode already exists
+        $existingLedger = Ledger::where('kode', $ledgerData['kode'])->first();
+        if ($existingLedger) {
+            return response()->json(['success' => false, 'errors' => ['kode' => ['Kode already exists.']]], 422);
+        }
+    
+        // Create the ledger entry
         Ledger::create($ledgerData);
-
+    
         return response()->json(['success' => true, 'message' => 'Ledger created successfully.']);
     }
+    
+
+    
+    
+    
 
     public function show($id)
     {
