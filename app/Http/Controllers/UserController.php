@@ -18,12 +18,12 @@ class UserController extends Controller
 {
     function __construct()
     {
-        $this->middleware('permission:list-user|create-user|edit-user|delete-user', ['only' => ['index','store']]);
-        $this->middleware('permission:create-user', ['only' => ['create','store']]);
-        $this->middleware('permission:edit-user', ['only' => ['edit','update']]);
+        $this->middleware('permission:list-user|create-user|edit-user|delete-user', ['only' => ['index', 'store']]);
+        $this->middleware('permission:create-user', ['only' => ['create', 'store']]);
+        $this->middleware('permission:edit-user', ['only' => ['edit', 'update']]);
         $this->middleware('permission:delete-user', ['only' => ['destroy']]);
     }
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -176,6 +176,7 @@ class UserController extends Controller
             'email' => 'required|string|email|max:255|unique:users,email,' . $id,
             'password' => 'nullable|string|min:6', // Password validation is optional during update
             'telepon' => ['required', 'string', 'unique:users,telepon,' . $id, 'regex:/^\d{10,12}$/'],
+            'status' => 'required|string',
             'jenkel' => 'required|string',
             'tgl_lahir' => 'required|date',
             'tmpt_lahir' => 'required|string',
@@ -187,16 +188,6 @@ class UserController extends Controller
 
         if ($request->has('password')) {
             $userData['password'] = Hash::make($request->input('password'));
-        }
-
-        if ($request->has('status')) {
-            if ($request->input('status') === 'Belum Aktivasi') {
-                $userData['status'] = '3';
-            } elseif ($request->input('status') === 'Aktif') {
-                $userData['status'] = '1';
-            } else {
-                $userData['status'] = '0';
-            }
         }
 
         $user->assignRole($request->input('role'));
