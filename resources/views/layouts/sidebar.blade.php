@@ -75,6 +75,24 @@
                         </li>
                     </ul>
                 </li>
+                <li class="nav-item{{ request()->is('anggota*') ? ' menu-open' : '' }}">
+                    <a href="#" class="nav-link {{ request()->is('anggota*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-users"></i>
+                        <p>
+                            Anggota
+                            <i class="fas fa-angle-left right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ route('anggota.index') }}"
+                                class="nav-link {{ request()->is('anggota*') ? 'active' : '' }}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Anggota</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
                 <li class="nav-item{{ request()->is('users*') || request()->is('roles*') || request()->is('permissions*') ? ' menu-open' : '' }}">
                     <a href="#" class="nav-link {{ request()->is('users*') || request()->is('roles*') || request()->is('permissions*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-users"></i>

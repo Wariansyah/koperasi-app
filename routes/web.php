@@ -3,7 +3,7 @@
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\{PermissionController, ProdukController, UserController, RoleController, LedgerController};
+use App\Http\Controllers\{PermissionController, ProdukController, UserController, RoleController, LedgerController, AnggotaController};
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\KasController;
 use App\Http\Middleware\UpdateKasNextDay;
@@ -56,6 +56,11 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/ledgers', [LedgerController::class, 'store'])->name('ledgers.store');
     Route::put('/ledgers/{id}', [LedgerController::class, 'update'])->name('ledgers.update');
     Route::delete('/ledgers/{id}', [LedgerController::class, 'destroy'])->name('ledgers.destroy');
+    Route::get('/anggota', [AnggotaController::class, 'index'])->name('anggota.index');
+    Route::resource('/anggota', AnggotaController::class);
+    Route::post('/anggota', [AnggotaController::class, 'store'])->name('anggota.store');
+    Route::put('/anggota/{id}', [AnggotaController::class, 'update'])->name('anggota.update');
+    Route::delete('/anggota/{id}', [AnggotaController::class, 'destroy'])->name('anggota.destroy');
 
 
 })->middleware('web');
