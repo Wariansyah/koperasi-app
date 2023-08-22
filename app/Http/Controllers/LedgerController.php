@@ -9,18 +9,20 @@ use Yajra\DataTables\Facades\DataTables;
 
 class LedgerController extends Controller
 {
+    function __construct()
+    {
+        $this->middleware('permission:list-ledger|create-ledger|edit-ledger|delete-ledger', ['only' => ['index', 'store']]);
+        $this->middleware('permission:create-ledger', ['only' => ['create', 'store']]);
+        $this->middleware('permission:edit-ledger', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:delete-ledger', ['only' => ['destroy']]);
+    }
+
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = Ledger::with('produk')->get();
+            $data = Ledger::all();
             return DataTables::of($data)
                 ->addIndexColumn()
-                ->addColumn('name', function ($row) {
-                    return $row->name; 
-                })
-                ->addColumn('produk', function ($row) {
-                    return $row->produk->pluck('name')->implode(', ');
-                })
                 ->addColumn('action', function ($row) {
                     $btn = '<a href="' . route('ledgers.edit', $row->id) . '" class="btn btn-sm btn-warning"><i class="fas fa-pen-square fa-circle mt-2"></i></a>';
                     $btn .= ' <button type="button" class="btn btn-sm btn-danger" data-id="' . $row->id . '" onclick="deleteItem(this)"><i class="fas fa-trash"></i></button>';
@@ -35,8 +37,7 @@ class LedgerController extends Controller
 
     public function create()
     {
-        $ledgers = Ledger::all();
-        return view('pages.ledgers.create', compact('ledgers'));
+        return view('pages.ledgers.create');
     }
 
     public function store(Request $request)
@@ -45,41 +46,28 @@ class LedgerController extends Controller
             'kode' => 'required|string|max:255|unique:ledger,kode',
             'name' => 'required|string|unique:ledger,name',
             'keterangan' => 'required|string|unique:ledger,keterangan',
-        ], [
-            'kode.required' => 'Kode ledger wajib diisi',
-            'kode.unique' => 'Kode tersebut telah digunakan.',
-            'name.required' => 'Nama ledger wajib diisi',
-            'name.unique' => 'Nama tersebut telah digunakan.',
-            'keterangan.required' => 'Keterangan ledger wajib diisi',
-            'keterangan.unique' => 'Keterangan tersebut telah digunakan.',
         ]);
 
         if ($validator->fails()) {
             return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
         }
 
-        Ledger::create([
-            'kode' => $request->kode,
-            'name' => $request->name,
-            'keterangan' => $request->keterangan,
-        ]);
+        $ledgerData = $request->all();
+        Ledger::create($ledgerData);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Permission berhasil dibuat'
-        ]);
+        return response()->json(['success' => true, 'message' => 'Ledger created successfully.']);
     }
 
     public function show($id)
     {
-        $ledger = Ledger::findOrFail($id);
+        $ledger = Ledger::find($id);
 
         return view('pages.ledgers.show', compact('ledger'));
     }
 
     public function edit($id)
     {
-        $ledger = Ledger::findOrFail($id);
+        $ledger = Ledger::find($id);
 
         return view('pages.ledgers.edit', compact('ledger'));
     }
@@ -90,38 +78,21 @@ class LedgerController extends Controller
             'kode' => 'required|string|max:255|unique:ledger,kode,' . $id,
             'name' => 'required|string|unique:ledger,name,' . $id,
             'keterangan' => 'required|string|unique:ledger,keterangan,' . $id,
-        ], [
-            'kode.required' => 'Kode ledger wajib diisi',
-            'kode.unique' => 'Kode tersebut telah digunakan.',
-            'name.required' => 'Nama ledger wajib diisi',
-            'name.unique' => 'Nama tersebut telah digunakan.',
-            'keterangan.required' => 'Keterangan ledger wajib diisi',
-            'keterangan.unique' => 'Keterangan tersebut telah digunakan.',
         ]);
 
         if ($validator->fails()) {
             return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
         }
 
-        $ledger = Ledger::findOrFail($id);
-        $newName = $request->input('name');
-        
-        if ($ledger->name !== $newName) {
-            $uniqueCheck = Ledger::where('name', $newName)->where('id', '<>', $id)->count();
-            if ($uniqueCheck > 0) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Nama ledger sudah ada'
-                ], 422);
-            }
-            $ledger->name = $newName;
-        }
-
+        $ledger = Ledger::find($id);
+        $ledger->kode = $request->input('kode');
+        $ledger->name = $request->input('name');
+        $ledger->keterangan = $request->input('keterangan');
         $ledger->save();
 
         return response()->json([
             'success' => true,
-            'message' => 'Ledger berhasil diupdate'
+            'message' => 'Ledger successfully updated'
         ]);
     }
 
@@ -132,13 +103,13 @@ class LedgerController extends Controller
         if ($ledger->delete()) {
             return response()->json([
                 'success' => true,
-                'message' => 'Ledger berhasil dihapus'
+                'message' => 'Ledger successfully deleted'
             ]);
         }
 
         return response()->json([
             'success' => false,
-            'message' => 'Gagal menghapus ledger'
+            'message' => 'Failed to delete ledger'
         ]);
     }
 }

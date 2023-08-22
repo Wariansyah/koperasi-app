@@ -27,7 +27,7 @@ class PermissionController extends Controller
             return DataTables()::of($data)
                 ->addIndexColumn()
                 ->addColumn('name', function ($row) {
-                    return $row->name; // Ubah 'name' sesuai dengan kolom yang tepat di tabel "permissions"
+                    return $row->name;
                 })
                 ->addColumn('roles', function ($row) {
                     return $row->roles->pluck('name')->implode(', ');
@@ -37,7 +37,6 @@ class PermissionController extends Controller
                     $btn .= ' <button type="button" class="btn btn-sm btn-danger" data-id="' . $row->id . '" onclick="deleteItem(this)"><i class="fas fa-trash"></i></button>';
                     return $btn;
                 })
-                ->addIndexColumn()
                 ->rawColumns(['action'])
                 ->make(true);
         }

@@ -5,12 +5,12 @@
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1 class="m-0">Edit Ledger</h1>
+                <h1 class="m-0">Create New Produk</h1>
             </div><!-- /.col -->
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><a href="#">Home</a></li>
-                    <li class="breadcrumb-item active">Ledger</li>
+                    <li class="breadcrumb-item active">Produk</li>
                 </ol>
             </div><!-- /.col -->
         </div><!-- /.row -->
@@ -21,27 +21,29 @@
     <div class="col-md-12">
         <div class="card">
             <div class="card-body">
-                <form id="editLedgerForm" method="POST" action="{{ route('ledgers.update', $ledger->id) }}">
+                <form id="createProdukForm" method="POST" action="{{ route('produk.store') }}">
                     @csrf
-                    @method('PUT')
                     <div class="form-group">
                         <label for="kode">Kode:</label>
-                        <input type="text" name="kode" id="kode" class="form-control" value="{{ $ledger->kode }}" required>
+                        <input type="text" name="kode" id="kode" class="form-control" required>
                         <span id="kode_error" class="text-danger"></span>
+                        @error('kode'){{ $message }}@enderror
                     </div>
                     <div class="form-group">
-                        <label for="name">Name:</label>
-                        <input type="text" name="name" id="name" class="form-control" value="{{ $ledger->name }}" required>
-                        <span id="name_error" class="text-danger"></span>
+                        <label for="ledger">Ledger:</label>
+                        <input type="text" name="ledger" id="ledger" class="form-control" required>
+                        <span id="ledger_error" class="text-danger"></span>
+                        @error('ledger'){{ $message }}@enderror
                     </div>
                     <div class="form-group">
                         <label for="keterangan">Keterangan:</label>
-                        <input type="text" name="keterangan" id="keterangan" class="form-control" value="{{ $ledger->keterangan }}" required>
+                        <textarea name="keterangan" id="keterangan" class="form-control" required></textarea>
                         <span id="keterangan_error" class="text-danger"></span>
+                        @error('keterangan'){{ $message }}@enderror
                     </div>
                     <div class="form-group">
-                        <button type="submit" id="editLedgerBtn" class="btn btn-primary">Update Ledger</button>
-                        <a href="{{ route('ledgers.index') }}" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" id="createProdukBtn" class="btn btn-primary">Create Produk</button>
+                        <a href="{{ route('produk.index') }}" class="btn btn-secondary">Cancel</a>
                     </div>
                 </form>
             </div>
@@ -52,15 +54,15 @@
 
 @section('script')
 <script type="application/javascript">
-    $("#editLedgerForm").on('submit', function(e) {
+    $("#createProdukForm").on('submit', function(e) {
         e.preventDefault();
-        var btn = $('#editLedgerBtn');
+        var btn = $('#createProdukBtn');
         btn.attr('disabled', true);
         btn.html("Loading...");
         var formData = new FormData(this);
         formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
         $('#kode_error').text('');
-        $('#name_error').text('');
+        $('#ledger_error').text('');
         $('#keterangan_error').text('');
 
         $.ajax({
@@ -74,21 +76,21 @@
                 if (response.success) {
                     Swal.fire({
                         icon: 'success',
-                        title: 'Ledger berhasil diperbarui',
+                        title: 'Produk berhasil dibuat',
                         showConfirmButton: false,
                         timer: 1500
                     }).then(() => {
-                        window.location.href = "{{ route('ledgers.index') }}";
+                        window.location.href = "{{ route('produk.index') }}";
                     });
                 } else {
                     btn.attr('disabled', false);
-                    btn.html("Update Ledger");
+                    btn.html("Create Produk");
                     if (response.errors) {
                         if (response.errors.kode) {
                             $('#kode_error').text(response.errors.kode[0]);
                         }
-                        if (response.errors.name) {
-                            $('#name_error').text(response.errors.name[0]);
+                        if (response.errors.ledger) {
+                            $('#ledger_error').text(response.errors.ledger[0]);
                         }
                         if (response.errors.keterangan) {
                             $('#keterangan_error').text(response.errors.keterangan[0]);
@@ -98,14 +100,14 @@
             },
             error: function(xhr, status, error) {
                 btn.attr('disabled', false);
-                btn.html("Update Ledger");
+                btn.html("Create Produk");
                 if (xhr.status === 422) {
                     var errors = JSON.parse(xhr.responseText).errors;
                     if (errors.kode) {
                         $('#kode_error').text(errors.kode[0]);
                     }
-                    if (errors.name) {
-                        $('#name_error').text(errors.name[0]);
+                    if (errors.ledger) {
+                        $('#ledger_error').text(errors.ledger[0]);
                     }
                     if (errors.keterangan) {
                         $('#keterangan_error').text(errors.keterangan[0]);
@@ -115,8 +117,16 @@
 
         });
 
-        $('#kode, #name, #keterangan').on('input', function() {
-            $('#kode_error, #name_error, #keterangan_error').text('');
+        $('#kode').on('input', function() {
+            $('#kode_error').text('');
+        });
+
+        $('#ledger').on('input', function() {
+            $('#ledger_error').text('');
+        });
+
+        $('#keterangan').on('input', function() {
+            $('#keterangan_error').text('');
         });
     });
 </script>

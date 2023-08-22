@@ -3,10 +3,9 @@
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\{PermissionController, UserController, RoleController};
+use App\Http\Controllers\{PermissionController, ProdukController, UserController, RoleController, LedgerController};
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\KasController;
-use App\Http\Controllers\LedgerController;
 use App\Http\Middleware\UpdateKasNextDay;
 /*
 |--------------------------------------------------------------------------
@@ -47,6 +46,16 @@ Route::group(['middleware' => ['auth']], function () {
     Route::delete('users/{id}', 'UserController@destroy')->name('users.destroy');
     Route::get('/kas', [KasController::class, 'index'])->name('kas.index');
     Route::resource('kas', KasController::class);
-    Route::resource('ledgers', LedgerController::class);
-    
+    Route::get('/produk', [ProdukController::class, 'index'])->name('produk.index');
+    Route::resource('/produk', ProdukController::class);
+    Route::post('/produk', [ProdukController::class, 'store'])->name('produk.store');
+    Route::put('/produk/{id}', 'ProdukController@update')->name('produk.update');
+    Route::delete('produk/{id}', 'ProdukController@destroy')->name('produk.destroy');
+    Route::get('/ledgers', [LedgerController::class, 'index'])->name('ledgers.index');
+    Route::resource('/ledgers', LedgerController::class);
+    Route::post('/ledgers', [LedgerController::class, 'store'])->name('ledgers.store');
+    Route::put('/ledgers/{id}', [LedgerController::class, 'update'])->name('ledgers.update');
+    Route::delete('/ledgers/{id}', [LedgerController::class, 'destroy'])->name('ledgers.destroy');
+
+
 })->middleware('web');

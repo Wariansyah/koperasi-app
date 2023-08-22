@@ -30,7 +30,7 @@
                         @error('kode'){{ $message }}@enderror
                     </div>
                     <div class="form-group">
-                        <label for="name">Nama:</label>
+                        <label for="name">Name:</label>
                         <input type="text" name="name" id="name" class="form-control" required>
                         <span id="name_error" class="text-danger"></span>
                         @error('name'){{ $message }}@enderror
@@ -58,7 +58,7 @@
         e.preventDefault();
         var btn = $('#createLedgerBtn');
         btn.attr('disabled', true);
-        btn.val("Loading...");
+        btn.html("Loading...");
         var formData = new FormData(this);
         formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
         $('#kode_error').text('');
@@ -76,7 +76,7 @@
                 if (response.success) {
                     Swal.fire({
                         icon: 'success',
-                        title: 'ledger berhasil dibuat',
+                        title: 'Ledger berhasil dibuat',
                         showConfirmButton: false,
                         timer: 1500
                     }).then(() => {
@@ -84,7 +84,7 @@
                     });
                 } else {
                     btn.attr('disabled', false);
-                    btn.val("Create ledger");
+                    btn.html("Create Ledger");
                     if (response.errors) {
                         if (response.errors.kode) {
                             $('#kode_error').text(response.errors.kode[0]);
@@ -100,7 +100,7 @@
             },
             error: function(xhr, status, error) {
                 btn.attr('disabled', false);
-                btn.val("Create Ledger");
+                btn.html("Create Ledger");
                 if (xhr.status === 422) {
                     var errors = JSON.parse(xhr.responseText).errors;
                     if (errors.kode) {
@@ -114,7 +114,6 @@
                     }
                 }
             }
-
         });
 
         $('#kode').on('input', function() {

@@ -48,6 +48,33 @@
                         </li>
                     </ul>
                 </li>
+                <li class="nav-item{{ request()->is('produk*') ? ' menu-open' : '' }}">
+                    <a href="#" class="nav-link {{ request()->is('produk*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-users"></i>
+                        <p>
+                            Produk
+                            <i class="fas fa-angle-left right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ route('produk.index') }}"
+                                class="nav-link {{ request()->is('produk*') ? 'active' : '' }}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Produk</p>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ route('ledgers.index') }}"
+                                class="nav-link {{ request()->is('ledgers*') ? 'active' : '' }}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Ledger</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
                 <li class="nav-item{{ request()->is('users*') || request()->is('roles*') || request()->is('permissions*') ? ' menu-open' : '' }}">
                     <a href="#" class="nav-link {{ request()->is('users*') || request()->is('roles*') || request()->is('permissions*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-users"></i>

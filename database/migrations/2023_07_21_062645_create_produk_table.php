@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('kode');
             $table->string('ledger');
-            $table->string('keterangan');
+            $table->text('keterangan');
             $table->timestamps();
         });
     }
