@@ -16,8 +16,8 @@ return new class extends Migration
         Schema::create('ledger', function (Blueprint $table) {
             $table->id();
             $table->string('kode');
-            $table->string('nama');
-            $table->string('keterangan');
+            $table->string('name');
+            $table->text('keterangan');
             $table->timestamps();
         });
     }

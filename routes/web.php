@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\{PermissionController, UserController, RoleController};
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\KasController;
+use App\Http\Controllers\LedgerController;
 use App\Http\Middleware\UpdateKasNextDay;
 /*
 |--------------------------------------------------------------------------
@@ -46,5 +47,6 @@ Route::group(['middleware' => ['auth']], function () {
     Route::delete('users/{id}', 'UserController@destroy')->name('users.destroy');
     Route::get('/kas', [KasController::class, 'index'])->name('kas.index');
     Route::resource('kas', KasController::class);
+    Route::resource('ledgers', LedgerController::class);
     
 })->middleware('web');
