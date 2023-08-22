@@ -73,9 +73,6 @@ class LedgerController extends Controller
     }
     
 
-    
-    
-    
 
     public function show($id)
     {

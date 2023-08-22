@@ -1,4 +1,5 @@
 @extends('layouts.app')
+
 @section('content')
 <!-- Content Header (Page header) -->
 <div class="content-header">
@@ -38,7 +39,7 @@
                             <table id="table-produk" style="width: 100%" class="table table-bordered table-hover">
                                 <thead>
                                     <tr>
-                                        <th>#</th>
+                                        <th>No</th>
                                         <th>Kode</th>
                                         <th>Ledger</th>
                                         <th>Keterangan</th>
@@ -77,7 +78,7 @@
                     className: 'align-middle'
                 },
                 {
-                    data: 'ledger',
+                    data: 'ledger.kode',
                     className: 'align-middle'
                 },
                 {

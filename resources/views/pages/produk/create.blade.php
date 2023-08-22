@@ -31,7 +31,12 @@
                     </div>
                     <div class="form-group">
                         <label for="ledger">Ledger:</label>
-                        <input type="text" name="ledger" id="ledger" class="form-control" required>
+                        <select name="ledger" id="ledger" class="form-control" required>
+                            <option value="">-- Select Ledger --</option>
+                            @foreach($ledgers as $ledger)
+                            <option value="{{ $ledger->kode }}">{{ $ledger->kode }} - {{ $ledger->name }}</option>
+                            @endforeach
+                        </select>
                         <span id="ledger_error" class="text-danger"></span>
                         @error('ledger'){{ $message }}@enderror
                     </div>
@@ -54,80 +59,76 @@
 
 @section('script')
 <script type="application/javascript">
-    $("#createProdukForm").on('submit', function(e) {
-        e.preventDefault();
-        var btn = $('#createProdukBtn');
-        btn.attr('disabled', true);
-        btn.html("Loading...");
-        var formData = new FormData(this);
-        formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
-        $('#kode_error').text('');
-        $('#ledger_error').text('');
-        $('#keterangan_error').text('');
+    $(document).ready(function() {
+        $("#createProdukForm").on('submit', function(e) {
+            e.preventDefault();
+            var btn = $('#createProdukBtn');
+            btn.attr('disabled', true);
+            btn.html("Loading ...");
 
-        $.ajax({
-            url: $(this).attr('action'),
-            type: "POST",
-            data: formData,
-            cache: false,
-            contentType: false,
-            processData: false,
-            success: function(response) {
-                if (response.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Produk berhasil dibuat',
-                        showConfirmButton: false,
-                        timer: 1500
-                    }).then(() => {
-                        window.location.href = "{{ route('produk.index') }}";
-                    });
-                } else {
+            var formData = new FormData(this);
+            formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
+            $('#kode_error').text('');
+            $('#ledger_error').text('');
+            $('#keterangan_error').text('');
+
+            $.ajax({
+                url: $(this).attr('action'),
+                type: "POST",
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Produk berhasil dibuat',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(() => {
+                            window.location.href = "{{ route('produk.index') }}";
+                        });
+                    } else {
+                        btn.attr('disabled', false);
+                        btn.html("Create Produk");
+                        if (response.errors) {
+                            if (response.errors.kode) {
+                                $('#kode_error').text(response.errors.kode[0]);
+                            }
+                            if (response.errors.ledger) {
+                                $('#ledger_error').text(response.errors.ledger[0]);
+                            }
+                            if (response.errors.keterangan) {
+                                $('#keterangan_error').text(response.errors.keterangan[0]);
+                            }
+                        }
+                    }
+                },
+                error: function(xhr, status, error) {
                     btn.attr('disabled', false);
                     btn.html("Create Produk");
-                    if (response.errors) {
-                        if (response.errors.kode) {
-                            $('#kode_error').text(response.errors.kode[0]);
+                    if (xhr.status === 422) {
+                        var errors = JSON.parse(xhr.responseText).errors;
+                        if (errors.kode) {
+                            $('#kode_error').text(errors.kode[0]);
                         }
-                        if (response.errors.ledger) {
-                            $('#ledger_error').text(response.errors.ledger[0]);
+                        if (errors.ledger) {
+                            $('#ledger_error').text(errors.ledger[0]);
                         }
-                        if (response.errors.keterangan) {
-                            $('#keterangan_error').text(response.errors.keterangan[0]);
+                        if (errors.keterangan) {
+                            $('#keterangan_error').text(errors.keterangan[0]);
                         }
                     }
                 }
-            },
-            error: function(xhr, status, error) {
-                btn.attr('disabled', false);
-                btn.html("Create Produk");
-                if (xhr.status === 422) {
-                    var errors = JSON.parse(xhr.responseText).errors;
-                    if (errors.kode) {
-                        $('#kode_error').text(errors.kode[0]);
-                    }
-                    if (errors.ledger) {
-                        $('#ledger_error').text(errors.ledger[0]);
-                    }
-                    if (errors.keterangan) {
-                        $('#keterangan_error').text(errors.keterangan[0]);
-                    }
-                }
-            }
-
+            });
         });
 
-        $('#kode').on('input', function() {
-            $('#kode_error').text('');
-        });
-
-        $('#ledger').on('input', function() {
-            $('#ledger_error').text('');
-        });
-
-        $('#keterangan').on('input', function() {
-            $('#keterangan_error').text('');
+        // Clear error messages on input
+        $('#kode, #ledger, #keterangan').on('input', function() {
+            $('#kode_error, #ledger_error, #keterangan_error').text('');
         });
     });
 </script>
+
 @endsection

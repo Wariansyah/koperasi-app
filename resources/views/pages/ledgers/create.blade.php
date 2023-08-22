@@ -28,7 +28,7 @@
                         <input type="text" name="kode" id="kode" class="form-control kode-input" required>
                         <span id="kode_error" class="text-danger"></span>
                         @error('kode'){{ $message }}@enderror
-                    </div>                    
+                    </div>
                     <div class="form-group">
                         <label for="name">Name:</label>
                         <input type="text" name="name" id="name" class="form-control" required>
@@ -54,10 +54,10 @@
 
 @section('script')
 <script type="application/javascript">
- function formatKode(kode) {
+    function formatKode(kode) {
         var digits = kode.replace(/\D/g, '');
         var formatted = '';
-        formatted += digits.slice(0, 1); 
+        formatted += digits.slice(0, 1);
         for (var i = 1; i < digits.length && i < 7; i += 2) {
             formatted += '.' + digits.slice(i, i + 2);
         }
@@ -74,7 +74,7 @@
             var btn = $('#createLedgerBtn');
             btn.attr('disabled', true);
             btn.html("Loading...");
-            
+
             var kodeInput = $('#kode');
             var kodeValue = kodeInput.val();
             var formattedKode = formatKode(kodeValue);
@@ -145,4 +145,3 @@
     });
 </script>
 @endsection
-
