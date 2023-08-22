@@ -13,7 +13,7 @@ class Ledger extends Model
     protected $primarykey = "id";
     protected $fillable = [
         'kode',
-        'nama',
+        'name',
         'keterangan',
     ];
 }
