@@ -15,8 +15,9 @@ class CompanyController extends Controller
         if ($request->ajax()) {
             $data = Company::all();
             return DataTables::of($data)
-                ->addColumn('logo', function ($row) {
-                    return '<img src="' . asset('storage/' . $row->logo) . '" height="50" />';
+            ->addIndexColumn()
+            ->addColumn('logo', function ($row) {
+                return asset('storage/' . $row->logo);
                 })
                 ->addColumn('action', function ($row) {
                     $actionBtn = '<a href="' . route('companies.edit', $row->id) . '" class="btn btn-primary">Edit</a>

@@ -1,10 +1,25 @@
 @extends('layouts.app')
 
 @section('content')
+<!-- Content Header (Page header) -->
 <div class="content-header">
-    <!-- Content header code here -->
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">Company</h1>
+            </div><!-- /.col -->
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item active">Company</li>
+                </ol>
+            </div><!-- /.col -->
+        </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
 </div>
+<!-- /.content-header -->
 
+<!-- Main content -->
 <section class="content">
     <div class="container-fluid">
         <div class="row">
@@ -18,12 +33,13 @@
                         <p>{{ $message }}</p>
                     </div>
                     @endif
+                    <!-- /.card-header -->
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table id="table-company" class="table table-bordered table-hover">
+                            <table id="table-company" style="width: 100%" class="table table-bordered table-hover">
                                 <thead>
                                     <tr>
-                                        <th>#</th>
+                                        <th>No</th>
                                         <th>Nama</th>
                                         <th>Alamat</th>
                                         <th>Email</th>
@@ -35,14 +51,17 @@
                             </table>
                         </div>
                     </div>
+                    <!-- /.card-body -->
                 </div>
             </div>
+            <!-- ./col -->
         </div>
-    </div>
+    </div><!-- /.container-fluid -->
 </section>
+<!-- /.content -->
 @endsection
 
-@section('scripts')
+@section('script')
 <script type="application/javascript">
     $(document).ready(function() {
         $('#table-company').DataTable({
@@ -52,46 +71,78 @@
                 url: "{{ route('companies.index') }}",
                 type: 'GET',
             },
-            columns: [
-                { data: 'DT_RowIndex', name: 'DT_RowIndex' },
-                { data: 'nama', name: 'nama'},
-                { data: 'alamat', name: 'alamat' },
-                { data: 'email', name: 'email' },
-                { data: 'telepon', name: 'telepon' },
+            columns: [{
+                    data: 'DT_RowIndex',
+                    className: 'align-middle'
+                },
+                {
+                    data: 'nama',
+                    className: 'align-middle'
+                },
+                {
+                    data: 'alamat',
+                    className: 'align-middle'
+                },
+                {
+                    data: 'email',
+                    className: 'align-middle'
+                },
+                {
+                    data: 'telepon',
+                    className: 'align-middle'
+                },
                 {
                     data: 'logo',
-                    className: 'logo',
+                    className: 'align-middle',
                     render: function(data, type, full, meta) {
-                        return '<img src="{{ Storage::url("/") }}' + data + '" height="50"/>';
+                        return "<img src='" + data + "' height='150'/>";
                     }
                 },
                 {
                     data: 'action',
                     className: 'align-middle text-center'
-                },
-            ]
+                }
+            ],
+            // Rest of the DataTables settings
         });
+    });
 
-        // Handling delete action using AJAX
-        $('#table-company').on('click', '.delete-btn', function() {
-            var id = $(this).data('id');
-            if (confirm("Are you sure you want to delete this company?")) {
+    function deleteItem(button) {
+        var id = $(button).data('id');
+        var name = $(button).data('name');
+
+        Swal.fire({
+            title: 'Kamu Yakin?',
+            text: 'Kamu ingin menghapus company ' + name + '.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Hapus!'
+        }).then((result) => {
+            if (result.isConfirmed) {
                 $.ajax({
-                    type: "DELETE",
-                    url: "{{ route('companies.destroy', '') }}" + '/' + id,
+                    url: '/company/' + id,
+                    type: 'DELETE',
                     data: {
-                        "_token": "{{ csrf_token() }}",
+                        _token: $('meta[name="csrf-token"]').attr('content')
                     },
-                    success: function(data) {
-                        $('#table-company').DataTable().ajax.reload();
-                        alert('Company deleted successfully.');
+                    success: function(response) {
+                        // Remove the deleted row from the table
+                        $(button).closest('tr').remove();
+
+                        Swal.fire(
+                            'Deleted!',
+                            name + ' Telah dihapus',
+                            'success'
+                        );
                     },
-                    error: function(data) {
-                        console.log('Error:', data);
+                    error: function(xhr) {
+                        console.log(xhr.responseText);
                     }
                 });
             }
         });
-    });
+    }
 </script>
 @endsection
