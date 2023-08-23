@@ -94,57 +94,40 @@
         });
     });
 
-    function deleteItem(e) {
-        let id = e.getAttribute('data-id');
-        console.log(id)
+    function deleteItem(button) {
+        var id = $(button).data('id');
+        var name = $(button).data('name');
 
-        const swalWithBootstrapButtons = Swal.mixin({
-            customClass: {
-                confirmButton: 'btn btn-success',
-                cancelButton: 'btn btn-danger'
-            },
-            buttonsStyling: true
-        });
-
-        swalWithBootstrapButtons.fire({
-            title: 'Apakah Anda yakin ingin melanjutkan?',
-            text: "Tindakan ini tidak dapat dibatalkan!",
+        Swal.fire({
+            title: 'Kamu Yakin?',
+            text: 'Kamu ingin menghapus produk ' + name + '.',
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Ya, hapus!',
-            cancelButtonText: 'Tidak, batalkan!',
-            reverseButtons: true
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Hapus!'
         }).then((result) => {
-            if (result.value) {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        type: 'POST',
-                        url: "produk/" + id,
-                        data: {
-                            "_token": "{{ csrf_token() }}",
-                            "_method": 'DELETE',
-                        },
-                        success: function(data) {
-                            if (data.success) {
-                                swalWithBootstrapButtons.fire(
-                                    'Terhapus!',
-                                    'Produk Anda telah dihapus.',
-                                    "success"
-                                ).then((result) => {
-                                    location.reload();
-                                })
-                                $("#" + id + "").remove(); // Anda dapat menambahkan div name untuk dihapus
-                            }
-                        }
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/produk/' + id,
+                    type: 'DELETE',
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        // Remove the deleted row from the table
+                        $(button).closest('tr').remove();
 
-                    });
-                }
-            } else if (result.dismiss === Swal.DismissReason.cancel) {
-                swalWithBootstrapButtons.fire(
-                    'Dibatalkan',
-                    'Produk Anda aman :)',
-                    'error'
-                );
+                        Swal.fire(
+                            'Deleted!',
+                            name + ' Telah dihapus',
+                            'success'
+                        );
+                    },
+                    error: function(xhr) {
+                        console.log(xhr.responseText);
+                    }
+                });
             }
         });
     }

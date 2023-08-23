@@ -35,7 +35,11 @@ class PermissionTableSeeder extends Seeder
             'list-ledger',
             'create-ledger',
             'edit-ledger',
-            'delete-ledger'
+            'delete-ledger',
+            'list-anggota',
+            'create-anggota',
+            'edit-anggota',
+            'delete-anggota'
          ];
       
          foreach ($permissions as $permission) {

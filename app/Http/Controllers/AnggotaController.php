@@ -7,15 +7,12 @@ use Illuminate\Http\Request;
 
 class AnggotaController extends Controller
 {
-
-
-
     function __construct()
     {
-        $this->middleware('permission:list-user|create-user|edit-user|delete-user', ['only' => ['index', 'store']]);
-        $this->middleware('permission:create-user', ['only' => ['create', 'store']]);
-        $this->middleware('permission:edit-user', ['only' => ['edit', 'update']]);
-        $this->middleware('permission:delete-user', ['only' => ['destroy']]);
+        $this->middleware('permission:list-anggota|create-anggota|edit-anggota|delete-anggota', ['only' => ['index', 'store']]);
+        $this->middleware('permission:create-anggota', ['only' => ['create', 'store']]);
+        $this->middleware('permission:edit-anggota', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:delete-anggota', ['only' => ['destroy']]);
     }
 
     /**
@@ -27,7 +24,7 @@ class AnggotaController extends Controller
     {
         if ($request->ajax()) {
             $data = Anggota::all();
-            return DataTables::of($data)
+            return DataTables()::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
                     $btn = '<a href="' . route('anggota.edit', $row->id) . '" class="btn btn-sm btn-warning"><i class="fas fa-pen-square fa-circle mt-2"></i></a>';
@@ -67,17 +64,17 @@ class AnggotaController extends Controller
             'jenkel' => 'required|string|max:255',
             'tnggl_lahir' => 'required|date',
             'tmpt_lahir' => 'required|string|max:255',
-            'ibu_kandung' => 'required|string|max:255|unique:anggota,ibu_kandung',
+            'ibu_kandung' => 'required|string|max:255',
         ]);
-    
+
         $anggotaData = $request->all();
         $anggotaData['created_by'] = auth()->user()->id;
         $anggotaData['updated_by'] = auth()->user()->id;
         $anggota = Anggota::create($anggotaData);
-    
+
         return response()->json(['success' => true, 'message' => 'Anggota created successfully.']);
     }
-    
+
     /**
      * Display the specified resource.
      *
@@ -114,16 +111,16 @@ class AnggotaController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'no_induk' => 'required|string|max:255|unique:anggota,no_induk,' . $anggota->id,
-            'nama' => 'required|string|max:255|unique:anggota,nama,' . $anggota->id,
+            'no_induk' => 'required|string' ,
+            'nama' => 'required|string' ,
             'alamat' => 'required|string',
-            'telepon' => 'required|string|max:255|unique:anggota,telepon,' . $anggota->id,
-            'jenkel' => 'required|string|max:255',
+            'telepon' => 'required|string' ,
+            'jenkel' => 'required|string',
             'tnggl_lahir' => 'required|date',
-            'tmpt_lahir' => 'required|string|max:255',
-            'ibu_kandung' => 'required|string|max:255|unique:anggota,ibu_kandung,' . $anggota->id,
+            'tmpt_lahir' => 'required|string',
+            'ibu_kandung' => 'required|string' ,
         ]);
-    
+
 
         $anggota = Anggota::find($id);
         $anggota->no_induk = $request->input('no_induk');
@@ -134,7 +131,7 @@ class AnggotaController extends Controller
         $anggota->tnggl_lahir = $request->input('tnggl_lahir');
         $anggota->tmpt_lahir = $request->input('tmpt_lahir');
         $anggota->ibu_kandung = $request->input('ibu_kandung');
-        $anggota->updated_by = auth()->user()->id; 
+        $anggota->updated_by = auth()->user()->id;
         $anggota->save();
 
         return response()->json([
