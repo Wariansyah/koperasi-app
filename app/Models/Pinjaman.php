@@ -27,5 +27,7 @@ class Pinjaman extends Model
         'penggunaan',
         'tgl_lunas',
         'otorisasi_by',
+        'created_by',
+        'updated_by',
     ];
 }
