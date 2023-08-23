@@ -8,7 +8,7 @@ use App\Http\Controllers\Controller;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\DB;
-use DataTables;
+use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
@@ -20,14 +20,14 @@ class RoleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    function __construct()
-    {
-        $this->middleware('permission:role-list|role-create|role-edit|role-delete', ['only' => ['index', 'store']]);
-        $this->middleware('permission:role-create', ['only' => ['create', 'store']]);
-        $this->middleware('permission:role-edit', ['only' => ['edit', 'update']]);
-        $this->middleware('permission:role-delete', ['only' => ['destroy']]);
+    // function __construct()
+    // {
+    //     $this->middleware('permission:role-list|role-create|role-edit|role-delete', ['only' => ['index', 'store']]);
+    //     $this->middleware('permission:role-create', ['only' => ['create', 'store']]);
+    //     $this->middleware('permission:role-edit', ['only' => ['edit', 'update']]);
+    //     $this->middleware('permission:role-delete', ['only' => ['destroy']]);
 
-    }
+    // }
 
     /**
      * Display a listing of the resource.
@@ -38,7 +38,7 @@ class RoleController extends Controller
     {
         if ($request->ajax()) {
             $data = Role::with('permissions')->get();
-            return Datatables()::of($data)
+            return Datatables::of($data)
                 ->addIndexColumn()
                 ->addColumn('permissions', function ($row) {
                     return $row->permissions->pluck('name')->implode(', ');

@@ -4,16 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Models\Anggota;
 use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
 
 class AnggotaController extends Controller
 {
-    function __construct()
-    {
-        $this->middleware('permission:list-anggota|create-anggota|edit-anggota|delete-anggota', ['only' => ['index', 'store']]);
-        $this->middleware('permission:create-anggota', ['only' => ['create', 'store']]);
-        $this->middleware('permission:edit-anggota', ['only' => ['edit', 'update']]);
-        $this->middleware('permission:delete-anggota', ['only' => ['destroy']]);
-    }
+    // function __construct()
+    // {
+    //     $this->middleware('permission:list-anggota|create-anggota|edit-anggota|delete-anggota', ['only' => ['index', 'store']]);
+    //     $this->middleware('permission:create-anggota', ['only' => ['create', 'store']]);
+    //     $this->middleware('permission:edit-anggota', ['only' => ['edit', 'update']]);
+    //     $this->middleware('permission:delete-anggota', ['only' => ['destroy']]);
+    // }
 
     /**
      * Display a listing of the resource.
@@ -24,7 +25,7 @@ class AnggotaController extends Controller
     {
         if ($request->ajax()) {
             $data = Anggota::all();
-            return DataTables()::of($data)
+            return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
                     $btn = '<a href="' . route('anggota.edit', $row->id) . '" class="btn btn-sm btn-warning"><i class="fas fa-pen-square fa-circle mt-2"></i></a>';

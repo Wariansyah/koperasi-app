@@ -7,24 +7,24 @@ use App\Http\Controllers\Controller;
 use Illuminate\Validation\Rules\Unique;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\Validator;
-use DataTables;
+use Yajra\DataTables\Facades\DataTables;
 use App\Models\User;
 
 class PermissionController extends Controller
 {
-    function __construct()
-    {
-        $this->middleware('permission:permission-list|permission-create|permission-edit|permission-delete', ['only' => ['index', 'store']]);
-        $this->middleware('permission:permission-create', ['only' => ['create', 'store']]);
-        $this->middleware('permission:permission-edit', ['only' => ['edit', 'update']]);
-        $this->middleware('permission:permission-delete', ['only' => ['destroy']]);
-    }
+    // function __construct()
+    // {
+    //     $this->middleware('permission:permission-list|permission-create|permission-edit|permission-delete', ['only' => ['index', 'store']]);
+    //     $this->middleware('permission:permission-create', ['only' => ['create', 'store']]);
+    //     $this->middleware('permission:permission-edit', ['only' => ['edit', 'update']]);
+    //     $this->middleware('permission:permission-delete', ['only' => ['destroy']]);
+    // }
 
     public function index(Request $request)
     {
         if ($request->ajax()) {
             $data = Permission::with('roles')->get();
-            return DataTables()::of($data)
+            return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('name', function ($row) {
                     return $row->name;

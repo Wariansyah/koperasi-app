@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
-use DataTables;
+use Yajra\DataTables\Facades\DataTables;
 use Auth;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
@@ -16,13 +16,13 @@ use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
-    function __construct()
-    {
-        $this->middleware('permission:list-user|create-user|edit-user|delete-user', ['only' => ['index', 'store']]);
-        $this->middleware('permission:create-user', ['only' => ['create', 'store']]);
-        $this->middleware('permission:edit-user', ['only' => ['edit', 'update']]);
-        $this->middleware('permission:delete-user', ['only' => ['destroy']]);
-    }
+    // function __construct()
+    // {
+    //     $this->middleware('permission:list-user|create-user|edit-user|delete-user', ['only' => ['index', 'store']]);
+    //     $this->middleware('permission:create-user', ['only' => ['create', 'store']]);
+    //     $this->middleware('permission:edit-user', ['only' => ['edit', 'update']]);
+    //     $this->middleware('permission:delete-user', ['only' => ['destroy']]);
+    // }
 
     /**
      * Display a listing of the resource.
@@ -35,7 +35,7 @@ class UserController extends Controller
         $data = User::with('role')->get();
 
         if ($request->ajax()) {
-            return DataTables()::of($data)
+            return DataTables::of($data)
                 ->addColumn('name', function ($row) {
                     return $row->name;
                 })
