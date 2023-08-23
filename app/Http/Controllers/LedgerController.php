@@ -9,13 +9,13 @@ use Yajra\DataTables\Facades\DataTables;
 
 class LedgerController extends Controller
 {
-    // function __construct()
-    // {
-    //     $this->middleware('permission:list-ledger|create-ledger|edit-ledger|delete-ledger', ['only' => ['index', 'store']]);
-    //     $this->middleware('permission:create-ledger', ['only' => ['create', 'store']]);
-    //     $this->middleware('permission:edit-ledger', ['only' => ['edit', 'update']]);
-    //     $this->middleware('permission:delete-ledger', ['only' => ['destroy']]);
-    // }
+    function __construct()
+    {
+        $this->middleware('permission:list-ledger|create-ledger|edit-ledger|delete-ledger', ['only' => ['index', 'store']]);
+        $this->middleware('permission:create-ledger', ['only' => ['create', 'store']]);
+        $this->middleware('permission:edit-ledger', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:delete-ledger', ['only' => ['destroy']]);
+    }
 
     public function index(Request $request)
     {

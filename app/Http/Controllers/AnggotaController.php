@@ -8,13 +8,13 @@ use Yajra\DataTables\Facades\DataTables;
 
 class AnggotaController extends Controller
 {
-    // function __construct()
-    // {
-    //     $this->middleware('permission:list-anggota|create-anggota|edit-anggota|delete-anggota', ['only' => ['index', 'store']]);
-    //     $this->middleware('permission:create-anggota', ['only' => ['create', 'store']]);
-    //     $this->middleware('permission:edit-anggota', ['only' => ['edit', 'update']]);
-    //     $this->middleware('permission:delete-anggota', ['only' => ['destroy']]);
-    // }
+    function __construct()
+    {
+        $this->middleware('permission:list-anggota|create-anggota|edit-anggota|delete-anggota', ['only' => ['index', 'store']]);
+        $this->middleware('permission:create-anggota', ['only' => ['create', 'store']]);
+        $this->middleware('permission:edit-anggota', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:delete-anggota', ['only' => ['destroy']]);
+    }
 
     /**
      * Display a listing of the resource.
