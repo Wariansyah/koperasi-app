@@ -10,11 +10,19 @@ use Yajra\DataTables\Facades\DataTables;
 
 class CompanyController extends Controller
 {
+    // function __construct()
+    // {
+    //     $this->middleware('permission:list-company|create-company|edit-company|delete-company', ['only' => ['index', 'store']]);
+    //     $this->middleware('permission:create-company', ['only' => ['create', 'store']]);
+    //     $this->middleware('permission:edit-company', ['only' => ['edit', 'update']]);
+    //     $this->middleware('permission:delete-company', ['only' => ['destroy']]);
+    // }
     public function index(Request $request)
     {
         if ($request->ajax()) {
             $data = Company::all();
             return DataTables::of($data)
+                ->addIndexColumn()
                 ->addColumn('logo', function ($row) {
                     return asset('storage/' . $row->logo);
                 })
