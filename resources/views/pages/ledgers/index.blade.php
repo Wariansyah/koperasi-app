@@ -94,59 +94,40 @@
         });
     });
 
-    function deleteItem(e) {
-        let id = e.getAttribute('data-id');
+    function deleteItem(button) {
+        var id = $(button).data('id');
+        var name = $(button).data('name');
 
-        const swalWithBootstrapButtons = Swal.mixin({
-            customClass: {
-                confirmButton: 'btn btn-success',
-                cancelButton: 'btn btn-danger'
-            },
-            buttonsStyling: true
-        });
-
-        swalWithBootstrapButtons.fire({
-            title: 'Apakah Anda yakin ingin melanjutkan?',
-            text: "Tindakan ini tidak dapat dibatalkan!",
+        Swal.fire({
+            title: 'Kamu Yakin?',
+            text: 'Kamu ingin menghapus ledger ' + name + '.',
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Ya, hapus!',
-            cancelButtonText: 'Tidak, batalkan!',
-            reverseButtons: true
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Hapus!'
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    type: 'POST',
-                    url: "{{ route('ledgers.destroy', '') }}" + "/" + id,
+                    url: '/ledgers/' + id,
+                    type: 'DELETE',
                     data: {
-                        "_token": "{{ csrf_token() }}",
-                        "_method": 'DELETE',
+                        _token: $('meta[name="csrf-token"]').attr('content')
                     },
-                    success: function(data) {
-                        if (data.success) {
-                            swalWithBootstrapButtons.fire(
-                                'Terhapus!',
-                                'Ledger berhasil dihapus.',
-                                "success"
-                            ).then(() => {
-                                location.reload();
-                            });
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        swalWithBootstrapButtons.fire(
-                            'Gagal',
-                            'Gagal menghapus ledger.',
-                            'error'
+                    success: function(response) {
+                        // Remove the deleted row from the table
+                        $(button).closest('tr').remove();
+
+                        Swal.fire(
+                            'Deleted!',
+                            name + ' Telah dihapus',
+                            'success'
                         );
+                    },
+                    error: function(xhr) {
+                        console.log(xhr.responseText);
                     }
                 });
-            } else if (result.dismiss === Swal.DismissReason.cancel) {
-                swalWithBootstrapButtons.fire(
-                    'Dibatalkan',
-                    'Ledger aman :)',
-                    'error'
-                );
             }
         });
     }

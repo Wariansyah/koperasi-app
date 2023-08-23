@@ -53,7 +53,7 @@
 @section('script')
 <script type="application/javascript">
     $(document).ready(function() {
-        
+
         $('#table-permission').DataTable({
             processing: true,
             serverSide: true,
@@ -78,48 +78,41 @@
     });
 
     function deleteItem(button) {
-    var id = $(button).data('id');
-    var name = $(button).data('name'); // Assuming you have a 'data-name' attribute
+        var id = $(button).data('id');
+        var name = $(button).data('name');
 
-    Swal.fire({
-        title: 'Apakah Anda yakin ingin melanjutkan?',
-        text: "Tindakan ini tidak dapat dibatalkan!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Ya, hapus!',
-        cancelButtonText: 'Tidak, batalkan!',
-        reverseButtons: true
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
-                url: '/permissions/' + id,
-                type: 'DELETE',
-                data: {
-                    _token: $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(response) {
-                    Swal.fire(
-                        'Terhapus!',
-                        'Role Anda telah dihapus.',
-                        'success'
-                    ).then(() => {
+        Swal.fire({
+            title: 'Kamu Yakin?',
+            text: 'Kamu ingin menghapus permission ' + name + '.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Hapus!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/permissions/' + id,
+                    type: 'DELETE',
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
                         // Remove the deleted row from the table
                         $(button).closest('tr').remove();
-                    });
-                },
-                error: function(xhr) {
-                    console.log(xhr.responseText);
-                }
-            });
-        } else if (result.dismiss === Swal.DismissReason.cancel) {
-            Swal.fire(
-                'Dibatalkan',
-                'Role Anda aman :)',
-                'error'
-            );
-        }
-    });
-}
 
+                        Swal.fire(
+                            'Deleted!',
+                            name + ' Telah dihapus',
+                            'success'
+                        );
+                    },
+                    error: function(xhr) {
+                        console.log(xhr.responseText);
+                    }
+                });
+            }
+        });
+    }
 </script>
 @endsection

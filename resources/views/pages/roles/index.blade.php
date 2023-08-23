@@ -1,63 +1,63 @@
 @extends('layouts.app')
 @section('content')
-    <!-- Content Header (Page header) -->
-    <div class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h1 class="m-0">Roles</h1>
-                </div><!-- /.col -->
-                <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="#">Home</a></li>
-                        <li class="breadcrumb-item active">Roles</li>
-                    </ol>
-                </div><!-- /.col -->
-            </div><!-- /.row -->
-        </div><!-- /.container-fluid -->
-    </div>
-    <!-- /.content-header -->
+<!-- Content Header (Page header) -->
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">Roles</h1>
+            </div><!-- /.col -->
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item active">Roles</li>
+                </ol>
+            </div><!-- /.col -->
+        </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+</div>
+<!-- /.content-header -->
 
-    <!-- Main content -->
-    <section class="content">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <a href="{{ route('roles.create') }}" class="btn btn-sm btn-primary">Tambah</a>
-                        </div>
-                        @if ($message = Session::get('success'))
-                            <div class="alert alert-success">
-                                <p>{{ $message }}</p>
-                            </div>
-                        @endif
-                        <!-- /.card-header -->
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table id="table-role" style="width: 100%" class="table table-bordered table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Nama</th>
-                                            <th>Permission</th>
-                                            <th>Aksi</th>
-                                        </tr>
-                                    </thead>
-                                </table>
-                            </div>
-                        </div>
-                        <!-- /.card-body -->
+<!-- Main content -->
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <a href="{{ route('roles.create') }}" class="btn btn-sm btn-primary">Tambah</a>
                     </div>
+                    @if ($message = Session::get('success'))
+                    <div class="alert alert-success">
+                        <p>{{ $message }}</p>
+                    </div>
+                    @endif
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table id="table-role" style="width: 100%" class="table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Nama</th>
+                                        <th>Permission</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
                 </div>
-                <!-- ./col -->
             </div>
-        </div><!-- /.container-fluid -->
-    </section>
-    <!-- /.content -->
+            <!-- ./col -->
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+<!-- /.content -->
 @endsection
 @section('script')
-    <script type="application/javascript">
+<script type="application/javascript">
     $(document).ready(function() {
         $('#table-role').DataTable({
             processing: true,
@@ -86,57 +86,41 @@
             // Rest of the DataTables settings
         });
     });
-    function deleteItem(e) {
-        let id = e.getAttribute('data-id');
-        console.log(id)
 
-        const swalWithBootstrapButtons = Swal.mixin({
-            customClass: {
-                confirmButton: 'btn btn-success',
-                cancelButton: 'btn btn-danger'
-            },
-            buttonsStyling: true
-        });
+    function deleteItem(button) {
+        var id = $(button).data('id');
+        var name = $(button).data('name');
 
-        swalWithBootstrapButtons.fire({
-            title: 'Apakah Anda yakin ingin melanjutkan?',
-            text: "Tindakan ini tidak dapat dibatalkan!",
+        Swal.fire({
+            title: 'Kamu Yakin?',
+            text: 'Kamu ingin menghapus role ' + name + '.',
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Ya, hapus!',
-            cancelButtonText: 'Tidak, batalkan!',
-            reverseButtons: true
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Hapus!'
         }).then((result) => {
-            if (result.value) {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        type: 'POST',
-                        url: "roles/" + id,
-                        data: {
-                            "_token": "{{ csrf_token() }}",
-                            "_method": 'DELETE',
-                        },
-                        success: function(data) {
-                            if (data.success) {
-                                swalWithBootstrapButtons.fire(
-                                    'Terhapus!',
-                                    'Role Anda telah dihapus.',
-                                    "success"
-                                ).then((result) => {
-                                    location.reload();
-                                })
-                                $("#" + id + "").remove(); // Anda dapat menambahkan div name untuk dihapus
-                            }
-                        }
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/roles/' + id,
+                    type: 'DELETE',
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        // Remove the deleted row from the table
+                        $(button).closest('tr').remove();
 
-                    });
-                }
-            } else if (result.dismiss === Swal.DismissReason.cancel) {
-                swalWithBootstrapButtons.fire(
-                    'Dibatalkan',
-                    'Role Anda aman :)',
-                    'error'
-                );
+                        Swal.fire(
+                            'Deleted!',
+                            name + ' Telah dihapus',
+                            'success'
+                        );
+                    },
+                    error: function(xhr) {
+                        console.log(xhr.responseText);
+                    }
+                });
             }
         });
     }

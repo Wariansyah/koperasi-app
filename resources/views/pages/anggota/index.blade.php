@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+<!-- Content Header (Page header) -->
 <div class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
@@ -16,6 +17,9 @@
         </div><!-- /.row -->
     </div><!-- /.container-fluid -->
 </div>
+<!-- /.content-header -->
+
+<!-- Main content -->
 <section class="content">
     <div class="container-fluid">
         <div class="row">
@@ -24,18 +28,24 @@
                     <div class="card-header">
                         <a href="{{ route('anggota.create') }}" class="btn btn-sm btn-primary">Tambah</a>
                     </div>
+                    @if ($message = Session::get('success'))
+                    <div class="alert alert-success">
+                        <p>{{ $message }}</p>
+                    </div>
+                    @endif
+                    <!-- /.card-header -->
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table id="table-anggota" class="table table-bordered table-hover">
+                            <table id="table-anggota" style="width: 100%" class="table table-bordered table-hover">
                                 <thead>
                                     <tr>
                                         <th>No</th>
-                                        <th>No Induk</th>
+                                        <th>No. Induk</th>
                                         <th>Nama</th>
                                         <th>Alamat</th>
                                         <th>Telepon</th>
                                         <th>Jenis Kelamin</th>
-                                        <th>Tanggal Lahir</th>
+                                        <th>Tgl Lahir</th>
                                         <th>Tempat Lahir</th>
                                         <th>Ibu Kandung</th>
                                         <th>Action</th>
@@ -44,118 +54,105 @@
                             </table>
                         </div>
                     </div>
+                    <!-- /.card-body -->
                 </div>
             </div>
+            <!-- ./col -->
         </div>
-    </div>
+    </div><!-- /.container-fluid -->
 </section>
+<!-- /.content -->
+@endsection
 
-<script>
+@section('script')
+<script type="application/javascript">
     $(document).ready(function() {
         $('#table-anggota').DataTable({
             processing: true,
             serverSide: true,
             ajax: {
-                url: "{{ route('anggota.index') }}"
+                url: "{{ route('anggota.index') }}",
+                type: 'GET',
             },
-            columns: [
-                {
+            columns: [{
                     data: 'DT_RowIndex',
-                    name: 'DT_RowIndex' 
+                    className: 'align_middle'
                 },
                 {
-                    data: 'no_induk', 
-                    name: 'no_induk' 
+                    data: 'no_induk',
+                    className: 'align_middle'
                 },
-                { 
-                    data: 'nama', 
-                    name: 'nama' 
+                {
+                    data: 'nama',
+                    className: 'align_middle'
                 },
-                { 
-                    data: 'alamat', 
-                    name: 'alamat' 
+                {
+                    data: 'alamat',
+                    className: 'align_middle'
                 },
-                { 
-                    data: 'telepon', 
-                    name: 'telepon' 
+                {
+                    data: 'telepon',
+                    className: 'align_middle'
                 },
-                { 
-                    data: 'jenkel', 
-                    name: 'jenkel' 
+                {
+                    data: 'jenkel',
+                    className: 'align_middle'
                 },
-                { 
-                    data: 'tgl_lahir', 
-                    name: 'tgl_lahir' 
+                {
+                    data: 'tnggl_lahir',
+                    className: 'align_middle'
                 },
-                { 
-                    data: 'tempat_lahir', 
-                    name: 'tempat_lahir'
+                {
+                    data: 'tmpt_lahir',
+                    className: 'align_middle'
                 },
-                { 
-                    data: 'ibu_kandung', 
-                    name: 'ibu_kandung' 
+                {
+                    data: 'ibu_kandung',
+                    className: 'align_middle'
                 },
                 {
                     data: 'action',
-                    name: 'action'
-                },
-            ]
+                    className: 'align-middle text-center'
+                }
+            ],
+            // Rest of the DataTables settings
         });
     });
-    
-    function deleteItem(e) {
-        let id = e.getAttribute('data-id');
 
-        const swalWithBootstrapButtons = Swal.mixin({
-            customClass: {
-                confirmButton: 'btn btn-success',
-                cancelButton: 'btn btn-danger'
-            },
-            buttonsStyling: true
-        });
+    function deleteItem(button) {
+        var id = $(button).data('id');
+        var name = $(button).data('name');
 
-        swalWithBootstrapButtons.fire({
-            title: 'Apakah Anda yakin ingin melanjutkan?',
-            text: "Tindakan ini tidak dapat dibatalkan!",
+        Swal.fire({
+            title: 'Kamu Yakin?',
+            text: 'Kamu ingin menghapus anggota ' + name + '.',
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Ya, hapus!',
-            cancelButtonText: 'Tidak, batalkan!',
-            reverseButtons: true
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Hapus!'
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    type: 'POST',
-                    url: "{{ route('anggota.destroy', '') }}" + "/" + id,
+                    url: '/anggota/' + id,
+                    type: 'DELETE',
                     data: {
-                        "_token": "{{ csrf_token() }}",
-                        "_method": 'DELETE',
+                        _token: $('meta[name="csrf-token"]').attr('content')
                     },
-                    success: function(data) {
-                        if (data.success) {
-                            swalWithBootstrapButtons.fire(
-                                'Terhapus!',
-                                'Anggota berhasil dihapus.',
-                                "success"
-                            ).then(() => {
-                                location.reload();
-                            });
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        swalWithBootstrapButtons.fire(
-                            'Gagal',
-                            'Gagal menghapus Anggota.',
-                            'error'
+                    success: function(response) {
+                        // Remove the deleted row from the table
+                        $(button).closest('tr').remove();
+
+                        Swal.fire(
+                            'Deleted!',
+                            name + ' Telah dihapus',
+                            'success'
                         );
+                    },
+                    error: function(xhr) {
+                        console.log(xhr.responseText);
                     }
                 });
-            } else if (result.dismiss === Swal.DismissReason.cancel) {
-                swalWithBootstrapButtons.fire(
-                    'Dibatalkan',
-                    'Anggota batal di hapus :)',
-                    'error'
-                );
             }
         });
     }

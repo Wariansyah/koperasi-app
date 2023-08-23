@@ -44,7 +44,7 @@
 @endsection
 
 @section('script')
-<script>
+<script type="application/javascript">
     $(document).ready(function() {
         $('#table-user').DataTable({
             processing: true,

@@ -53,7 +53,7 @@
                     </div>
                     <div class="form-group">
                         <label for="tnggl_lahir">Tanggal Lahir:</label>
-                        <input type="date" name="tnggl_lahir" class="form-control" value="{{ $anggota->tgl_lahir }}" required>
+                        <input type="date" name="tnggl_lahir" class="form-control" value="{{ $anggota->tnggl_lahir }}" required>
                         <span class="text-danger" id="tnggl_lahir_error"></span>
                     </div>
                     <div class="form-group">
