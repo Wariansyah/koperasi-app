@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Kas;
 use Carbon\Carbon;
 use App\Models\User;
-use Illuminate\Support\Facades\Cache; // Import Cache facade
+use Illuminate\Support\Facades\Cache;
 
 class UpdateKasNextDay
 {
@@ -18,8 +18,8 @@ class UpdateKasNextDay
         if (Auth::check()) {
             $user = Auth::user();
 
-            $loggedInUser = User::find($user->id); 
-            $lastUpdateDate = $loggedInUser->last_kas_update_date; 
+            $loggedInUser = User::find($user->id);
+            $lastUpdateDate = $loggedInUser->last_kas_update_date;
 
             $currentDate = Carbon::now();
             $currentDateStr = $currentDate->toDateString();
@@ -32,11 +32,11 @@ class UpdateKasNextDay
                         ->first();
 
                     if (!$currentKasRecord) {
-                        $this->generateKasForUser($user, $currentDateStr); 
+                        $this->generateKasForUser($user, $currentDateStr);
                         return true;
                     }
 
-                    return false; 
+                    return false;
                 });
 
                 if ($shouldGenerate) {
@@ -52,29 +52,24 @@ class UpdateKasNextDay
 
     private function generateKasForUser($user, $currentDate)
     {
-        // Your kas generation logic here
-        // Ambil saldo akhir dari user pada hari sebelumnya (jika ada)
-        $kas_akhir = Kas::where('user_id', $user->id)
-            ->whereDate('date', $currentDate) // Ambil kas akhir dari tanggal saat pengguna login
-            ->value('kas_akhir');
+        // Get the last kas record for the user
+        $lastKasRecord = Kas::where('user_id', $user->id)
+            ->whereDate('date', '<=', $currentDate) // Consider kas records up to the current date
+            ->orderBy('date', 'desc')
+            ->first();
 
-        // Ambil transaksi kas user pada hari ini (jika ada)
-        $currentKasRecord = Kas::where('user_id', $user->id)
-            ->whereDate('date', $currentDate)
-            ->sum('kas_masuk') - Kas::where('user_id', $user->id)
-            ->whereDate('date', $currentDate)
-            ->sum('kas_keluar');
+        $kasAwalNextDay = 0;
+        if ($lastKasRecord) {
+            $kasAwalNextDay = $lastKasRecord->kas_akhir;
+        }
 
-        // Hitung kas awal untuk user pada hari berikutnya
-        $kasAwalNextDay = $kas_akhir + $currentKasRecord;
-
-        // Buat data transaksi kas baru untuk user pada hari berikutnya
+        // Create a new kas transaction record for the next day
         $transaction = new Kas();
         $transaction->user_id = $user->id;
-        $transaction->date = $currentDate; // Tanggal hari ini atau saat pengguna login
+        $transaction->date = $currentDate;
         $transaction->kas_awal = $kasAwalNextDay;
-        $transaction->kas_masuk = 0; // Reset kas masuk
-        $transaction->kas_keluar = 0; // Reset kas keluar
+        $transaction->kas_masuk = 0;
+        $transaction->kas_keluar = 0;
         $transaction->kas_akhir = $kasAwalNextDay;
         $transaction->save();
     }

@@ -15,7 +15,6 @@ class CompanyController extends Controller
         if ($request->ajax()) {
             $data = Company::all();
             return DataTables::of($data)
-                ->addIndexColumn()
                 ->addColumn('logo', function ($row) {
                     return '<img src="' . asset('storage/' . $row->logo) . '" height="50" />';
                 })

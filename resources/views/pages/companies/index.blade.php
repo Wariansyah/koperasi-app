@@ -95,7 +95,7 @@
                     data: 'logo',
                     className: 'align-middle',
                     render: function(data, type, full, meta) {
-                        return "<img src='" + data + "' height='50'/>";
+                        return "<img src='" + data + "' height='150'/>";
                     }
                 },
                 {
@@ -123,6 +123,7 @@
             if (result.isConfirmed) {
                 $.ajax({
                     url: '/companies/' + id,
+                    url: '/company/' + id,
                     type: 'DELETE',
                     data: {
                         _token: $('meta[name="csrf-token"]').attr('content')
