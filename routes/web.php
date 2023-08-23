@@ -57,6 +57,11 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/ledgers', [LedgerController::class, 'store'])->name('ledgers.store');
     Route::put('/ledgers/{id}', [LedgerController::class, 'update'])->name('ledgers.update');
     Route::delete('/ledgers/{id}', [LedgerController::class, 'destroy'])->name('ledgers.destroy');
+    Route::get('/companies', [CompanyController::class, 'index'])->name('companies.index');
+    Route::resource('/companies', CompanyController::class);
+    Route::post('/companies', [CompanyController::class, 'store'])->name('companies.store');
+    Route::put('/companies/{id}', [CompanyController::class, 'update'])->name('companies.update');
+    Route::delete('/companies/{id}', [CompanyController::class, 'destroy'])->name('companies.destroy');
 
 
 })->middleware('web');

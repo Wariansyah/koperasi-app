@@ -3,6 +3,10 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Carbon\Carbon;
+use App\Http\Controllers\KasController;
+use Illuminate\Support\Facades\Log;
+
 
 class UpdateKasAwalForNextDay extends Command
 {

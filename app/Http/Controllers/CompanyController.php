@@ -4,34 +4,33 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Company;
-use DataTables;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Yajra\DataTables\Facades\DataTables;
 
 class CompanyController extends Controller
 {
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = Company::get();
-            dd($data);
-            return DataTables()::of($data)
+            $data = Company::all();
+            return DataTables::of($data)
                 ->addColumn('logo', function ($row) {
-                    dd($row->logo);
                     return '<img src="' . asset('storage/' . $row->logo) . '" height="50" />';
                 })
                 ->addColumn('action', function ($row) {
-                    $actionBtn = '<a href="' . route('companies.show', $row->id) . '" class="btn btn-info">Show</a>
-                                  <a href="' . route('companies.edit', $row->id) . '" class="btn btn-primary">Edit</a>
+                    $actionBtn = '<a href="' . route('companies.edit', $row->id) . '" class="btn btn-primary">Edit</a>
                                   <button class="btn btn-danger delete-btn" data-id="' . $row->id . '">Delete</button>';
                     return $actionBtn;
                 })
                 ->rawColumns(['logo', 'action'])
                 ->toJson();
         }
-
+    
         return view('pages.companies.index');
     }
+    
+
 
     public function create()
     {

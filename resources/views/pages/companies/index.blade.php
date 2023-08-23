@@ -45,7 +45,6 @@
 @section('scripts')
 <script type="application/javascript">
     $(document).ready(function() {
-        
         $('#table-company').DataTable({
             processing: true,
             serverSide: true,
@@ -53,32 +52,17 @@
                 url: "{{ route('companies.index') }}",
                 type: 'GET',
             },
-            columns: [{
-                    data: 'DT_RowIndex',
-                    name: 'DT_RowIndex'
-                },
-                {
-                    data: 'nama',
-                    name: 'nama'
-                },
-                {
-                    data: 'alamat',
-                    name: 'alamat'
-                },
-                {
-                    data: 'email',
-                    name: 'email'
-                },
-                {
-                    data: 'telepon',
-                    name: 'telepon'
-                },
+            columns: [
+                { data: 'DT_RowIndex', name: 'DT_RowIndex' },
+                { data: 'nama', name: 'nama'},
+                { data: 'alamat', name: 'alamat' },
+                { data: 'email', name: 'email' },
+                { data: 'telepon', name: 'telepon' },
                 {
                     data: 'logo',
-                    name: 'logo',
+                    className: 'logo',
                     render: function(data, type, full, meta) {
-                        return '<img src="{{ Storage::url('
-                        ') }}/' + data + '" height="50"/>';
+                        return '<img src="{{ Storage::url("/") }}' + data + '" height="50"/>';
                     }
                 },
                 {
@@ -99,7 +83,6 @@
                         "_token": "{{ csrf_token() }}",
                     },
                     success: function(data) {
-                        console.log(data);
                         $('#table-company').DataTable().ajax.reload();
                         alert('Company deleted successfully.');
                     },
