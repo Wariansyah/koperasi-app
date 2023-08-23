@@ -16,7 +16,7 @@ class CompanyController extends Controller
             $data = Company::all();
             return DataTables::of($data)
                 ->addColumn('logo', function ($row) {
-                    return '<img src="' . asset('storage/' . $row->logo) . '" height="50" />';
+                    return asset('storage/' . $row->logo);
                 })
                 ->addColumn('action', function ($row) {
                     $actionBtn = '<a href="' . route('companies.edit', $row->id) . '" class="btn btn-warning"><i class="fas fa-pen-square fa-circle mt-2"></i></a>

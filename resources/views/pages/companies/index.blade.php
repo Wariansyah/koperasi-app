@@ -73,7 +73,7 @@
             },
             columns: [{
                     data: 'DT_RowIndex',
-                    className: 'align-middle'
+                    name: 'DT_RowIndex'
                 },
                 {
                     data: 'nama',
