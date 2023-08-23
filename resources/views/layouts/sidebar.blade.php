@@ -66,8 +66,8 @@
                         </li>
                     </ul>
                 </li>
-                <li class="nav-item{{ request()->is('produk*') ? ' menu-open' : '' }}">
-                    <a href="#" class="nav-link {{ request()->is('produk*') ? 'active' : '' }}">
+                <li class="nav-item{{ request()->is('produk*') || request()->is('ledgers*') ? ' menu-open' : '' }}">
+                    <a href="#" class="nav-link {{ request()->is('produk*') || request()->is('ledgers*')? 'active' : '' }}">
                         <i class="nav-icon fas fa-users"></i>
                         <p>
                             Produk
@@ -89,6 +89,24 @@
                                 class="nav-link {{ request()->is('ledgers*') ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Ledger</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item{{ request()->is('anggota*') ? ' menu-open' : '' }}">
+                    <a href="#" class="nav-link {{ request()->is('anggota*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-users"></i>
+                        <p>
+                            Anggota
+                            <i class="fas fa-angle-left right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ route('anggota.index') }}"
+                                class="nav-link {{ request()->is('anggota*') ? 'active' : '' }}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Anggota</p>
                             </a>
                         </li>
                     </ul>
