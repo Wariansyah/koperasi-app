@@ -30,6 +30,24 @@
                         </p>
                     </a>
                 </li>
+                <li class="nav-item{{ request()->is('companies*') ? ' menu-open' : '' }}">
+                    <a href="#" class="nav-link {{ request()->is('companies*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-users"></i>
+                        <p>
+                            Company
+                            <i class="fas fa-angle-left right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ route('companies.index') }}"
+                                class="nav-link {{ request()->is('companies*') ? 'active' : '' }}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>company</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
                 <li class="nav-item{{ request()->is('kas*') ? ' menu-open' : '' }}">
                     <a href="#" class="nav-link {{ request()->is('kas*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-users"></i>
