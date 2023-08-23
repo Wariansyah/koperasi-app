@@ -64,7 +64,7 @@ class AnggotaController extends Controller
             'jenkel' => 'required|string|max:255',
             'tnggl_lahir' => 'required|date',
             'tmpt_lahir' => 'required|string|max:255',
-            'ibu_kandung' => 'required|string|max:255|unique:anggota,ibu_kandung',
+            'ibu_kandung' => 'required|string|max:255',
         ]);
 
         $anggotaData = $request->all();
