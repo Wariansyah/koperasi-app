@@ -39,7 +39,11 @@ class PermissionTableSeeder extends Seeder
             'list-anggota',
             'create-anggota',
             'edit-anggota',
-            'delete-anggota'
+            'delete-anggota',
+            'list-company',
+            'create-company',
+            'edit-company',
+            'delete-company',
          ];
       
          foreach ($permissions as $permission) {

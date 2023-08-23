@@ -10,13 +10,21 @@ use Yajra\DataTables\Facades\DataTables;
 
 class CompanyController extends Controller
 {
+    // function __construct()
+    // {
+    //     $this->middleware('permission:list-company|create-company|edit-company|delete-company', ['only' => ['index', 'store']]);
+    //     $this->middleware('permission:create-company', ['only' => ['create', 'store']]);
+    //     $this->middleware('permission:edit-company', ['only' => ['edit', 'update']]);
+    //     $this->middleware('permission:delete-company', ['only' => ['destroy']]);
+    // }
     public function index(Request $request)
     {
         if ($request->ajax()) {
             $data = Company::all();
             return DataTables::of($data)
+                ->addIndexColumn()
                 ->addColumn('logo', function ($row) {
-                    return '<img src="' . asset('storage/' . $row->logo) . '" height="50" />';
+                    return asset('storage/' . $row->logo);
                 })
                 ->addColumn('action', function ($row) {
                     $actionBtn = '<a href="' . route('companies.edit', $row->id) . '" class="btn btn-warning"><i class="fas fa-pen-square fa-circle mt-2"></i></a>
