@@ -22,6 +22,8 @@ return new class extends Migration
             $table->date('tgl_lahir')->after('jenkel')->nullable();
             $table->string('tmpt_lahir')->after('tgl_lahir')->nullable();
             $table->decimal('limit_pinjaman', 14, 2)->after('tmpt_lahir')->nullable();
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
         });
     }
 

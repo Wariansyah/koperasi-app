@@ -29,6 +29,8 @@ class User extends Authenticatable
         'tgl_lahir',
         'tmpt_lahir',
         'limit_pinjaman',
+        'created_by',
+        'updated_by',
     ];
 
     protected $hidden = [

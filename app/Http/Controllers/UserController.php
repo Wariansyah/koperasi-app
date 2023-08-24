@@ -16,13 +16,13 @@ use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
-    // function __construct()
-    // {
-    //     $this->middleware('permission:list-user|create-user|edit-user|delete-user', ['only' => ['index', 'store']]);
-    //     $this->middleware('permission:create-user', ['only' => ['create', 'store']]);
-    //     $this->middleware('permission:edit-user', ['only' => ['edit', 'update']]);
-    //     $this->middleware('permission:delete-user', ['only' => ['destroy']]);
-    // }
+    function __construct()
+    {
+        $this->middleware('permission:list-user|create-user|edit-user|delete-user', ['only' => ['index', 'store']]);
+        $this->middleware('permission:create-user', ['only' => ['create', 'store']]);
+        $this->middleware('permission:edit-user', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:delete-user', ['only' => ['destroy']]);
+    }
 
     /**
      * Display a listing of the resource.
@@ -122,6 +122,8 @@ class UserController extends Controller
             $userData['status'] = '0';
         }
         $userData['password'] = Hash::make($request->input('password'));
+        $userData['created_by'] = auth()->user()->id;
+        $userData['updated_by'] = auth()->user()->id;
         $user = User::create($userData);
         $user->assignRole($request->input('role'));
 
@@ -193,6 +195,7 @@ class UserController extends Controller
         $user->assignRole($request->input('role'));
 
         $user->update($userData);
+        $user->updated_by = auth()->user()->id;
 
         return response()->json(['success' => true, 'message' => 'User updated successfully.']);
     }
