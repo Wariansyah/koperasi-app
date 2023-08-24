@@ -195,7 +195,7 @@ class UserController extends Controller
         $user->assignRole($request->input('role'));
 
         $user->update($userData);
-        $user->updated_by = auth()->user()->id;
+        $user->updated_by = Auth::user()->name;
 
         return response()->json(['success' => true, 'message' => 'User updated successfully.']);
     }
