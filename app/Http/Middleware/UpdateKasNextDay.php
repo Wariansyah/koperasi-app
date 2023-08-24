@@ -71,6 +71,8 @@ class UpdateKasNextDay
         $transaction->kas_masuk = 0;
         $transaction->kas_keluar = 0;
         $transaction->kas_akhir = $kasAwalNextDay;
+        
+        // Save the transaction
         $transaction->save();
     }
 }
