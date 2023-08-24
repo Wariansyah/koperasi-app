@@ -12,11 +12,29 @@ class Simpanan extends Model
     protected $table = "pinjaman";
     protected $primarykey = "id";
     protected $fillable = [
-        'rekening_simpanan',
-        'user_id',
+        'rekening',
+        'no_induk',
         'tgl_buka',
         'tgl_tutup',
         'nominal',
         'keterangan',
+        'created_by',
+        'updated_by',
     ];
+
+    public function anggota()
+    {
+        return $this->belongsTo(Anggota::class);
+    }
+
+    public function createdByUser()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function updatedByUser()
+    {
+        return $this->belongsTo(User::class, 'updated_by');
+    }
+
 }

@@ -12,6 +12,7 @@ class Anggota extends Model
     protected $table = 'anggota';
 
     protected $fillable = [
+        'rekening',
         'no_induk',
         'nama',
         'alamat',
@@ -23,6 +24,11 @@ class Anggota extends Model
         'created_by',
         'updated_by',
     ];
+    
+    public function simpanan()
+    {
+        return $this->hasMany(Simpanan::class);
+    }
 
     public function createdByUser()
     {

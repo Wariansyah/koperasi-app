@@ -31,6 +31,8 @@ return new class extends Migration
             $table->string('penggunaan');
             $table->date('tgl_lunas');
             $table->string('otoritasi_by');
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
             $table->timestamps();
         });
     }

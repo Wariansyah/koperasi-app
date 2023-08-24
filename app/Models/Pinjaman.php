@@ -12,6 +12,7 @@ class Pinjaman extends Model
     protected $table = "pinjaman";
     protected $primarykey = "id";
     protected $fillable = [
+        'rekening',
         'user_id',
         'nominal',
         'tgl_pinjam',
@@ -27,5 +28,7 @@ class Pinjaman extends Model
         'penggunaan',
         'tgl_lunas',
         'otorisasi_by',
+        'created_by',
+        'updated_by',
     ];
 }

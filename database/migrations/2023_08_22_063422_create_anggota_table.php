@@ -15,6 +15,7 @@ class CreateAnggotaTable extends Migration
     {
         Schema::create('anggota', function (Blueprint $table) {
             $table->id();
+            $table->string('rekening')->unique();
             $table->string('no_induk')->unique();
             $table->string('nama');
             $table->text('alamat')->nullable();
@@ -23,8 +24,8 @@ class CreateAnggotaTable extends Migration
             $table->date('tnggl_lahir')->nullable();
             $table->string('tmpt_lahir')->nullable();
             $table->string('ibu_kandung')->nullable();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
             $table->timestamps();
         });
     }
