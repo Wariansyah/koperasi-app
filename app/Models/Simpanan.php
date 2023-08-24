@@ -13,10 +13,23 @@ class Simpanan extends Model
     protected $primarykey = "id";
     protected $fillable = [
         'rekening_simpanan',
-        'user_id',
+        'no_induk',
         'tgl_buka',
         'tgl_tutup',
         'nominal',
         'keterangan',
+        'created_by',
+        'updated_by',
     ];
+
+    public function createdByUser()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function updatedByUser()
+    {
+        return $this->belongsTo(User::class, 'updated_by');
+    }
+    
 }

@@ -53,6 +53,7 @@ class PinjamanController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+            'rekening' => 'required|numeric',
             'nominal' => 'required|numeric',
             'tgl_pinjam' => 'required|date',
             'keuntungan' => 'required|numeric',
@@ -115,6 +116,8 @@ class PinjamanController extends Controller
     public function update(Request $request, Pinjaman $pinjaman)
     {
         $request->validate([
+            'rekening' => 'required|numeric',
+            'user_id' => 'required|numeric',
             'nominal' => 'required|numeric',
             'tgl_pinjam' => 'required|date',
             'keuntungan' => 'required|numeric',

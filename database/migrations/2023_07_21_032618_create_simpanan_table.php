@@ -21,6 +21,8 @@ return new class extends Migration
             $table->date('tgl_tutup');
             $table->integer('nominal');
             $table->string('keterangan');
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
             $table->timestamps();
         });
     }

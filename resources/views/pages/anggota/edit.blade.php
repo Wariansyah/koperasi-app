@@ -24,6 +24,11 @@
                     @csrf
                     @method('PUT')
                     <div class="form-group">
+                        <label for="rekening">Rekening:</label>
+                        <input type="text" name="rekening" class="form-control" value="{{ $anggota->rekening }}" required>
+                        <span class="text-danger" id="rekening_error"></span>
+                    </div>
+                    <div class="form-group">
                         <label for="no_induk">No Induk:</label>
                         <input type="text" name="no_induk" class="form-control" value="{{ $anggota->no_induk }}" required>
                         <span class="text-danger" id="no_induk_error"></span>
@@ -95,6 +100,7 @@
         btn.val("Loading...");
         var formData = new FormData(this);
         formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
+        $('#rekening_error').text('');
         $('#no_induk_error').text('');
         $('#name_error').text('');
         $('#alamat_error').text('');

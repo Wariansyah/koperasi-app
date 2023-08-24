@@ -12,6 +12,7 @@ class Pinjaman extends Model
     protected $table = "pinjaman";
     protected $primarykey = "id";
     protected $fillable = [
+        'rekening',
         'user_id',
         'nominal',
         'tgl_pinjam',

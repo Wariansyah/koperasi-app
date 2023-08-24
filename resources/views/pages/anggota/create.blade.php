@@ -24,6 +24,11 @@
                 <form id="createAnggotaForm" method="POST" action="{{ route('anggota.store') }}">
                     @csrf
                     <div class="form-group">
+                        <label for="rekening">Rekening:</label>
+                        <input type="text" name="rekening" class="form-control" required>
+                        <span class="text-danger" id="rekening_error"></span>
+                    </div>
+                    <div class="form-group">
                         <label for="no_induk">No Induk:</label>
                         <input type="text" name="no_induk" class="form-control" required>
                         <span class="text-danger" id="no_induk_error"></span>
@@ -96,6 +101,7 @@
         btn.attr('disabled', true);
         btn.val("Loading...");
         let formData = new FormData(this);
+        $('#rekening_error').text('');
         $('#no_induk_error').text('');
         $('#name_error').text('');
         $('#alamat_error').text('');
@@ -138,6 +144,7 @@
                     confirmButtonText: 'OK'
                 });
 
+                $('#rekening_error').text(response.responseJSON.errors.rekening);
                 $('#no_induk_error').text(response.responseJSON.errors.no_induk);
                 $('#name_error').text(response.responseJSON.errors.name);
                 $('#alamat_error').text(response.responseJSON.errors.alamat);

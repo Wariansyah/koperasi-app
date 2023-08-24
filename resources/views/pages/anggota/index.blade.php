@@ -40,6 +40,7 @@
                                 <thead>
                                     <tr>
                                         <th>No</th>
+                                        <th>Rekening</th>
                                         <th>No. Induk</th>
                                         <th>Nama</th>
                                         <th>Alamat</th>
@@ -76,6 +77,10 @@
             },
             columns: [{
                     data: 'DT_RowIndex',
+                    className: 'align_middle'
+                },
+                {
+                    data: 'rekening',
                     className: 'align_middle'
                 },
                 {

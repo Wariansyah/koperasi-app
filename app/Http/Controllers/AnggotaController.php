@@ -58,6 +58,7 @@ class AnggotaController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+            'rekening'=> 'required|string|unique:anggota,rekening' ,
             'no_induk' => 'required|string|max:255|unique:anggota,no_induk',
             'nama' => 'required|string|max:255|unique:anggota,nama',
             'alamat' => 'required|string',
@@ -112,7 +113,9 @@ class AnggotaController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'no_induk' => 'required|string' ,
+            
+            'rekening'=> 'required|string|unique:anggota,rekening' ,
+            'no_induk' => 'required|string|unique:anggota,no_induk' ,
             'nama' => 'required|string' ,
             'alamat' => 'required|string',
             'telepon' => 'required|string' ,
@@ -124,6 +127,7 @@ class AnggotaController extends Controller
 
 
         $anggota = Anggota::find($id);
+        $anggota->rekening= $request->input('rekening');
         $anggota->no_induk = $request->input('no_induk');
         $anggota->nama = $request->input('nama');
         $anggota->alamat = $request->input('alamat');
