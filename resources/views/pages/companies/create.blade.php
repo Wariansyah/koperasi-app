@@ -45,8 +45,11 @@
                     </div>
                     <div class="form-group">
                         <label for="logo">Logo:</label>
-                        <input type="file" name="logo" class="form-control-file" required>
+                        <input type="file" name="logo" class="form-control-file" id="logoInput" required>
                         <span class="text-danger" id="logo_error"></span>
+                    </div>
+                    <div class="form-group">
+                        <img id="logoPreview" src="#" alt="Logo Preview" style="max-height: 200px; display: none;">
                     </div>
                     <div class="form-group">
                         <button type="submit" id="createCompanyBtn" class="btn btn-primary">Create Company</button>
@@ -70,6 +73,19 @@
 
 @section('script')
 <script type="application/javascript">
+     $("#logoInput").on('change', function(e) {
+        var logoInput = e.target;
+        if (logoInput.files && logoInput.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function(e) {
+                $('#logoPreview').attr('src', e.target.result);
+                $('#logoPreview').css('display', 'block');
+            }
+
+            reader.readAsDataURL(logoInput.files[0]);
+        }
+    });
     $("#createCompanyForm").on('submit', function(e) {
         e.preventDefault();
         var btn = $('#createCompanyBtn');
