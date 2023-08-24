@@ -32,9 +32,9 @@
                 </li>
                 <li class="nav-item{{ request()->is('companies*') ? ' menu-open' : '' }}">
                     <a href="#" class="nav-link {{ request()->is('companies*') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-users"></i>
+                        <i class="nav-icon fas fa-city"></i>
                         <p>
-                            Company
+                            Perusahaan
                             <i class="fas fa-angle-left right"></i>
                         </p>
                     </a>
@@ -50,7 +50,7 @@
                 </li>
                 <li class="nav-item{{ request()->is('kas*') ? ' menu-open' : '' }}">
                     <a href="#" class="nav-link {{ request()->is('kas*') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-users"></i>
+                        <i class="nav-icon fas fa-chart-pie"></i>
                         <p>
                             Keuangan
                             <i class="fas fa-angle-left right"></i>
@@ -68,7 +68,7 @@
                 </li>
                 <li class="nav-item{{ request()->is('produk*') || request()->is('ledgers*') ? ' menu-open' : '' }}">
                     <a href="#" class="nav-link {{ request()->is('produk*') || request()->is('ledgers*')? 'active' : '' }}">
-                        <i class="nav-icon fas fa-users"></i>
+                        <i class="nav-icon fas fa-cubes"></i>
                         <p>
                             Produk
                             <i class="fas fa-angle-left right"></i>
@@ -95,7 +95,7 @@
                 </li>
                 <li class="nav-item{{ request()->is('anggota*') ? ' menu-open' : '' }}">
                     <a href="#" class="nav-link {{ request()->is('anggota*') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-users"></i>
+                        <i class="nav-icon fas fa-address-card"></i>
                         <p>
                             Anggota
                             <i class="fas fa-angle-left right"></i>
