@@ -81,7 +81,7 @@
                     </div>
                     <div class="form-group">
                         <label for="role">Peran:</label>
-                        <select name="role" id="role" class="form-control" required>
+                        <select name="role" id="role" class="form-control select2" required>
                             <option value="">-- Pilih Peran --</option>
                             @foreach($roles as $role)
                             <option value="{{ $role->id }}" {{ $user->hasRole($role->name) ? 'selected' : '' }}>
@@ -110,19 +110,23 @@
 
 @section('script')
 <script type="application/javascript">
+    $(document).ready(function() {
+        $('.select2').select2();
+    });
+
     $("#editUserForm").on('submit', function(e) {
         e.preventDefault();
         var btn = $('#editUserBtn');
+        btn.attr
+        var btn = $('#editUserBtn');
         btn.attr('disabled', true);
         btn.val("Loading...");
-        var formData = new FormData(this);
-        formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
+        let formData = new FormData(this);
         $('#name_error').text('');
         $('#no_induk_error').text('');
         $('#alamat_error').text('');
         $('#email_error').text('');
         $('#telepon_error').text('');
-        $('#password_error').text('');
         $('#status_error').text('');
         $('#jenkel_error').text('');
         $('#tgl_lahir_error').text('');
@@ -131,7 +135,7 @@
         $('#limit_pinjaman_error').text('');
 
         $.ajax({
-            url: $(this).attr('action'),
+            url: "{{ route('users.update', $user->id) }}",
             type: "POST",
             data: formData,
             cache: false,
@@ -139,42 +143,42 @@
             processData: false,
             success: function(response) {
                 if (response.success) {
+                    sessionStorage.setItem('success', response.message);
+                    $('#jenkel').html('<span class="badge badge-primary">' + response.jenkel + '</span>');
+
                     Swal.fire({
                         icon: 'success',
-                        title: 'User Update',
-                        text: 'User Berhasi Diupdate.',
+                        title: 'User Updated',
+                        text: response.message,
                         showConfirmButton: false,
                         timer: 1500 // Auto close after 1.5 seconds
                     }).then(function() {
                         window.location.href = "{{ route('users.index') }}";
                     });
-                } else {
-                    if (response.errors) {
-                        // Handle error fields
-                        // ...
-                    }
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Update Failed',
-                        text: 'An error occurred while updating the user.',
-                        confirmButtonText: 'OK'
-                    });
                 }
-
+            },
+            error: function(response) {
                 btn.attr('disabled', false);
                 btn.val("Update User");
-            },
-            error: function(xhr, status, error) {
-                // Handle error cases
+
                 Swal.fire({
                     icon: 'error',
-                    title: 'Update Failed',
+                    title: 'Error',
                     text: 'An error occurred while updating the user.',
                     confirmButtonText: 'OK'
                 });
 
-                btn.attr('disabled', false);
-                btn.val("Update User");
+                $('#name_error').text(response.responseJSON.errors.name);
+                $('#no_induk_error').text(response.responseJSON.errors.no_induk);
+                $('#alamat_error').text(response.responseJSON.errors.alamat);
+                $('#email_error').text(response.responseJSON.errors.email);
+                $('#telepon_error').text(response.responseJSON.errors.telepon);
+                $('#status_error').text(response.responseJSON.errors.status);
+                $('#jenkel_error').text(response.responseJSON.errors.jenkel);
+                $('#tgl_lahir_error').text(response.responseJSON.errors.tgl_lahir);
+                $('#tmpt_lahir_error').text(response.responseJSON.errors.tmpt_lahir);
+                $('#role_error').text(response.responseJSON.errors.role);
+                $('#limit_pinjaman_error').text(response.responseJSON.errors.limit_pinjaman);
             }
         });
     });

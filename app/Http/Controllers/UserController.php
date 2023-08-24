@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
 use Yajra\DataTables\Facades\DataTables;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Arr;
@@ -16,6 +16,7 @@ use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
+
     // function __construct()
     // {
     //     $this->middleware('permission:list-user|create-user|edit-user|delete-user', ['only' => ['index', 'store']]);
@@ -23,6 +24,7 @@ class UserController extends Controller
     //     $this->middleware('permission:edit-user', ['only' => ['edit', 'update']]);
     //     $this->middleware('permission:delete-user', ['only' => ['destroy']]);
     // }
+
 
     /**
      * Display a listing of the resource.
@@ -122,15 +124,13 @@ class UserController extends Controller
             $userData['status'] = '0';
         }
         $userData['password'] = Hash::make($request->input('password'));
-        $userData['created_by'] = auth()->user()->id;
-        $userData['updated_by'] = auth()->user()->id;
+        $userData['created_by'] = Auth::user()->name; // Replace with the correct user ID
+        $userData['updated_by'] = Auth::user()->name; // Replace with the correct user ID
         $user = User::create($userData);
         $user->assignRole($request->input('role'));
 
-
         return response()->json(['success' => true, 'message' => 'User created successfully.']);
     }
-
 
     /**
      * Display the specified resource.
