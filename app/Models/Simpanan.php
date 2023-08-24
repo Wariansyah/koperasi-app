@@ -12,7 +12,7 @@ class Simpanan extends Model
     protected $table = "pinjaman";
     protected $primarykey = "id";
     protected $fillable = [
-        'rekening_simpanan',
+        'rekening',
         'no_induk',
         'tgl_buka',
         'tgl_tutup',
@@ -21,6 +21,11 @@ class Simpanan extends Model
         'created_by',
         'updated_by',
     ];
+
+    public function anggota()
+    {
+        return $this->belongsTo(Anggota::class);
+    }
 
     public function createdByUser()
     {
@@ -31,5 +36,5 @@ class Simpanan extends Model
     {
         return $this->belongsTo(User::class, 'updated_by');
     }
-    
+
 }
