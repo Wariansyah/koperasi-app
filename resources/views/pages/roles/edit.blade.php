@@ -33,9 +33,13 @@
                         <strong>Permission:</strong>
                         <br />
                         <div class="container">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="select-all">
+                                <label class="form-check-label" for="select-all">Select All</label>
+                            </div>
                             @foreach($permission as $value)
                             <div class="form-check">
-                                <input class="form-check-input" value="{{ $value->id }}" name="permission[]" type="checkbox" id="flexSwitchCheckDefault{{ $value->id }}" @if(in_array($value->id, $rolePermissions)) checked @endif>
+                                <input class="form-check-input" value="{{ $value->id }}" name="permission[]" type="checkbox" id="flexSwitchCheckDefault{{ $value->id }}">
                                 <label class="form-check-label" for="flexSwitchCheckDefault{{ $value->id }}">{{ $value->name }}</label>
                             </div>
                             @endforeach
@@ -54,6 +58,19 @@
 
 @section('script')
 <script type="application/javascript">
+    $(document).ready(function() {
+        $('#select-all').click(function(event) {
+            if (this.checked) {
+                $(':checkbox').each(function() {
+                    this.checked = true;
+                });
+            } else {
+                $(':checkbox').each(function() {
+                    this.checked = false;
+                });
+            }
+        });
+    });
     $("#editRoleForm").on('submit', function(e) {
         e.preventDefault();
         var btn = $('#editRoleBtn');
@@ -94,17 +111,17 @@
             error: function(xhr, status, error) {
                 console.log(xhr.responseText);
                 btn.attr('disabled', false);
-                btn.val("Update Role"); 
+                btn.val("Update Role");
                 if (xhr.status === 422) {
                     var errors = JSON.parse(xhr.responseText).errors;
-                        if (errors.name) {
-                            $('#name_error').text(errors.name[0]);
-                        }       
+                    if (errors.name) {
+                        $('#name_error').text(errors.name[0]);
+                    }
                 }
             }
 
         });
-        $('#name_error').on('input', function(){
+        $('#name_error').on('input', function() {
             $('#name_error').text('');
         });
     });
