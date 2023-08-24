@@ -11,13 +11,13 @@ use Illuminate\Support\Facades\Auth;
 
 class CompanyController extends Controller
 {
-    // function __construct()
-    // {
-    //     $this->middleware('permission:list-company|create-company|edit-company|delete-company', ['only' => ['index', 'store']]);
-    //     $this->middleware('permission:create-company', ['only' => ['create', 'store']]);
-    //     $this->middleware('permission:edit-company', ['only' => ['edit', 'update']]);
-    //     $this->middleware('permission:delete-company', ['only' => ['destroy']]);
-    // }
+    function __construct()
+    {
+        $this->middleware('permission:list-company|create-company|edit-company|delete-company', ['only' => ['index', 'store']]);
+        $this->middleware('permission:create-company', ['only' => ['create', 'store']]);
+        $this->middleware('permission:edit-company', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:delete-company', ['only' => ['destroy']]);
+    }
 
     public function index(Request $request)
     {
@@ -64,12 +64,15 @@ class CompanyController extends Controller
             $companyData['logo'] = $logoPath;
         }
 
-        Company::create($companyData);
+        // Set created_by and updated_by based on the authenticated user's name
         $companyData['created_by'] = Auth::user()->name;
         $companyData['updated_by'] = Auth::user()->name;
 
+        Company::create($companyData);
+
         return response()->json(['success' => true, 'message' => 'Company created successfully']);
     }
+
 
     public function show($id)
     {
