@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Anggota;
-use App\Models\Simpanan;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -25,13 +24,9 @@ class AnggotaController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = Anggota::with('simpanan')->get();
+            $data = Anggota::all();
             return DataTables::of($data)
                 ->addIndexColumn()
-                ->addColumn('table_simpanan', function ($row) {
-                    $tableSimpanan = $row->simpanan->sum('nominal');
-                    return $tableSimpanan;
-                })
                 ->addColumn('action', function ($row) {
                     $btn = '<a href="' . route('anggota.edit', $row->id) . '" class="btn btn-sm btn-warning"><i class="fas fa-pen-square fa-circle mt-2"></i></a>';
                     $btn .= ' <button type="button" class="btn btn-sm btn-danger" data-id="' . $row->id . '" onclick="deleteItem(this)"><i class="fas fa-trash"></i></button>';
@@ -43,7 +38,6 @@ class AnggotaController extends Controller
 
         return view('pages.anggota.index');
     }
-
 
     /**
      * Show the form for creating a new resource.
@@ -64,45 +58,23 @@ class AnggotaController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            // Validasi untuk tabel 'anggota'
-            'rekening' => 'required|string|unique:anggota,rekening',
-            'no_induk' => 'required|string|unique:anggota,no_induk',
+            'rekening' => 'required|string|max:255|unique:anggota,rekening',
+            'no_induk' => 'required|string|max:255|unique:anggota,no_induk',
             'nama' => 'required|string|max:255|unique:anggota,nama',
             'alamat' => 'required|string',
             'telepon' => 'required|string|max:255|unique:anggota,telepon',
             'jenkel' => 'required|string|max:255',
             'tnggl_lahir' => 'required|date',
-            'tmpt_lahir' => 'required|string',
+            'tmpt_lahir' => 'required|string|max:255',
             'ibu_kandung' => 'required|string|max:255',
-
-            // Validasi untuk tabel 'simpanan'
-            'rekening_simpanan' => 'required|string|unique:simpanan,rekening_simpanan',
-            'no_induk' => 'required|string',
-            'tgl_buka' => 'required|date',
-            'tgl_tutup' => 'required|date',
-            'nominal' => 'required|numeric',
-            'keterangan' => 'required|string',
         ]);
 
-        $anggotaData = $request->only([
-            'rekening', 'no_induk', 'nama', 'alamat', 'telepon',
-            'jenkel', 'tnggl_lahir', 'tmpt_lahir', 'ibu_kandung'
-        ]);
+        $anggotaData = $request->all();
         $anggotaData['created_by'] = auth()->user()->id;
         $anggotaData['updated_by'] = auth()->user()->id;
-        
         $anggota = Anggota::create($anggotaData);
 
-        $simpananData = $request->only([
-            'rekening_simpanan', 'no_induk', 'tgl_buka', 'tgl_tutup', 'nominal', 'keterangan'
-        ]);
-        $simpananData['created_by'] = auth()->user()->id;
-        $simpananData['updated_by'] = auth()->user()->id;
-        $simpananData['anggota_id'] = $anggota->id; // Menghubungkan simpanan dengan anggota yang baru dibuat
-        $simpanan = Simpanan::create($simpananData);
-
-        return response()->json(['success' => true, 'message' => 'Anggota and Simpanan created successfully.']);
-    
+        return response()->json(['success' => true, 'message' => 'Anggota created successfully.']);
     }
 
     /**
@@ -141,9 +113,8 @@ class AnggotaController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            
-            'rekening'=> 'required|string|unique:anggota,rekening' ,
-            'no_induk' => 'required|string|unique:anggota,no_induk' ,
+            'rekening' => 'required|string' ,
+            'no_induk' => 'required|string' ,
             'nama' => 'required|string' ,
             'alamat' => 'required|string',
             'telepon' => 'required|string' ,
@@ -155,7 +126,6 @@ class AnggotaController extends Controller
 
 
         $anggota = Anggota::find($id);
-        $anggota->rekening= $request->input('rekening');
         $anggota->no_induk = $request->input('no_induk');
         $anggota->nama = $request->input('nama');
         $anggota->alamat = $request->input('alamat');
