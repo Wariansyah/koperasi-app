@@ -101,7 +101,7 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required|string|max:255|unique:users,name',
             'no_induk' => 'required|string|unique:users',
-            'alamat' => 'required|string|unique:users',
+            'alamat' => 'required|string',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6',
             'telepon' => ['required', 'string', 'unique:users', 'regex:/^\d{10,12}$/'],
@@ -124,8 +124,8 @@ class UserController extends Controller
             $userData['status'] = '0';
         }
         $userData['password'] = Hash::make($request->input('password'));
-        $userData['created_by'] = Auth::user()->name; // Replace with the correct user ID
-        $userData['updated_by'] = Auth::user()->name; // Replace with the correct user ID
+        $userData['created_by'] = Auth::user()->name; 
+        $userData['updated_by'] = Auth::user()->name; 
         $user = User::create($userData);
         $user->assignRole($request->input('role'));
 
@@ -174,7 +174,7 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required|string|max:255|unique:users,name,' . $id,
             'no_induk' => 'required|string|unique:users,no_induk,' . $id,
-            'alamat' => 'required|string|unique:users,alamat,' . $id,
+            'alamat' => 'required|string',
             'email' => 'required|string|email|max:255|unique:users,email,' . $id,
             'password' => 'nullable|string|min:6', // Password validation is optional during update
             'telepon' => ['required', 'string', 'unique:users,telepon,' . $id, 'regex:/^\d{10,12}$/'],

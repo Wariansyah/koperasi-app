@@ -7,16 +7,17 @@ use App\Models\Company;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Auth;
 
 class CompanyController extends Controller
 {
-    function __construct()
-    {
-        $this->middleware('permission:list-company|create-company|edit-company|delete-company', ['only' => ['index', 'store']]);
-        $this->middleware('permission:create-company', ['only' => ['create', 'store']]);
-        $this->middleware('permission:edit-company', ['only' => ['edit', 'update']]);
-        $this->middleware('permission:delete-company', ['only' => ['destroy']]);
-    }
+    // function __construct()
+    // {
+    //     $this->middleware('permission:list-company|create-company|edit-company|delete-company', ['only' => ['index', 'store']]);
+    //     $this->middleware('permission:create-company', ['only' => ['create', 'store']]);
+    //     $this->middleware('permission:edit-company', ['only' => ['edit', 'update']]);
+    //     $this->middleware('permission:delete-company', ['only' => ['destroy']]);
+    // }
 
     public function index(Request $request)
     {
@@ -64,6 +65,8 @@ class CompanyController extends Controller
         }
 
         Company::create($companyData);
+        $companyData['created_by'] = Auth::user()->name;
+        $companyData['updated_by'] = Auth::user()->name;
 
         return response()->json(['success' => true, 'message' => 'Company created successfully']);
     }
@@ -85,10 +88,10 @@ class CompanyController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'nama' => 'required|string' ,
+            'nama' => 'required|string',
             'alamat' => 'required|string',
             'email' => 'required|string',
-            'telepon' => 'required|string' ,
+            'telepon' => 'required|string',
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
@@ -101,6 +104,7 @@ class CompanyController extends Controller
 
         $company = Company::findOrFail($id);
         $company->update($companyData);
+        $company->updated_by = Auth::user()->name;
 
         return response()->json(['success' => true, 'message' => 'Company updated successfully']);
     }
