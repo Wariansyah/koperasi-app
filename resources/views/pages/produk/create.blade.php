@@ -31,7 +31,7 @@
                     </div>
                     <div class="form-group">
                         <label for="ledger">Ledger:</label>
-                        <select name="ledger" id="ledger" class="form-control" required>
+                        <select name="ledger" id="ledger" class="form-control select2" required>
                             <option value="">-- Select Ledger --</option>
                             @foreach($ledgers as $ledger)
                             <option value="{{ $ledger->kode }}">{{ $ledger->kode }} - {{ $ledger->name }}</option>
@@ -57,9 +57,15 @@
 </div>
 @endsection
 
+<!-- Step 3: Add select2 class to ledger select field -->
+
+<!-- Step 4: Initialize select2 plugin -->
 @section('script')
 <script type="application/javascript">
     $(document).ready(function() {
+        // Initialize select2 plugin on ledger select field
+        $('.select2').select2();
+
         $("#createProdukForm").on('submit', function(e) {
             e.preventDefault();
             var btn = $('#createProdukBtn');

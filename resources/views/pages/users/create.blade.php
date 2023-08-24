@@ -83,7 +83,7 @@
                     </div>
                     <div class="form-group">
                         <label for="role">Role:</label>
-                        <select name="role" id="role" class="form-control" required>
+                        <select name="role" id="role" class="form-control select2" required>
                             <option value="">-- Pilih Role --</option>
                             @foreach($roles as $role)
                             <option value="{{ $role->id }}">{{ $role->name }}</option>
@@ -120,9 +120,13 @@
 
 @section('script')
 <script type="application/javascript">
+    function formatLimitPinjaman(value) {
+        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
     $(document).ready(function() {
         // Set default value for status
         $('#status').val('Aktif');
+        $('.select2').select2();
 
         // Set status to Aktif when selected
         $('#status').on('change', function() {
@@ -133,74 +137,87 @@
                 $('#status').html('<span class="badge badge-warning text-white">Tidak Aktif</span>');
                 $('#status').html('<span class="badge badge-danger text-white">Blokir</span>');
             }
+            $('#limit_pinjaman').on('input', function() {
+                // Get the value of the input field
+                let value = $(this).val();
+
+                // Remove any existing thousand separators
+                value = value.replace(/\./g, '');
+
+                // Format the value with a thousand separator
+                const formattedValue = formatLimitPinjaman(value);
+
+                // Set the formatted value as the new value of the input field
+                $(this).val(formattedValue);
+            });
         });
-    });
 
-    $("#createUserForm").on('submit', function(e) {
-        e.preventDefault();
-        var btn = $('#createUserBtn');
-        btn.attr('disabled', true);
-        btn.val("Loading...");
-        let formData = new FormData(this);
-        $('#name_error').text('');
-        $('#no_induk_error').text('');
-        $('#alamat_error').text('');
-        $('#email_error').text('');
-        $('#telepon_error').text('');
-        $('#password_error').text('');
-        $('#jenkel_error').text('');
-        $('#tgl_lahir_error').text('');
-        $('#tmpt_lahir_error').text('');
-        $('#role_error').text('');
-        $('#limit_pinjaman_error').text('');
+        $("#createUserForm").on('submit', function(e) {
+            e.preventDefault();
+            var btn = $('#createUserBtn');
+            btn.attr('disabled', true);
+            btn.val("Loading...");
+            let formData = new FormData(this);
+            $('#name_error').text('');
+            $('#no_induk_error').text('');
+            $('#alamat_error').text('');
+            $('#email_error').text('');
+            $('#telepon_error').text('');
+            $('#password_error').text('');
+            $('#jenkel_error').text('');
+            $('#tgl_lahir_error').text('');
+            $('#tmpt_lahir_error').text('');
+            $('#role_error').text('');
+            $('#limit_pinjaman_error').text('');
 
-        $.ajax({
-            url: "{{ route('users.store') }}",
-            type: "POST",
-            data: formData,
-            cache: false,
-            contentType: false,
-            processData: false,
-            success: function(response) {
-                $(".preloader").fadeOut();
-                if (response.success) {
-                    sessionStorage.setItem('success', response.message);
-                    $('#jenkel').html('<span class="badge badge-primary">' + response.jenkel + '</span>');
+            $.ajax({
+                url: "{{ route('users.store') }}",
+                type: "POST",
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    $(".preloader").fadeOut();
+                    if (response.success) {
+                        sessionStorage.setItem('success', response.message);
+                        $('#jenkel').html('<span class="badge badge-primary">' + response.jenkel + '</span>');
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'User Created',
+                            text: response.message,
+                            showConfirmButton: false,
+                            timer: 1500 // Auto close after 1.5 seconds
+                        }).then(function() {
+                            window.location.href = "{{ route('users.index') }}";
+                        });
+                    }
+                },
+                error: function(response) {
+                    btn.attr('disabled', false);
+                    btn.val("Simpan");
 
                     Swal.fire({
-                        icon: 'success',
-                        title: 'User Created',
-                        text: response.message,
-                        showConfirmButton: false,
-                        timer: 1500 // Auto close after 1.5 seconds
-                    }).then(function() {
-                        window.location.href = "{{ route('users.index') }}";
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'An error occurred while creating the user.',
+                        confirmButtonText: 'OK'
                     });
+
+                    $('#name_error').text(response.responseJSON.errors.name);
+                    $('#no_induk_error').text(response.responseJSON.errors.no_induk);
+                    $('#alamat_error').text(response.responseJSON.errors.alamat);
+                    $('#email_error').text(response.responseJSON.errors.email);
+                    $('#telepon_error').text(response.responseJSON.errors.telepon);
+                    $('#password_error').text(response.responseJSON.errors.password);
+                    $('#jenkel_error').text(response.responseJSON.errors.jenkel);
+                    $('#tgl_lahir_error').text(response.responseJSON.errors.tgl_lahir);
+                    $('#tmpt_lahir_error').text(response.responseJSON.errors.tmpt_lahir);
+                    $('#role_error').text(response.responseJSON.errors.role);
+                    $('#limit_pinjaman_error').text(response.responseJSON.errors.limit_pinjaman);
                 }
-            },
-            error: function(response) {
-                btn.attr('disabled', false);
-                btn.val("Simpan");
-
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'An error occurred while creating the user.',
-                    confirmButtonText: 'OK'
-                });
-
-                $('#name_error').text(response.responseJSON.errors.name);
-                $('#no_induk_error').text(response.responseJSON.errors.no_induk);
-                $('#alamat_error').text(response.responseJSON.errors.alamat);
-                $('#email_error').text(response.responseJSON.errors.email);
-                $('#telepon_error').text(response.responseJSON.errors.telepon);
-                $('#password_error').text(response.responseJSON.errors.password);
-                $('#jenkel_error').text(response.responseJSON.errors.jenkel);
-                $('#tgl_lahir_error').text(response.responseJSON.errors.tgl_lahir);
-                $('#tmpt_lahir_error').text(response.responseJSON.errors.tmpt_lahir);
-                $('#role_error').text(response.responseJSON.errors.role);
-                $('#limit_pinjaman_error').text(response.responseJSON.errors.limit_pinjaman);
-            }
+            });
         });
     });
 </script>

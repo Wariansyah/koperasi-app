@@ -31,7 +31,7 @@
                     </div>
                     <div class="form-group">
                         <label for="ledger">Ledger:</label>
-                        <select name="ledger" id="ledger" class="form-control" required>
+                        <select name="ledger" id="ledger" class="form-control select2" required>
                             <option value="">-- Select Ledger --</option>
                             @foreach($ledgers as $ledger)
                             <option value="{{ $ledger->kode }}" @if($produk->ledger == $ledger->kode) selected @endif>{{ $ledger->kode }} - {{ $ledger->name }}</option>
@@ -59,6 +59,7 @@
 @section('script')
 <script type="application/javascript">
     $(document).ready(function() {
+        $('.select2').select2();
         $("#editProdukForm").on('submit', function(e) {
             e.preventDefault();
             var btn = $('#editProdukBtn');

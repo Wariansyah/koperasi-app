@@ -33,6 +33,10 @@
                         <strong>Permission:</strong>
                         <br />
                         <div class="container">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="select-all">
+                                <label class="form-check-label" for="select-all">Select All</label>
+                            </div>
                             @foreach($permission as $value)
                             <div class="form-check">
                                 <input class="form-check-input" value="{{ $value->id }}" name="permission[]" type="checkbox" id="flexSwitchCheckDefault{{ $value->id }}">
@@ -54,6 +58,19 @@
 
 @section('script')
 <script type="application/javascript">
+    $(document).ready(function() {
+        $('#select-all').click(function(event) {
+            if (this.checked) {
+                $(':checkbox').each(function() {
+                    this.checked = true;
+                });
+            } else {
+                $(':checkbox').each(function() {
+                    this.checked = false;
+                });
+            }
+        });
+    });
     $("#createRoleForm").on('submit', function(e) {
         e.preventDefault();
         var btn = $('#createRoleBtn');
@@ -92,18 +109,18 @@
                 }
             },
             error: function(xhr, status, error) {
-                    btn.attr('disabled', false);
-                    btn.val("Create Role"); 
-                    if (xhr.status === 422) {
-                        var errors = JSON.parse(xhr.responseText).errors;
-                            if (errors.name) {
-                                $('#name_error').text(errors.name[0]);
-                            }       
+                btn.attr('disabled', false);
+                btn.val("Create Role");
+                if (xhr.status === 422) {
+                    var errors = JSON.parse(xhr.responseText).errors;
+                    if (errors.name) {
+                        $('#name_error').text(errors.name[0]);
                     }
+                }
             }
 
         });
-        $('#name').on('input', function(){
+        $('#name').on('input', function() {
             $('#name_error').text('');
         });
     });
