@@ -70,12 +70,14 @@ class AnggotaController extends Controller
             'ibu_kandung' => 'required|string|max:255',
         ]);
 
+        // Buat data anggota
         $anggotaData = $request->all();
-        $anggotaData['created_by'] = auth()->user()->id;
-        $anggotaData['updated_by'] = auth()->user()->id;
+        $anggotaData['created_by'] = auth()->user()->nama;
+        $anggotaData['updated_by'] = auth()->user()->nama;
         $anggota = Anggota::create($anggotaData);
 
-        // Buat Simpanan otomatis
+        // Buat data simpanan otomatis
+        $currentDate = now();
         $simpananData = [
             'rekening' => $anggota->rekening,
             'no_induk' => $anggota->no_induk,
@@ -85,11 +87,11 @@ class AnggotaController extends Controller
             'keterangan' => 'Simpanan otomatis saat pendaftaran anggota',
         ];
 
-        $simpananData = $request->all();
         $simpanan = Simpanan::create($simpananData);
 
         return response()->json(['success' => true, 'message' => 'Anggota dan Simpanan created successfully.']);
     }
+
 
 
     /**
