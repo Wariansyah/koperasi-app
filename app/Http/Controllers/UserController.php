@@ -71,6 +71,9 @@ class UserController extends Controller
                         return $badge;
                     }
                 })
+                ->addColumn('limit_pinjaman', function ($row) {
+                    return number_format($row->limit_pinjaman, 0, ',', '.');
+                })
                 ->addColumn('action', function ($row) {
                     $editUrl = route('users.edit', $row->id);
                     $deleteUrl = route('users.destroy', $row->id);

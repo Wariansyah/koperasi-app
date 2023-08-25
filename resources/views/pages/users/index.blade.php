@@ -59,6 +59,18 @@
 
 @section('script')
 <script type="application/javascript">
+    function formatLimitPinjaman(value) {
+        // Remove any existing dots from the value
+        value = value.replace(/\./g, '');
+
+        // Check the length of the value
+        if (value.length >= 4) {
+            // Insert a dot after the second character from the right
+            value = value.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
+        }
+
+        return value;
+    }
     $(document).ready(function() {
         $('#table-user').DataTable({
             processing: true,
@@ -106,7 +118,10 @@
                 },
                 {
                     data: 'limit_pinjaman',
-                    name: 'limit_pinjaman'
+                    name: 'limit_pinjaman',
+                    render: function(data) {
+                        return formatLimitPinjaman(data);
+                    }
                 },
                 {
                     data: 'action',
