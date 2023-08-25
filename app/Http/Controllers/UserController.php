@@ -25,7 +25,6 @@ class UserController extends Controller
     //     $this->middleware('permission:delete-user', ['only' => ['destroy']]);
     // }
 
-
     /**
      * Display a listing of the resource.
      *
@@ -124,8 +123,10 @@ class UserController extends Controller
             $userData['status'] = '0';
         }
         $userData['password'] = Hash::make($request->input('password'));
-        $userData['created_by'] = Auth::user()->name; 
-        $userData['updated_by'] = Auth::user()->name; 
+        $userData['created_by'] = Auth::user()->name;
+        $userData['updated_by'] = Auth::user()->name;
+        $limit_pinjaman = str_replace('.', '', $request->input('limit_pinjaman'));
+        $userData['limit_pinjaman'] = $limit_pinjaman;
         $user = User::create($userData);
         $user->assignRole($request->input('role'));
 
@@ -176,9 +177,7 @@ class UserController extends Controller
             'no_induk' => 'required|string|unique:users,no_induk,' . $id,
             'alamat' => 'required|string',
             'email' => 'required|string|email|max:255|unique:users,email,' . $id,
-            'password' => 'nullable|string|min:6', // Password validation is optional during update
             'telepon' => ['required', 'string', 'unique:users,telepon,' . $id, 'regex:/^\d{10,12}$/'],
-            'status' => 'required|string',
             'jenkel' => 'required|string',
             'tgl_lahir' => 'required|date',
             'tmpt_lahir' => 'required|string',
@@ -186,16 +185,19 @@ class UserController extends Controller
             'limit_pinjaman' => 'required|numeric',
         ]);
 
-        $userData = $request->except('password'); // Exclude password if it's not provided
-
+        $userData = $request->all();
         if ($request->has('password')) {
             $userData['password'] = Hash::make($request->input('password'));
         }
+        $userData['updated_by'] = Auth::user()->name;
 
-        $user->assignRole($request->input('role'));
+        if ($request->has('limit_pinjaman')) {
+            $limit_pinjaman = str_replace('.', '', $request->input('limit_pinjaman'));
+            $userData['limit_pinjaman'] = $limit_pinjaman;
+        }
 
         $user->update($userData);
-        $user->updated_by = Auth::user()->name;
+        $user->syncRoles([$request->input('role')]);
 
         return response()->json(['success' => true, 'message' => 'User updated successfully.']);
     }

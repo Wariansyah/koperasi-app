@@ -9,13 +9,13 @@ use Yajra\DataTables\Facades\DataTables;
 
 class ProdukController extends Controller
 {
-    function __construct()
-    {
-        $this->middleware('permission:list-produk|create-produk|edit-produk|delete-produk', ['only' => ['index', 'store']]);
-        $this->middleware('permission:create-produk', ['only' => ['create', 'store']]);
-        $this->middleware('permission:edit-produk', ['only' => ['edit', 'update']]);
-        $this->middleware('permission:delete-produk', ['only' => ['destroy']]);
-    }
+    // function __construct()
+    // {
+    //     $this->middleware('permission:list-produk|create-produk|edit-produk|delete-produk', ['only' => ['index', 'store']]);
+    //     $this->middleware('permission:create-produk', ['only' => ['create', 'store']]);
+    //     $this->middleware('permission:edit-produk', ['only' => ['edit', 'update']]);
+    //     $this->middleware('permission:delete-produk', ['only' => ['destroy']]);
+    // }
     /**
      * Display a listing of the resource.
      *

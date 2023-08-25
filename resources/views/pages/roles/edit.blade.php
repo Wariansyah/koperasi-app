@@ -39,7 +39,7 @@
                             </div>
                             @foreach($permission as $value)
                             <div class="form-check">
-                                <input class="form-check-input" value="{{ $value->id }}" name="permission[]" type="checkbox" id="flexSwitchCheckDefault{{ $value->id }}">
+                                <input class="form-check-input" value="{{ $value->id }}" name="permission[]" type="checkbox" id="flexSwitchCheckDefault{{ $value->id }}" @if(in_array($value->id, old('permission', $rolePermissions))) checked @endif>
                                 <label class="form-check-label" for="flexSwitchCheckDefault{{ $value->id }}">{{ $value->name }}</label>
                             </div>
                             @endforeach

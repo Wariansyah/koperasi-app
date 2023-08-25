@@ -93,8 +93,9 @@
                     </div>
                     <div class="form-group">
                         <label for="limit_pinjaman">Limit Pinjaman:</label>
-                        <input type="number" name="limit_pinjaman" id="limit_pinjaman" class="form-control" value="{{ $user->limit_pinjaman }}" required>
+                        <input type="text" name="limit_pinjaman" id="limit_pinjaman" class="form-control" value="{{ $user->limit_pinjaman }}" required oninput="this.value = formatLimitPinjaman(this.value)">
                         <span id="limit_pinjaman_error" class="text-danger"></span>
+                        @error('limit_pinjaman'){{ $message }}@enderror
                     </div>
                     <div class="form-group">
                         <button type="submit" id="editUserBtn" class="btn btn-primary">Update User</button>
@@ -110,6 +111,18 @@
 
 @section('script')
 <script type="application/javascript">
+    function formatLimitPinjaman(value) {
+        // Remove any existing dots from the value
+        value = value.replace(/\./g, '');
+
+        // Check the length of the value
+        if (value.length >= 4) {
+            // Insert a dot after the second character from the right
+            value = value.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
+        }
+
+        return value;
+    }
     $(document).ready(function() {
         $('.select2').select2();
     });
