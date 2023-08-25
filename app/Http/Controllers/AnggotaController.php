@@ -2,19 +2,21 @@
 
 namespace App\Http\Controllers;
 
+
 use App\Models\Anggota;
+use App\Models\Simpanan;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
 class AnggotaController extends Controller
 {
-    function __construct()
-    {
-        $this->middleware('permission:list-anggota|create-anggota|edit-anggota|delete-anggota', ['only' => ['index', 'store']]);
-        $this->middleware('permission:create-anggota', ['only' => ['create', 'store']]);
-        $this->middleware('permission:edit-anggota', ['only' => ['edit', 'update']]);
-        $this->middleware('permission:delete-anggota', ['only' => ['destroy']]);
-    }
+    // function __construct()
+    // {
+    //     $this->middleware('permission:list-anggota|create-anggota|edit-anggota|delete-anggota', ['only' => ['index', 'store']]);
+    //     $this->middleware('permission:create-anggota', ['only' => ['create', 'store']]);
+    //     $this->middleware('permission:edit-anggota', ['only' => ['edit', 'update']]);
+    //     $this->middleware('permission:delete-anggota', ['only' => ['destroy']]);
+    // }
 
     /**
      * Display a listing of the resource.
@@ -38,7 +40,6 @@ class AnggotaController extends Controller
 
         return view('pages.anggota.index');
     }
-
     /**
      * Show the form for creating a new resource.
      *
@@ -74,8 +75,22 @@ class AnggotaController extends Controller
         $anggotaData['updated_by'] = auth()->user()->id;
         $anggota = Anggota::create($anggotaData);
 
-        return response()->json(['success' => true, 'message' => 'Anggota created successfully.']);
+        // Buat Simpanan otomatis
+        $simpananData = [
+            'rekening_simpanan' => $anggota->rekening,
+            'no_induk' => $anggota->no_induk,
+            'tgl_buka' => now(),
+            'tgl_tutup' => now(),
+            'nominal' => 0, // Sesuaikan nilai awal sesuai kebutuhan
+            'keterangan' => 'Simpanan otomatis saat pendaftaran anggota',
+        ];
+
+        $simpananData = $request->all();
+        $simpanan = Simpanan::create($simpananData);
+
+        return response()->json(['success' => true, 'message' => 'Anggota dan Simpanan created successfully.']);
     }
+
 
     /**
      * Display the specified resource.
@@ -83,12 +98,20 @@ class AnggotaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    public function Simpanan()
+    {
+        $simpananData = Simpanan::all(); // Ubah ini sesuai dengan cara Anda ingin mengambil data simpanan
+        return view('pages.anggota.simpanan', compact('simpananData'));
+    }
+
+
     public function show($id)
     {
         $anggota = Anggota::find($id);
 
         return view('pages.anggota.show', compact('anggota'));
     }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -126,6 +149,7 @@ class AnggotaController extends Controller
 
 
         $anggota = Anggota::find($id);
+        $anggota->rekening = $request->input('rekening');
         $anggota->no_induk = $request->input('no_induk');
         $anggota->nama = $request->input('nama');
         $anggota->alamat = $request->input('alamat');
@@ -137,10 +161,19 @@ class AnggotaController extends Controller
         $anggota->updated_by = auth()->user()->id;
         $anggota->save();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Anggota successfully updated'
-        ]);
+        $simpananData = [
+            'rekening_simpanan' => $anggota->rekening,
+            'no_induk' => $anggota->no_induk,
+            'tgl_buka' => now(),
+            'tgl_tutup' => now(),
+            'nominal' => 0, // Sesuaikan nilai awal sesuai kebutuhan
+            'keterangan' => 'Simpanan otomatis saat pendaftaran anggota',
+        ];
+
+        $simpananData = $request->all();
+        $simpanan = Simpanan::create($simpananData);
+
+        return response()->json(['success' => true, 'message' => 'Anggota dan Simpanan update successfully.']);
     }
 
 

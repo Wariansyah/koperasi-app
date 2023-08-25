@@ -27,6 +27,7 @@
                     <div class="card">
                         <div class="card-header">
                             <a href="{{ route('anggota.create') }}" class="btn btn-sm btn-primary">Tambah</a>
+                            <a href="{{ route('anggota.lihat_simpanan') }}" class="btn btn-sm btn-primary">Lihat Simpanan</a>
                         </div>
                         @if ($message = Session::get('success'))
                             <div class="alert alert-success">

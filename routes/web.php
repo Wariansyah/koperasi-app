@@ -67,6 +67,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/anggota', [AnggotaController::class, 'store'])->name('anggota.store');
     Route::put('/anggota/{id}', [AnggotaController::class, 'update'])->name('anggota.update');
     Route::delete('/anggota/{id}', [AnggotaController::class, 'destroy'])->name('anggota.destroy');
+    Route::get('anggota/simpanan', 'AnggotaController@lihatSimpanan')->name('anggota.lihat_simpanan');
+
 
 
 })->middleware('web');
