@@ -94,7 +94,7 @@
                     </div>
                     <div class="form-group">
                         <label for="limit_pinjaman">Limit Pinjaman:</label>
-                        <input type="number" name="limit_pinjaman" id="limit_pinjaman" class="form-control" required>
+                        <input type="text" name="limit_pinjaman" id="limit_pinjaman" class="form-control" required oninput="this.value = formatLimitPinjaman(this.value)">
                         <span id="limit_pinjaman_error" class="text-danger"></span>
                         @error('limit_pinjaman'){{ $message }}@enderror
                     </div>
@@ -121,8 +121,18 @@
 @section('script')
 <script type="application/javascript">
     function formatLimitPinjaman(value) {
-        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        // Remove any existing dots from the value
+        value = value.replace(/\./g, '');
+
+        // Check the length of the value
+        if (value.length >= 4) {
+            // Insert a dot after the second character from the right
+            value = value.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
+        }
+
+        return value;
     }
+
     $(document).ready(function() {
         // Set default value for status
         $('#status').val('Aktif');
@@ -139,10 +149,7 @@
             }
             $('#limit_pinjaman').on('input', function() {
                 // Get the value of the input field
-                let value = $(this).val();
-
-                // Remove any existing thousand separators
-                value = value.replace(/\./g, '');
+                let value = parseFormattedValue($(this).val());
 
                 // Format the value with a thousand separator
                 const formattedValue = formatLimitPinjaman(value);
