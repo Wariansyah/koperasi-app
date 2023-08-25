@@ -77,10 +77,10 @@ class AnggotaController extends Controller
 
         // Buat Simpanan otomatis
         $simpananData = [
-            'rekening_simpanan' => $anggota->rekening,
+            'rekening' => $anggota->rekening,
             'no_induk' => $anggota->no_induk,
-            'tgl_buka' => now(),
-            'tgl_tutup' => now(),
+            'tgl_buka' => $currentDate,
+            'tgl_tutup' => $currentDate,
             'nominal' => 0, // Sesuaikan nilai awal sesuai kebutuhan
             'keterangan' => 'Simpanan otomatis saat pendaftaran anggota',
         ];
@@ -160,18 +160,6 @@ class AnggotaController extends Controller
         $anggota->ibu_kandung = $request->input('ibu_kandung');
         $anggota->updated_by = auth()->user()->id;
         $anggota->save();
-
-        $simpananData = [
-            'rekening_simpanan' => $anggota->rekening,
-            'no_induk' => $anggota->no_induk,
-            'tgl_buka' => now(),
-            'tgl_tutup' => now(),
-            'nominal' => 0, // Sesuaikan nilai awal sesuai kebutuhan
-            'keterangan' => 'Simpanan otomatis saat pendaftaran anggota',
-        ];
-
-        $simpananData = $request->all();
-        $simpanan = Simpanan::create($simpananData);
 
         return response()->json(['success' => true, 'message' => 'Anggota dan Simpanan update successfully.']);
     }

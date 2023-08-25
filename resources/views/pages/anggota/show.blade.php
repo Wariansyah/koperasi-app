@@ -22,6 +22,9 @@
             <div class="row">
                 <div class="col-12">
                     <div class="card">
+                        <div class="card-header">
+                            <a href="{{ route('anggota.index') }}" class="btn btn-sm btn-primary">Back</a>
+                        </div>
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table id="table-simpanan" style="width: 100%" class="table table-bordered table-hover">
@@ -53,12 +56,12 @@
                 processing: true,
                 serverSide: true,
                 ajax: {
-                    url: "{{ route('anggota.index') }}", // Ganti sesuai rute yang Anda gunakan untuk index simpanan
+                    url: "{{ route('anggota.index') }}",
                     type: 'GET',
                 },
                 columns: [
                     { data: 'DT_RowIndex', name: 'DT_RowIndex' },
-                    { data: 'rekening_simpanan', name: 'rekening_simpanan' },
+                    { data: 'rekening', name: 'rekening' },
                     { data: 'no_induk', name: 'no_induk' },
                     { data: 'tgl_buka', name: 'tgl_buka' },
                     { data: 'tgl_tutup', name: 'tgl_tutup' },

@@ -12,7 +12,7 @@ class Simpanan extends Model
     protected $table = "pinjaman";
     protected $primarykey = "id";
     protected $fillable = [
-        'rekening_simpanan',
+        'rekening',
         'no_induk',
         'tgl_buka',
         'tgl_tutup',

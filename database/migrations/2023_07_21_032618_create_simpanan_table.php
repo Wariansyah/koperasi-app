@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('simpanan', function (Blueprint $table) {
             $table->id();
-            $table->string('rekening_simpanan');
+            $table->string('rekening');
             $table->string('user_id');
             $table->date('tgl_buka');
             $table->date('tgl_tutup');
